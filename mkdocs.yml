@@ -92,6 +92,7 @@ nav:
       - プロフィール: guide/settings/profile.md
       - 表示設定: guide/settings/display.md
       - 通知設定: guide/settings/notification.md
+  - ユースケース: usecases.md
   - 管理者ガイド:
     - はじめに: admin/index.md
     - サーバー構築: admin/server-setup.md
