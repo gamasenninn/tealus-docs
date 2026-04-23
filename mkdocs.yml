@@ -1,0 +1,109 @@
+site_name: Tealus ドキュメント
+site_url: https://gamasenninn.github.io/tealus-docs/
+site_description: Tealus — オープンソース社内メッセンジャーの公式ドキュメント
+site_author: Tealus Project
+
+repo_url: https://github.com/gamasenninn/tealus
+repo_name: gamasenninn/tealus
+
+theme:
+  name: material
+  language: ja
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: ダークモードに切替
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: ライトモードに切替
+  font:
+    text: Noto Sans JP
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search:
+      lang: ja
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gamasenninn/tealus
+
+copyright: Copyright &copy; 2026 Tealus Project
+
+nav:
+  - Home: index.md
+  - ユーザーガイド:
+    - はじめに: guide/index.md
+    - インストールと初期設定: guide/setup.md
+    - 基本操作:
+      - ログイン: guide/basic/login.md
+      - トーク（チャット）: guide/basic/chat.md
+      - グループ: guide/basic/group.md
+      - メディア送信: guide/basic/media.md
+      - 音声メッセージ: guide/basic/voice.md
+    - 応用機能:
+      - メッセージ検索: guide/advanced/search.md
+      - リアクション: guide/advanced/reaction.md
+      - メンション: guide/advanced/mention.md
+      - スタンプ: guide/advanced/stamp.md
+      - TODO機能: guide/advanced/todo.md
+      - 音声・ビデオ通話: guide/advanced/call.md
+    - 設定:
+      - プロフィール: guide/settings/profile.md
+      - 表示設定: guide/settings/display.md
+      - 通知設定: guide/settings/notification.md
+  - 管理者ガイド:
+    - はじめに: admin/index.md
+    - サーバー構築: admin/server-setup.md
+    - ユーザー管理: admin/user-management.md
+    - ダッシュボード: admin/dashboard.md
+    - AIエージェント設定: admin/agent.md
+    - 運用・監視: admin/operations.md
+  - 開発者ガイド:
+    - はじめに: dev/index.md
+    - アーキテクチャ: dev/architecture.md
+    - API リファレンス: dev/api.md
+    - Socket.IO イベント: dev/socketio.md
+    - Bot API / Webhook: dev/bot-api.md
+    - MCP Server: dev/mcp.md
+    - CLI ツール: dev/cli.md
+    - テスト: dev/testing.md
+    - コントリビューション: dev/contributing.md
+  - リリースノート: releases.md
