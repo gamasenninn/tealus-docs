@@ -147,6 +147,10 @@ npm run dev
 | `TEALUS_BOT_PASS` | Botユーザーのパスワード |
 | `OPENAI_API_KEY` | OpenAI APIキー |
 | `AGENT_WORKSPACE_ROOT` | ワークスペースのパス |
+| `AIVIS_API_KEY` | Aivis Cloud API キー（TTS 音声合成用） |
+| `AIVIS_MODEL_UUID` | デフォルト音声モデル UUID（デフォルト: 凛音エル） |
+| `TTS_ENABLED` | TTS 読み上げの有効/無効（`"false"` で無効化、デフォルト: 有効） |
+| `TTS_MAX_LENGTH` | 読み上げ最大文字数（デフォルト: 500） |
 
 ## 7. 本番デプロイ
 

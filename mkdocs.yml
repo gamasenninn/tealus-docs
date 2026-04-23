@@ -85,6 +85,7 @@ nav:
       - スタンプ: guide/advanced/stamp.md
       - TODO機能: guide/advanced/todo.md
       - 音声・ビデオ通話: guide/advanced/call.md
+      - TTS 読み上げ: guide/advanced/tts.md
     - 設定:
       - プロフィール: guide/settings/profile.md
       - 表示設定: guide/settings/display.md

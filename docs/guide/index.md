@@ -22,6 +22,7 @@ Tealus の基本的な使い方を説明します。
     - [スタンプ](advanced/stamp.md)
     - [TODO機能](advanced/todo.md)
     - [音声・ビデオ通話](advanced/call.md)
+    - [TTS 読み上げ](advanced/tts.md)
 - **設定**
     - [プロフィール](settings/profile.md)
     - [表示設定](settings/display.md)
