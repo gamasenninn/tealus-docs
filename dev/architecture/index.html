@@ -564,6 +564,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/basic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/basic/login/" class="md-nav__link">
         
   
@@ -758,6 +786,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1618,6 +1674,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tts-plaintransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 音声合成パイプライン（PlainTransport）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TTS 音声合成パイプライン（PlainTransport）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plaintransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PlainTransport の仕組み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ffmpeg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ffmpeg パラメータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2005,6 +2111,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tts-plaintransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 音声合成パイプライン（PlainTransport）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TTS 音声合成パイプライン（PlainTransport）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plaintransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PlainTransport の仕組み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ffmpeg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ffmpeg パラメータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2280,6 +2436,81 @@
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>req.user にユーザー情報を設定
 </code></pre></div>
 <p>Socket.IO接続時も <code>handshake.auth.token</code> でJWTを検証します。</p>
+<h2 id="tts-plaintransport">TTS 音声合成パイプライン（PlainTransport）<a class="headerlink" href="#tts-plaintransport" title="Permanent link">&para;</a></h2>
+<p>AIエージェントの回答を音声で読み上げる際、mediasoup の <strong>PlainTransport</strong> を使って WebRTC スタックなしで音声を注入します。</p>
+<h3 id="_8">処理フロー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>agent-server: speakMessage(roomId, text)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → テキスト前処理（Markdown除去・URL省略・500文字制限）
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → sendViaPlainTransport(wavFile, roomId)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      ├── WebSocket → rtc-server (localhost:3100)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>      ├── join → createPlainTransport(comedia: true)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>      ├── plainProduce(ssrc: 1111)
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>      ├── Consumer セットアップ待ち 2秒
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>      └── ffmpeg → Opus RTP → PlainTransport → Router
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>          → WebRTC Consumer → ブラウザで再生
+</code></pre></div>
+<h3 id="plaintransport">PlainTransport の仕組み<a class="headerlink" href="#plaintransport" title="Permanent link">&para;</a></h3>
+<p>通常の WebRTC 通話では、ブラウザ間で DTLS/SRTP を使った暗号化通信を行います。一方 PlainTransport は <strong>暗号化なしの RTP/RTCP を直接受け取る</strong>トランスポートで、サーバーサイドの音声ソース（ffmpeg 等）から mediasoup に音声を注入する用途に適しています。</p>
+<p><strong>comedia モード</strong>: 送信元の IP:port を事前に指定する代わりに、最初の RTP パケットから自動検知します。ローカルホスト内の通信で利用しています。</p>
+<h3 id="ffmpeg">ffmpeg パラメータ<a class="headerlink" href="#ffmpeg" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ffmpeg<span class="w"> </span>-re<span class="w"> </span>-i<span class="w"> </span>&lt;wavFile&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-af<span class="w"> </span><span class="nv">adelay</span><span class="o">=</span><span class="m">300</span><span class="p">|</span><span class="m">300</span>,apad<span class="o">=</span><span class="nv">pad_dur</span><span class="o">=</span>500ms<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-c:a<span class="w"> </span>libopus<span class="w"> </span>-ac<span class="w"> </span><span class="m">2</span><span class="w"> </span>-ar<span class="w"> </span><span class="m">48000</span><span class="w"> </span>-b:a<span class="w"> </span>32k<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-f<span class="w"> </span>rtp<span class="w"> </span>-ssrc<span class="w"> </span><span class="m">1111</span><span class="w"> </span>-payload_type<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>rtp://127.0.0.1:&lt;port&gt;
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-re</code></td>
+<td>—</td>
+<td>リアルタイム速度で送信</td>
+</tr>
+<tr>
+<td><code>adelay=300\|300</code></td>
+<td>300ms</td>
+<td>頭切れ防止の先頭無音</td>
+</tr>
+<tr>
+<td><code>apad=pad_dur=500ms</code></td>
+<td>500ms</td>
+<td>尻切れ防止の末尾無音</td>
+</tr>
+<tr>
+<td><code>-c:a libopus</code></td>
+<td>Opus</td>
+<td>コーデック</td>
+</tr>
+<tr>
+<td><code>-ar 48000</code></td>
+<td>48kHz</td>
+<td>サンプリングレート</td>
+</tr>
+<tr>
+<td><code>-b:a 32k</code></td>
+<td>32kbps</td>
+<td>ビットレート</td>
+</tr>
+<tr>
+<td><code>-ssrc 1111</code></td>
+<td>固定値</td>
+<td>RTP ストリーム識別子</td>
+</tr>
+<tr>
+<td><code>-payload_type 100</code></td>
+<td>100</td>
+<td>mediasoup と合わせた PT 番号</td>
+</tr>
+</tbody>
+</table>
 
 
 
