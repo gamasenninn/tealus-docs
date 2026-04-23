@@ -12,13 +12,13 @@
         <meta name="author" content="Tealus Project">
       
       
-        <link rel="canonical" href="https://gamasenninn.github.io/tealus-docs/dev/mcp/">
+        <link rel="canonical" href="https://gamasenninn.github.io/tealus-docs/dev/ai-architecture/">
       
       
-        <link rel="prev" href="../bot-api/">
+        <link rel="prev" href="../architecture/">
       
       
-        <link rel="next" href="../cli/">
+        <link rel="next" href="../api/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>MCP Server - Tealus ドキュメント</title>
+        <title>AI アーキテクチャ - Tealus ドキュメント</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mcp-server" class="md-skip">
+        <a href="#ai" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              MCP Server
+              AI アーキテクチャ
             
           </span>
         </div>
@@ -1537,10 +1537,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../ai-architecture/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI アーキテクチャ
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1556,6 +1583,326 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#router-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Router — 2段階振り分け
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Router — 2段階振り分け">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第1段: ルールベース判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第2段: LLM 判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#light-agent-openai-agents-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Light Agent — OpenAI Agents SDK
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Light Agent — OpenAI Agents SDK">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tealussession" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        セッション管理（TealusSession）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        システムプロンプト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ツール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deep-agent-claude-code-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Agent — Claude Code CLI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deep Agent — Claude Code CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的 MCP 設定生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webhook-dispatcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Dispatcher
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Webhook Dispatcher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルーム別キュー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        無限ループ防止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応イベント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 音声合成パイプライン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TTS 音声合成パイプライン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fifo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIFO キュー管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テキスト前処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルーム別音声モデル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計思想
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設計思想">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コスト最適化 — なぜ3層か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        声は人格の一部
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI 間協働
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1649,37 +1996,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MCP Server
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../mcp/" class="md-nav__link">
         
   
   
@@ -1695,98 +2015,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        利用可能なツール
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セットアップ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="セットアップ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mcp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MCP設定ファイル
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        環境変数
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        活用例
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1967,7 +2195,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        全体構成
       
     </span>
   </a>
@@ -1975,33 +2203,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#router-2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        利用可能なツール
+        Router — 2段階振り分け
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セットアップ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="セットアップ">
+    <nav class="md-nav" aria-label="Router — 2段階振り分け">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#mcp" class="md-nav__link">
+  <a href="#1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MCP設定ファイル
+        第1段: ルールベース判定
       
     </span>
   </a>
@@ -2009,10 +2226,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#2-llm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        環境変数
+        第2段: LLM 判定
       
     </span>
   </a>
@@ -2025,13 +2242,252 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#light-agent-openai-agents-sdk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        活用例
+        Light Agent — OpenAI Agents SDK
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Light Agent — OpenAI Agents SDK">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tealussession" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        セッション管理（TealusSession）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        システムプロンプト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ツール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deep-agent-claude-code-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Agent — Claude Code CLI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deep Agent — Claude Code CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的 MCP 設定生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webhook-dispatcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Webhook Dispatcher
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Webhook Dispatcher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルーム別キュー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        無限ループ防止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応イベント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 音声合成パイプライン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TTS 音声合成パイプライン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fifo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIFO キュー管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テキスト前処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルーム別音声モデル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計思想
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設計思想">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コスト最適化 — なぜ3層か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        声は人格の一部
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI 間協働
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2055,15 +2511,140 @@
   
 
 
-<h1 id="mcp-server">MCP Server<a class="headerlink" href="#mcp-server" title="Permanent link">&para;</a></h1>
-<p>Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラップし、Claude Code や他の MCP クライアントから Tealus をネイティブツールとして操作できます。</p>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h1 id="ai">AI アーキテクチャ<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h1>
+<p>Tealus の AI 統合の全体像を開発者向けに解説します。3層エージェント構造、Webhook ディスパッチ、TTS 音声合成パイプラインの内部実装を説明します。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>運用・設定については <a href="../../admin/agent/">AIエージェント設定</a>、MCP ツールの詳細は <a href="../mcp/">MCP Server</a> を参照してください。</p>
+</div>
+<h2 id="_1">全体構成<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ユーザーがメッセージ送信
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    ↓
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Tealus Server (port 3000)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ↓ Webhook (message.created)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Agent Server (port 4000)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ↓
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>┌─────────────────────────────────────────┐
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│           Webhook Handler               │
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│                                         │
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  botUserIds Set ← Bot? → スキップ       │
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│         ↓ (人間のメッセージのみ)         │
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│                                         │
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│       Webhook Dispatcher                │
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│  roomQueues Map ← ルーム別キュー         │
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│         ↓                               │
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>│       応答モード判定                     │
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│  (auto / mention / all / off)           │
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│         ↓                               │
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>│        Router                           │
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│  ┌─────────────────────────────┐        │
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>│  │ 第1段: ルールベース判定     │        │
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│  │  /deep → Deep              │        │
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>│  │  /light → Light            │        │
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>│  │  挨拶パターン → 即応答      │        │
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>│  │  Deep キーワード → Deep     │        │
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>│  │  該当なし ↓                 │        │
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>│  │ 第2段: LLM 判定            │        │
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│  │  GPT系 → light or deep     │        │
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│  └──────┬──────────┬──────────┘        │
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│         ↓          ↓                    │
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>│    Light Agent   Deep Agent             │
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>│   (GPT-4o-mini)  (Claude CLI)           │
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>│         ↓          ↓                    │
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>│      Bot API で回答送信                  │
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>│         ↓                               │
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>│    TTS 読み上げ (fire-and-forget)        │
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>└─────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="router-2">Router — 2段階振り分け<a class="headerlink" href="#router-2" title="Permanent link">&para;</a></h2>
+<p>ユーザーのメッセージを適切なエージェントに振り分けます。</p>
+<h3 id="1">第1段: ルールベース判定<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<p>高速で確実な判定をルールで行います。</p>
+<table>
+<thead>
+<tr>
+<th>パターン</th>
+<th>振り分け先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/deep</code> コマンド</td>
+<td>Deep Agent</td>
+</tr>
+<tr>
+<td><code>/light</code> コマンド</td>
+<td>Light Agent</td>
+</tr>
+<tr>
+<td>挨拶パターン（こんにちは、ありがとう等）</td>
+<td>Router が直接応答</td>
+</tr>
+<tr>
+<td>Deep キーワード（コード、リファクタ、デバッグ、実装、PR等）</td>
+<td>Deep Agent</td>
+</tr>
+<tr>
+<td>該当なし</td>
+<td>第2段へ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-llm">第2段: LLM 判定<a class="headerlink" href="#2-llm" title="Permanent link">&para;</a></h3>
+<p>第1段で判定できなかったメッセージを LLM で分類します。</p>
 <ul>
-<li>ディレクトリ: <code>tealus/mcp-server/</code>（Agent Server とは独立）</li>
-<li>通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)</li>
-<li>技術スタック: <code>@modelcontextprotocol/sdk</code>、<code>zod</code>、<code>node-fetch</code>、<code>form-data</code></li>
+<li><strong>モデル</strong>: GPT系（GPT-4o-mini）</li>
+<li><strong>パラメータ</strong>: <code>max_tokens: 10</code>, <code>temperature: 0</code>（決定論的に判定）</li>
+<li><strong>出力</strong>: <code>light</code> または <code>deep</code> の1単語</li>
+<li><strong>フォールバック</strong>: エラー時は Light Agent に振る</li>
 </ul>
-<h2 id="_2">利用可能なツール<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">なぜ2段階か</p>
+<p>ルールベース判定はコストゼロ・遅延ゼロで処理できます。LLM を呼ぶのは判定が難しいケースだけに限定することで、Router のコストを月 $3〜$13 に抑えています。</p>
+</div>
+<h2 id="light-agent-openai-agents-sdk">Light Agent — OpenAI Agents SDK<a class="headerlink" href="#light-agent-openai-agents-sdk" title="Permanent link">&para;</a></h2>
+<p>日常的な質問やタスクを高速に処理する軽量エージェントです。</p>
+<h3 id="tealussession">セッション管理（TealusSession）<a class="headerlink" href="#tealussession" title="Permanent link">&para;</a></h3>
+<p><code>TealusSession</code> クラスが Tealus の会話履歴を OpenAI Agents SDK の形式に変換します。</p>
+<ul>
+<li>Bot API からチャット履歴を取得</li>
+<li>直近 <strong>20件</strong>（<code>LIGHT_CONTEXT_MESSAGES</code>）のメッセージをコンテキストとして使用</li>
+<li>初回は DB から取得、以降はキャッシュに蓄積</li>
+</ul>
+<h3 id="_2">システムプロンプト<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>複数のプロンプトソースが階層的に合成されます。</p>
+<table>
+<thead>
+<tr>
+<th>ソース</th>
+<th>ファイル</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>デフォルト</td>
+<td><code>config/default_system_prompt.md</code></td>
+<td>基本</td>
+</tr>
+<tr>
+<td>カスタム</td>
+<td><code>config/system_prompt.md</code></td>
+<td>グローバル上書き</td>
+</tr>
+<tr>
+<td>ルーム固有</td>
+<td><code>{workspace}/light_prompt.md</code></td>
+<td>ルーム個別の指示</td>
+</tr>
+<tr>
+<td>メモリ</td>
+<td><code>{workspace}/memory/MEMORY.md</code></td>
+<td>エージェントの記憶</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">ツール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2073,77 +2654,219 @@
 </thead>
 <tbody>
 <tr>
-<td><code>send_message</code></td>
-<td>テキストメッセージ送信</td>
+<td><code>write_memory</code></td>
+<td>エージェントのメモリに情報を書き込み</td>
 </tr>
 <tr>
-<td><code>send_image</code></td>
-<td>画像送信（base64入力 → Buffer変換）</td>
+<td><code>read_memory</code></td>
+<td>保存済みメモリの読み取り</td>
 </tr>
 <tr>
-<td><code>get_messages</code></td>
-<td>メッセージ取得</td>
+<td><code>get_current_time</code></td>
+<td>現在時刻の取得</td>
 </tr>
 <tr>
-<td><code>list_rooms</code></td>
-<td>ルーム一覧取得</td>
+<td><code>list_workspace_files</code></td>
+<td>ワークスペース内のファイル一覧</td>
 </tr>
 <tr>
-<td><code>join_room</code></td>
-<td>ルームに参加</td>
+<td><code>generate_image</code></td>
+<td>DALL-E による画像生成（設定でON/OFF可）</td>
 </tr>
 <tr>
-<td><code>mark_read</code></td>
-<td>既読マーク</td>
+<td><code>code_interpreter</code></td>
+<td>Python コード実行（設定でON/OFF可）</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">セットアップ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="mcp">MCP設定ファイル<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
-<p>Claude Code や他のMCPクライアントの設定ファイル（<code>mcp_config.json</code>）に以下を追加します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;tealus&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;node&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;C:/app/tealus/mcp-server/src/index.js&quot;</span><span class="p">],</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nt">&quot;TEALUS_API_URL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nt">&quot;TEALUS_BOT_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AI_AGENT&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">&quot;TEALUS_BOT_PASS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234&quot;</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">}</span>
+<p>ツール実行時には UI にステータスが自動通知されます（例: 「検索中...」「画像生成中...」）。</p>
+<h2 id="deep-agent-claude-code-cli">Deep Agent — Claude Code CLI<a class="headerlink" href="#deep-agent-claude-code-cli" title="Permanent link">&para;</a></h2>
+<p>複雑なコード生成、分析、長いワークフローを処理する高度なエージェントです。</p>
+<h3 id="_4">起動方式<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>claude<span class="w"> </span>-p<span class="w"> </span>-<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--dangerously-skip-permissions<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--mcp-config<span class="w"> </span>&lt;動的設定ファイル&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="o">[</span>--resume<span class="w"> </span>&lt;sessionId&gt;<span class="o">]</span>
 </code></pre></div>
-<h3 id="_4">環境変数<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>プロンプトは <strong>stdin</strong> から送信</li>
+<li><code>--resume tealus-room-{roomId}</code> で前のセッションから再開可能</li>
+</ul>
+<h3 id="mcp">動的 MCP 設定生成<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
+<p>実行時に MCP 設定 JSON を動的に組み立てます。</p>
+<ol>
+<li>Tealus MCP Server（チャット読み書き用）を基本設定として追加</li>
+<li>ルーム固有の MCP 設定（<code>room_settings.json</code> の <code>mcp</code> セクション）をマージ</li>
+<li><code>.deep_mcp_config.json</code> としてワークスペースに書き出し</li>
+</ol>
+<p>これにより、Deep Agent は <a href="../mcp/">MCP Server</a> 経由でチャット履歴の読み取り・メッセージ送信を自律的に行えます。</p>
+<h3 id="_5">制約<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>変数</th>
-<th>説明</th>
+<th>項目</th>
+<th>値</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>TEALUS_API_URL</code></td>
-<td>Tealus Server の URL</td>
+<td>タイムアウト</td>
+<td>5分（<code>DEEP_TIMEOUT</code>）</td>
 </tr>
 <tr>
-<td><code>TEALUS_BOT_ID</code></td>
-<td>Bot ユーザーの社員番号</td>
+<td>出力分割</td>
+<td>4000字単位でチャットに送信</td>
 </tr>
 <tr>
-<td><code>TEALUS_BOT_PASS</code></td>
-<td>Bot ユーザーのパスワード</td>
+<td>プロセス終了</td>
+<td>SIGTERM（Windows: <code>taskkill /T /F</code>）</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_5">活用例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="webhook-dispatcher">Webhook Dispatcher<a class="headerlink" href="#webhook-dispatcher" title="Permanent link">&para;</a></h2>
+<p>Agent Server がメッセージを受け取り、エージェントに渡すまでの制御を担います。</p>
+<h3 id="_6">ルーム別キュー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>同一ルームへの並行応答を防止するため、<code>roomQueues</code>（Map）でルームごとにメッセージをシリアライズします。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ルーム A: メッセージ1 → メッセージ2 → メッセージ3（順次処理）
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ルーム B: メッセージ1 → メッセージ2（並行して処理）
+</code></pre></div>
+<p>異なるルームのメッセージは並行処理されますが、同じルーム内のメッセージは前のメッセージの処理が完了してから次に進みます。</p>
+<h3 id="_7">無限ループ防止<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p><code>botUserIds</code>（Set）に Bot ユーザー ID を保持し、Webhook 受信時に送信者をチェックします。Bot からのメッセージは即座にスキップされ、Bot 同士の無限応答ループを防止します。</p>
+<h3 id="_8">対応イベント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>イベント</th>
+<th>処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message.created</code></td>
+<td>Router 経由でエージェントに振り分け</td>
+</tr>
+<tr>
+<td><code>voice.transcription_completed</code></td>
+<td>音声文字起こし完了時にエージェント処理</td>
+</tr>
+<tr>
+<td><code>member.joined</code> / <code>member.left</code></td>
+<td>Bot のルーム参加状態を追跡</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tts">TTS 音声合成パイプライン<a class="headerlink" href="#tts" title="Permanent link">&para;</a></h2>
+<p>AI の回答をリアルタイムで音声に変換し、トランシーバーに送信します。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>PlainTransport・ffmpeg の技術詳細は <a href="../architecture/">アーキテクチャ</a> の「TTS 音声合成パイプライン（PlainTransport）」セクションを参照してください。</p>
+</div>
+<h3 id="fifo">FIFO キュー管理<a class="headerlink" href="#fifo" title="Permanent link">&para;</a></h3>
+<p><code>isProcessing</code> フラグによる排他制御で、同時読み上げを防止します。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>speakMessage() → queue に追加
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>                    ↓
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>              processQueue()
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>              isProcessing = true
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                    ↓
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>              テキスト前処理
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>                    ↓
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>              Aivis Cloud API (0.3-0.5秒)
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                    ↓
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>              ffmpeg → RTP 送信
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                    ↓
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>              isProcessing = false
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>              → キューに次があれば再度 processQueue()
+</code></pre></div>
+<p>複数のメッセージが短時間に発生しても、キューに積まれた順序で逐次処理されます。</p>
+<h3 id="_9">テキスト前処理<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>読み上げに適したテキストに変換します。</p>
+<table>
+<thead>
+<tr>
+<th>処理</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Markdown除去</td>
+<td>見出し・太字・リンク等の記法を除去</td>
+</tr>
+<tr>
+<td>URL省略</td>
+<td>URL → 「URL省略」に置換</td>
+</tr>
+<tr>
+<td>コード省略</td>
+<td>コードブロック → 「コード省略」に置換</td>
+</tr>
+<tr>
+<td>改行統一</td>
+<td>連続改行を1行に統一</td>
+</tr>
+<tr>
+<td>文字数制限</td>
+<td>500文字（<code>TTS_MAX_LENGTH</code>）を超える部分をカット</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">ルーム別音声モデル<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p><code>room_settings.json</code> の <code>tts_model_uuid</code> フィールドでルームごとに異なる音声モデルを設定できます。未設定の場合は環境変数 <code>AIVIS_MODEL_UUID</code> のデフォルトモデル（凛音エル）が使用されます。</p>
+<h2 id="_11">設計思想<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="3">コスト最適化 — なぜ3層か<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p>すべてのメッセージを Deep Agent（Claude）で処理すると高コストになります。3層に分けることで、大半のメッセージを低コストな Light Agent で処理し、複雑なタスクだけを Deep Agent に回します。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>月額目安</th>
+<th>処理割合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Router</td>
+<td>$3〜$13</td>
+<td>全メッセージを判定</td>
+</tr>
+<tr>
+<td>Light Agent</td>
+<td>$80〜$280</td>
+<td>大半のメッセージ</td>
+</tr>
+<tr>
+<td>Deep Agent</td>
+<td>$100（MAXプラン固定）</td>
+<td>複雑なタスクのみ</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td><strong>$183〜$393</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deep Agent のコストは MAXプランの固定料金が前提です。API 課金に切り替える場合はコストが大幅に変動します。</p>
+</div>
+<h3 id="_12">声は人格の一部<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>Tealus ではプロンプト（性格・口調）と音声モデル（声）を <code>room_settings.json</code> で統合管理します。</p>
 <ul>
-<li>Claude Code からチャットにメッセージを投稿</li>
-<li>AIエージェントがチャット履歴を読み取って分析</li>
-<li>外部AIツールからTealusを操作</li>
+<li>ルームごとに異なるエージェントの人格を定義</li>
+<li>「丁寧な敬語で話すアシスタント」には落ち着いた声を</li>
+<li>「フレンドリーなチームメイト」には明るい声を</li>
 </ul>
+<p>声とプロンプトを同じレイヤで管理することで、エージェントのキャラクター設定が一貫します。</p>
+<h3 id="ai_1">AI 間協働<a class="headerlink" href="#ai_1" title="Permanent link">&para;</a></h3>
+<p>Tealus では AI 同士が GitHub Issue で作業指示を出し合う運用が実現しています。</p>
+<ul>
+<li>開発 AI（Claude）がドキュメント AI に GitHub Issue でレビュー結果を記載</li>
+<li>ドキュメント AI が Issue を見て更新を実施</li>
+<li>開発 AI がレビューして承認</li>
+</ul>
+<p>複数の AI（GPT-4o-mini + Claude）が同じチャットルームで人間と対等に議論し、設計提案・実装・レビューを分担しています。</p>
 
 
 

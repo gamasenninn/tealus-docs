@@ -306,6 +306,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="releases/" class="md-tabs__link">
         
   
@@ -445,7 +464,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ドキュメントの構成
+        競合製品との比較
       
     </span>
   </a>
@@ -454,6 +473,17 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ドキュメントの構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         クイックリンク
@@ -1596,6 +1626,34 @@
   
   
     <li class="md-nav__item">
+      <a href="dev/ai-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI アーキテクチャ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="dev/api/" class="md-nav__link">
         
   
@@ -1799,6 +1857,33 @@
   
   
     <li class="md-nav__item">
+      <a href="faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="releases/" class="md-nav__link">
         
   
@@ -1860,7 +1945,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ドキュメントの構成
+        競合製品との比較
       
     </span>
   </a>
@@ -1869,6 +1954,17 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ドキュメントの構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         クイックリンク
@@ -1910,7 +2006,103 @@
 <li><strong>音声・ビデオ通話</strong> — WebRTC (mediasoup) によるグループ通話</li>
 <li><strong>完全自社管理</strong> — オンプレミスで運用可能。データは社外に出ない</li>
 </ul>
-<h2 id="_1">ドキュメントの構成<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="_1">競合製品との比較<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>Slack</th>
+<th>Teams</th>
+<th>Mattermost</th>
+<th>Rocket.Chat</th>
+<th><strong>Tealus</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>テキストチャット</td>
+<td>◎</td>
+<td>◎</td>
+<td>○</td>
+<td>○</td>
+<td><strong>◎</strong></td>
+</tr>
+<tr>
+<td>音声・ビデオ通話</td>
+<td>◎</td>
+<td>◎</td>
+<td>×</td>
+<td>△</td>
+<td><strong>◎</strong></td>
+</tr>
+<tr>
+<td>AI エージェント</td>
+<td>△ 外部連携</td>
+<td>△ Copilot</td>
+<td>△</td>
+<td>△</td>
+<td><strong>◎ 3層自律型</strong></td>
+</tr>
+<tr>
+<td>AI 音声読み上げ（TTS）</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+<td><strong>◎ 唯一</strong></td>
+</tr>
+<tr>
+<td>トランシーバー（PTT）</td>
+<td>×</td>
+<td>◎ Walkie Talkie</td>
+<td>×</td>
+<td>×</td>
+<td><strong>◎</strong></td>
+</tr>
+<tr>
+<td>TODO 管理</td>
+<td>×</td>
+<td>×</td>
+<td>△</td>
+<td>×</td>
+<td><strong>◎ タグベース</strong></td>
+</tr>
+<tr>
+<td>音声文字起こし</td>
+<td>×</td>
+<td>△</td>
+<td>×</td>
+<td>×</td>
+<td><strong>◎ Whisper + AI整形</strong></td>
+</tr>
+<tr>
+<td>自前ホスティング</td>
+<td>×</td>
+<td>×</td>
+<td>◎</td>
+<td>◎</td>
+<td><strong>◎ NAS 1台</strong></td>
+</tr>
+<tr>
+<td>月額コスト（50人）</td>
+<td>¥50,000〜</td>
+<td>¥75,000〜</td>
+<td>無料〜</td>
+<td>無料〜</td>
+<td><strong>無料</strong></td>
+</tr>
+<tr>
+<td>データ主権</td>
+<td>クラウド</td>
+<td>クラウド</td>
+<td>自社</td>
+<td>自社</td>
+<td><strong>完全自社</strong></td>
+</tr>
+</tbody>
+</table>
+<p>※ 2026年4月時点の情報です</p>
+<h2 id="_2">ドキュメントの構成<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
 <ul>
 <li>
@@ -1933,7 +2125,7 @@
 </li>
 </ul>
 </div>
-<h2 id="_2">クイックリンク<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">クイックリンク<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
