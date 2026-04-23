@@ -102,6 +102,7 @@ nav:
   - 開発者ガイド:
     - はじめに: dev/index.md
     - アーキテクチャ: dev/architecture.md
+    - AI アーキテクチャ: dev/ai-architecture.md
     - API リファレンス: dev/api.md
     - Socket.IO イベント: dev/socketio.md
     - Bot API / Webhook: dev/bot-api.md
@@ -109,4 +110,5 @@ nav:
     - CLI ツール: dev/cli.md
     - テスト: dev/testing.md
     - コントリビューション: dev/contributing.md
+  - FAQ: faq.md
   - リリースノート: releases.md
