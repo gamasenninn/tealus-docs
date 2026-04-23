@@ -55,9 +55,9 @@ LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/te
 
 | 用途 | モデル | 提供元 |
 |---|---|---|
-| Light Agent（日常Q&A） | GPT-4o-mini | OpenAI |
+| Light Agent（日常Q&A） | gpt-5.4-mini | OpenAI |
 | Deep Agent（複雑な分析） | Claude | Anthropic |
-| Router（振り分け判定） | GPT-4o-mini | OpenAI |
+| Router（振り分け判定） | gpt-5.4-mini | OpenAI |
 | 音声合成（TTS） | Aivis Cloud API | Aivis Project |
 | 音声文字起こし | Whisper | OpenAI |
 
@@ -69,7 +69,8 @@ LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/te
 
 | 項目 | 月額目安 |
 |---|---|
-| Router + Light Agent | $83〜$293 |
+| Router | $3〜$13 |
+| Light Agent | $80〜$280 |
 | Deep Agent（MAXプラン） | $100（固定） |
 | TTS 読み上げ（Aivis） | ¥1,980（無制限プラン） |
 | Whisper 文字起こし | 音声1分あたり約¥0.6 |
