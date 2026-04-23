@@ -120,3 +120,49 @@ req.user にユーザー情報を設定
 ```
 
 Socket.IO接続時も `handshake.auth.token` でJWTを検証します。
+
+## TTS 音声合成パイプライン（PlainTransport）
+
+AIエージェントの回答を音声で読み上げる際、mediasoup の **PlainTransport** を使って WebRTC スタックなしで音声を注入します。
+
+### 処理フロー
+
+```
+agent-server: speakMessage(roomId, text)
+  → テキスト前処理（Markdown除去・URL省略・500文字制限）
+  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
+  → sendViaPlainTransport(wavFile, roomId)
+      ├── WebSocket → rtc-server (localhost:3100)
+      ├── join → createPlainTransport(comedia: true)
+      ├── plainProduce(ssrc: 1111)
+      ├── Consumer セットアップ待ち 2秒
+      └── ffmpeg → Opus RTP → PlainTransport → Router
+          → WebRTC Consumer → ブラウザで再生
+```
+
+### PlainTransport の仕組み
+
+通常の WebRTC 通話では、ブラウザ間で DTLS/SRTP を使った暗号化通信を行います。一方 PlainTransport は **暗号化なしの RTP/RTCP を直接受け取る**トランスポートで、サーバーサイドの音声ソース（ffmpeg 等）から mediasoup に音声を注入する用途に適しています。
+
+**comedia モード**: 送信元の IP:port を事前に指定する代わりに、最初の RTP パケットから自動検知します。ローカルホスト内の通信で利用しています。
+
+### ffmpeg パラメータ
+
+```bash
+ffmpeg -re -i <wavFile> \
+  -af adelay=300|300,apad=pad_dur=500ms \
+  -c:a libopus -ac 2 -ar 48000 -b:a 32k \
+  -f rtp -ssrc 1111 -payload_type 100 \
+  rtp://127.0.0.1:<port>
+```
+
+| パラメータ | 値 | 説明 |
+|---|---|---|
+| `-re` | — | リアルタイム速度で送信 |
+| `adelay=300\|300` | 300ms | 頭切れ防止の先頭無音 |
+| `apad=pad_dur=500ms` | 500ms | 尻切れ防止の末尾無音 |
+| `-c:a libopus` | Opus | コーデック |
+| `-ar 48000` | 48kHz | サンプリングレート |
+| `-b:a 32k` | 32kbps | ビットレート |
+| `-ssrc 1111` | 固定値 | RTP ストリーム識別子 |
+| `-payload_type 100` | 100 | mediasoup と合わせた PT 番号 |

@@ -73,12 +73,14 @@ nav:
     - はじめに: guide/index.md
     - インストールと初期設定: guide/setup.md
     - 基本操作:
+      - はじめに: guide/basic/index.md
       - ログイン: guide/basic/login.md
       - トーク（チャット）: guide/basic/chat.md
       - グループ: guide/basic/group.md
       - メディア送信: guide/basic/media.md
       - 音声メッセージ: guide/basic/voice.md
     - 応用機能:
+      - はじめに: guide/advanced/index.md
       - メッセージ検索: guide/advanced/search.md
       - リアクション: guide/advanced/reaction.md
       - メンション: guide/advanced/mention.md

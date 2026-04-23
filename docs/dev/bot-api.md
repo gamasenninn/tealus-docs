@@ -110,6 +110,105 @@ function verifySignature(body, signature, secret) {
 }
 ```
 
+### ペイロード例
+
+#### message.created
+
+```json
+{
+  "event": "message.created",
+  "timestamp": "2026-04-23T12:00:00.000Z",
+  "room": {
+    "id": "550e8400-...",
+    "name": "開発チーム",
+    "type": "group",
+    "member_count": 5
+  },
+  "message": {
+    "id": "660e8400-...",
+    "type": "text",
+    "content": "明日の会議は10時からです",
+    "sender": {
+      "id": "770e8400-...",
+      "display_name": "田中太郎"
+    }
+  }
+}
+```
+
+#### message.updated
+
+```json
+{
+  "event": "message.updated",
+  "timestamp": "2026-04-23T12:05:00.000Z",
+  "room": { "id": "550e8400-...", "name": "開発チーム", "type": "group", "member_count": 5 },
+  "message": {
+    "id": "660e8400-...",
+    "content": "明日の会議は11時に変更です",
+    "previous_content": "明日の会議は10時からです",
+    "version": 2,
+    "sender": { "id": "770e8400-...", "display_name": "田中太郎" }
+  }
+}
+```
+
+#### message.deleted
+
+```json
+{
+  "event": "message.deleted",
+  "timestamp": "2026-04-23T12:10:00.000Z",
+  "room": { "id": "550e8400-...", "name": "開発チーム", "type": "group", "member_count": 5 },
+  "message": {
+    "id": "660e8400-...",
+    "sender": { "id": "770e8400-...", "display_name": "田中太郎" }
+  }
+}
+```
+
+#### reaction.added
+
+```json
+{
+  "event": "reaction.added",
+  "timestamp": "2026-04-23T12:15:00.000Z",
+  "room": { "id": "550e8400-...", "name": "開発チーム", "type": "group", "member_count": 5 },
+  "message": { "id": "660e8400-..." },
+  "reaction": {
+    "emoji": "👍",
+    "user": { "id": "880e8400-...", "display_name": "山田花子" }
+  }
+}
+```
+
+#### member.joined
+
+```json
+{
+  "event": "member.joined",
+  "timestamp": "2026-04-23T13:00:00.000Z",
+  "room": { "id": "550e8400-...", "name": "開発チーム", "type": "group", "member_count": 6 },
+  "user": { "id": "990e8400-...", "display_name": "佐藤次郎" },
+  "added_by": { "id": "770e8400-...", "display_name": "田中太郎" }
+}
+```
+
+#### member.left
+
+```json
+{
+  "event": "member.left",
+  "timestamp": "2026-04-23T14:00:00.000Z",
+  "room": { "id": "550e8400-...", "name": "開発チーム", "type": "group", "member_count": 4 },
+  "user": { "id": "990e8400-...", "display_name": "佐藤次郎" },
+  "removed_by": { "id": "770e8400-...", "display_name": "田中太郎" }
+}
+```
+
+!!! note
+    `member.left` の `removed_by` は管理者による除外時のみ含まれます。自主退会の場合は含まれません。
+
 ### リトライポリシー
 
 配信失敗時は指数バックオフで3回リトライ:

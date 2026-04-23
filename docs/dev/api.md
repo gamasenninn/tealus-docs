@@ -2,6 +2,67 @@
 
 すべてのAPIエンドポイントの一覧です。認証が必要なエンドポイントは `Authorization: Bearer <JWT>` ヘッダが必要です。
 
+## 共通仕様
+
+### エラーレスポンス
+
+エラーレスポンスは以下の JSON 形式で返されます。
+
+```json
+{ "error": "エラーメッセージ" }
+```
+
+### ステータスコード
+
+| コード | 用途 |
+|---|---|
+| 200 | 成功 |
+| 201 | リソース作成成功 |
+| 400 | バリデーションエラー（必須フィールド欠如、不正な値） |
+| 401 | 認証エラー（トークン未送信・無効・パスワード不一致） |
+| 403 | 権限エラー（ルームアクセス権なし・admin権限不足） |
+| 404 | リソースが見つからない |
+| 409 | 重複（既にメンバーに存在等） |
+| 500 | サーバー内部エラー |
+
+### リクエスト/レスポンス例
+
+#### ログイン
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"employee_id":"EMP001","password":"password123"}'
+```
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "employee_id": "EMP001",
+    "display_name": "管理者",
+    "role": "admin"
+  }
+}
+```
+
+#### メッセージ送信
+
+```bash
+curl -X POST http://localhost:3000/api/rooms/{roomId}/messages \
+  -H "Authorization: Bearer <JWT>" \
+  -H "Content-Type: application/json" \
+  -d '{"content":"こんにちは","type":"text"}'
+```
+
+#### メッセージ取得（ページネーション）
+
+```bash
+curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={messageId}" \
+  -H "Authorization: Bearer <JWT>"
+```
+
 ## 認証
 
 | メソッド | パス | 説明 | 認証 |
