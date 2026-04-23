@@ -2549,7 +2549,7 @@
 <a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│  └──────┬──────────┬──────────┘        │
 <a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│         ↓          ↓                    │
 <a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>│    Light Agent   Deep Agent             │
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>│   (GPT-4o-mini)  (Claude CLI)           │
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>│   (gpt-5.4-mini)  (Claude CLI)           │
 <a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>│         ↓          ↓                    │
 <a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>│      Bot API で回答送信                  │
 <a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>│         ↓                               │
@@ -2593,7 +2593,7 @@
 <h3 id="2-llm">第2段: LLM 判定<a class="headerlink" href="#2-llm" title="Permanent link">&para;</a></h3>
 <p>第1段で判定できなかったメッセージを LLM で分類します。</p>
 <ul>
-<li><strong>モデル</strong>: GPT系（GPT-4o-mini）</li>
+<li><strong>モデル</strong>: GPT系（gpt-5.4-mini）</li>
 <li><strong>パラメータ</strong>: <code>max_tokens: 10</code>, <code>temperature: 0</code>（決定論的に判定）</li>
 <li><strong>出力</strong>: <code>light</code> または <code>deep</code> の1単語</li>
 <li><strong>フォールバック</strong>: エラー時は Light Agent に振る</li>
@@ -2866,7 +2866,7 @@
 <li>ドキュメント AI が Issue を見て更新を実施</li>
 <li>開発 AI がレビューして承認</li>
 </ul>
-<p>複数の AI（GPT-4o-mini + Claude）が同じチャットルームで人間と対等に議論し、設計提案・実装・レビューを分担しています。</p>
+<p>複数の AI（gpt-5.4-mini + Claude）が同じチャットルームで人間と対等に議論し、設計提案・実装・レビューを分担しています。</p>
 
 
 
