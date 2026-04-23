@@ -927,6 +927,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/tts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TTS 読み上げ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1435,7 +1463,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 読み上げ（音声合成）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TTS 読み上げ（音声合成）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aivis-cloud-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aivis Cloud API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルームごとの音声モデル設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コスト目安
@@ -1967,7 +2034,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 読み上げ（音声合成）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TTS 読み上げ（音声合成）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aivis-cloud-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aivis Cloud API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルームごとの音声モデル設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コスト目安
@@ -2103,7 +2209,33 @@
 </ul>
 <h2 id="_6">無限ループ防止<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>Webhook受信時に <code>sender.is_bot</code> を確認し、Botからのメッセージは無視します。これによりBot同士の無限応答ループを防止します。</p>
-<h2 id="_7">コスト目安<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="tts">TTS 読み上げ（音声合成）<a class="headerlink" href="#tts" title="Permanent link">&para;</a></h2>
+<p>AIエージェントの回答を音声で読み上げる機能です。Aivis Cloud API を使用します。</p>
+<h3 id="aivis-cloud-api">Aivis Cloud API<a class="headerlink" href="#aivis-cloud-api" title="Permanent link">&para;</a></h3>
+<p>音声合成サービスとして <a href="https://aivis-project.com/">Aivis Cloud API</a> を利用しています。</p>
+<table>
+<thead>
+<tr>
+<th>プラン</th>
+<th>料金</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>従量課金</td>
+<td>¥440 / 1万文字</td>
+</tr>
+<tr>
+<td>月額定額</td>
+<td>¥1,980 / 無制限</td>
+</tr>
+</tbody>
+</table>
+<p><code>agent-server/.env</code> に <code>AIVIS_API_KEY</code> を設定してください。</p>
+<h3 id="_7">ルームごとの音声モデル設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>ダッシュボードのルーム設定（基本設定タブ）から、ルームごとに読み上げの音声モデルを選択できます。設定は <code>room_settings.json</code> の <code>tts_model_uuid</code> フィールドに保存されます。</p>
+<p>選択可能なモデルは10種類（凛音エル、まお、にせ、まい、阿井田 茂、fumifumi、morioki、ろてじん、花音、コハク）です。詳細は <a href="../../guide/advanced/tts/">TTS 読み上げ</a> を参照してください。</p>
+<h2 id="_8">コスト目安<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
