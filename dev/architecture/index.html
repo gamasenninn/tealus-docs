@@ -2481,7 +2481,7 @@
 <tbody>
 <tr>
 <td><code>users</code></td>
-<td>ユーザー（社員番号・表示名・アバター・ロール）</td>
+<td>ユーザー（ユーザーID・表示名・アバター・ロール）</td>
 </tr>
 <tr>
 <td><code>rooms</code></td>
@@ -2547,7 +2547,7 @@
 <h3 id="row-level-securityrls">Row Level Security（RLS）<a class="headerlink" href="#row-level-securityrls" title="Permanent link">&para;</a></h3>
 <p><code>messages</code>、<code>room_members</code>、<code>message_reads</code> テーブルにRLSが有効です。<code>current_setting('app.current_user_id', true)</code> でユーザーを識別し、自分が参加しているルームのデータのみアクセス可能です。</p>
 <h2 id="_7">認証フロー<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>POST /api/auth/login { employee_id, password }
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>POST /api/auth/login { login_id, password }
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    ↓ bcryptで検証
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>JWT発行（ペイロード: user_id, role）
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    ↓

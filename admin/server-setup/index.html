@@ -2593,13 +2593,13 @@
 <p>ブラウザで <code>http://localhost:5173</code> を開いても、初期状態ではユーザーが存在しません。APIで管理者ユーザーを登録します。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/auth/register<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;employee_id&quot;:&quot;EMP001&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;login_id&quot;:&quot;admin&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>初回に登録したユーザーを管理者にするには、データベースで直接 <code>role</code> を <code>admin</code> に設定する必要があります。</p>
 </div>
-<p>以降はログイン画面から社員番号とパスワードでログインできます。</p>
+<p>以降はログイン画面からユーザーIDとパスワードでログインできます。</p>
 <h2 id="6-ai">6. AIエージェントサーバー（オプション）<a class="headerlink" href="#6-ai" title="Permanent link">&para;</a></h2>
 <p>AI機能を使用する場合は、エージェントサーバーも起動します。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>agent-server
@@ -2623,7 +2623,7 @@
 </tr>
 <tr>
 <td><code>TEALUS_BOT_ID</code></td>
-<td>Botユーザーの社員番号</td>
+<td>BotユーザーのユーザーID</td>
 </tr>
 <tr>
 <td><code>TEALUS_BOT_PASS</code></td>
