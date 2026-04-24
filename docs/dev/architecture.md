@@ -84,7 +84,7 @@
 
 | テーブル | 役割 |
 |---|---|
-| `users` | ユーザー（社員番号・表示名・アバター・ロール） |
+| `users` | ユーザー（ユーザーID・表示名・アバター・ロール） |
 | `rooms` | トークルーム（direct/group） |
 | `room_members` | ルーム参加者（ロール: admin/member） |
 | `messages` | メッセージ（テキスト・画像・動画・音声・スタンプ・システム） |
@@ -110,7 +110,7 @@
 ## 認証フロー
 
 ```
-POST /api/auth/login { employee_id, password }
+POST /api/auth/login { login_id, password }
     ↓ bcryptで検証
 JWT発行（ペイロード: user_id, role）
     ↓

@@ -14,7 +14,7 @@
 
 | 項目 | 説明 |
 |---|---|
-| 社員番号 | ログインに使用するID（一意） |
+| ユーザーID | ログインに使用するID（一意） |
 | 表示名 | チャットに表示される名前 |
 | パスワード | 初期パスワード |
 | ロール | `admin`（管理者）または `user`（一般） |
@@ -27,7 +27,7 @@ POST /api/admin/users
 
 ```json
 {
-  "employee_id": "EMP002",
+  "login_id": "user001",
   "display_name": "山田太郎",
   "password": "initial_password",
   "role": "user"

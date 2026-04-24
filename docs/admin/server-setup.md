@@ -116,13 +116,13 @@ npm run build
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"employee_id":"EMP001","display_name":"管理者","password":"password123"}'
+  -d '{"login_id":"admin","display_name":"管理者","password":"password123"}'
 ```
 
 !!! warning
     初回に登録したユーザーを管理者にするには、データベースで直接 `role` を `admin` に設定する必要があります。
 
-以降はログイン画面から社員番号とパスワードでログインできます。
+以降はログイン画面からユーザーIDとパスワードでログインできます。
 
 ## 6. AIエージェントサーバー（オプション）
 
@@ -143,7 +143,7 @@ npm run dev
 | 変数名 | 説明 |
 |---|---|
 | `TEALUS_API_URL` | Tealus本体のURL（例: `http://localhost:3000`） |
-| `TEALUS_BOT_ID` | Botユーザーの社員番号 |
+| `TEALUS_BOT_ID` | BotユーザーのユーザーID |
 | `TEALUS_BOT_PASS` | Botユーザーのパスワード |
 | `OPENAI_API_KEY` | OpenAI APIキー |
 | `AGENT_WORKSPACE_ROOT` | ワークスペースのパス |

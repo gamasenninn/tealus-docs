@@ -46,7 +46,7 @@ Claude Code や他のMCPクライアントの設定ファイル（`mcp_config.js
 | 変数 | 説明 |
 |---|---|
 | `TEALUS_API_URL` | Tealus Server の URL |
-| `TEALUS_BOT_ID` | Bot ユーザーの社員番号 |
+| `TEALUS_BOT_ID` | Bot ユーザーのユーザーID |
 | `TEALUS_BOT_PASS` | Bot ユーザーのパスワード |
 
 ## 活用例

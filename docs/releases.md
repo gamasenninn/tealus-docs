@@ -1,5 +1,15 @@
 # リリースノート
 
+## v0.1.0 準備 — OSS 公開前リネーム（2026年4月24日）
+
+!!! warning "破壊的変更"
+    `employee_id`（社員番号）が `login_id`（ユーザーID）にリネームされました。DB カラム名、API フィールド名、JWT ペイロードがすべて変更されています。既存環境からのアップグレード時はマイグレーションが必要です。
+
+- `users.employee_id` → `users.login_id`（DB カラム名）
+- API リクエスト/レスポンスの `employee_id` → `login_id`
+- UI 文字列「社員番号」→「ユーザーID」
+- 環境変数名（`TEALUS_BOT_ID` 等）は変更なし
+
 ## Phase 4 — WebRTC 通話プラットフォーム（2026年4月18日〜）
 
 - mediasoup SFU による音声・ビデオ通話
@@ -56,7 +66,7 @@
 ## Phase 1 — MVP（2026年3月27日〜）
 
 - プロジェクト基盤セットアップ（Docker Compose + PostgreSQL + Redis）
-- 認証（社員番号ログイン・JWT）
+- 認証（ユーザーIDログイン・JWT）
 - ルーム管理（1対1・グループ）
 - メッセージ送受信（REST API + WebSocket）
 - メディアアップロード（画像・動画・ファイル・サムネイル自動生成）
