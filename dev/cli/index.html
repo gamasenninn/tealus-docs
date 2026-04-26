@@ -2210,9 +2210,13 @@
 <h2 id="_2">設定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>scripts/.env</code> に認証情報を設定します。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>TEALUS_SERVER=http://localhost:3000
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TEALUS_BOT_ID=BOT001
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>TEALUS_BOT_PASS=bot_password
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TEALUS_BOT_ID=&lt;your_bot_id&gt;
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>TEALUS_BOT_PASS=&lt;your_bot_password&gt;
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>&lt;your_bot_id&gt;</code> と <code>&lt;your_bot_password&gt;</code> は実際のBotユーザーの認証情報に置き換えてください。</p>
+</div>
 <h2 id="_3">コマンド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="_4">テキスト送信<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>node<span class="w"> </span>tealus-cli.js<span class="w"> </span>send<span class="w"> </span><span class="s2">&quot;グループ名&quot;</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">&quot;Hello!&quot;</span>

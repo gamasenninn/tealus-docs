@@ -1593,7 +1593,7 @@
   <a href="#cloudflare-nas" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cloudflare + NAS構成
+        Cloudflare + NAS構成（参考）
       
     </span>
   </a>
@@ -2359,7 +2359,7 @@
   <a href="#cloudflare-nas" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cloudflare + NAS構成
+        Cloudflare + NAS構成（参考）
       
     </span>
   </a>
@@ -2478,11 +2478,15 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npx<span class="w"> </span>web-push<span class="w"> </span>generate-vapid-keys
 </code></pre></div>
 <h3 id="_4">全環境変数一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="admonition danger">
+<p class="admonition-title">本番運用前の必須変更</p>
+<p>下表の <strong>「開発用デフォルト」列は localhost 検証用の値</strong> です。<strong>本番ではすべて固有の値に置換してください</strong>。特に <code>JWT_SECRET</code> / <code>DB_PASSWORD</code> を未変更のまま外部公開した場合、トークン偽造や DB 侵入の対象になります。</p>
+</div>
 <table>
 <thead>
 <tr>
 <th>変数名</th>
-<th>デフォルト</th>
+<th>開発用デフォルト</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -2514,28 +2518,28 @@
 </tr>
 <tr>
 <td><code>DB_PASSWORD</code></td>
-<td>tealus_dev</td>
+<td><strong>本番では必ず固有値に変更</strong></td>
 <td>データベースパスワード</td>
 </tr>
 <tr>
 <td><code>JWT_SECRET</code></td>
-<td>tealus-dev-secret</td>
+<td><strong>本番では必ず固有値を生成</strong> （<code>openssl rand -hex 32</code> 等）</td>
 <td>JWT署名シークレット</td>
 </tr>
 <tr>
 <td><code>VAPID_PUBLIC_KEY</code></td>
 <td>—</td>
-<td>Web Push公開鍵</td>
+<td>Web Push公開鍵（<code>npx web-push generate-vapid-keys</code> で生成）</td>
 </tr>
 <tr>
 <td><code>VAPID_PRIVATE_KEY</code></td>
 <td>—</td>
-<td>Web Push秘密鍵</td>
+<td>Web Push秘密鍵（同上）</td>
 </tr>
 <tr>
 <td><code>VAPID_SUBJECT</code></td>
-<td>mailto:admin@tealus.local</td>
-<td>Web Push送信者メール</td>
+<td><code>mailto:admin@example.com</code></td>
+<td>Web Push送信者メール（運用ドメインのアドレスに）</td>
 </tr>
 <tr>
 <td><code>OPENAI_API_KEY</code></td>
@@ -2591,6 +2595,10 @@
 <p><code>dist/</code> ディレクトリにビルド成果物が生成されます。</p>
 <h2 id="5">5. 初回ユーザー登録<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <p>ブラウザで <code>http://localhost:5173</code> を開いても、初期状態ではユーザーが存在しません。APIで管理者ユーザーを登録します。</p>
+<div class="admonition warning">
+<p class="admonition-title">パスワードについて</p>
+<p>下記の <code>password123</code> は <strong>localhost 検証用のサンプル値</strong> です。本番運用では必ず強固なパスワード（12 文字以上、英数記号混在）に置き換えてください。</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/auth/register<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;login_id&quot;:&quot;admin&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
@@ -2689,35 +2697,35 @@
 <a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="p">}</span>
 </code></pre></div>
-<h3 id="cloudflare-nas">Cloudflare + NAS構成<a class="headerlink" href="#cloudflare-nas" title="Permanent link">&para;</a></h3>
-<p><code>tealus.dev</code> ドメインをCloudflare経由でNASに接続する構成が利用可能です。</p>
+<h3 id="cloudflare-nas">Cloudflare + NAS構成（参考）<a class="headerlink" href="#cloudflare-nas" title="Permanent link">&para;</a></h3>
+<p>NAS 上で運用する場合、所有ドメイン（例: <code>your-domain.example</code>）を Cloudflare 経由で NAS に接続する構成が便利です。</p>
 <table>
 <thead>
 <tr>
-<th>サブドメイン</th>
+<th>サブドメイン例</th>
 <th>用途</th>
 <th>転送先</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>app.tealus.dev</code></td>
+<td><code>app.your-domain.example</code></td>
 <td>Tealus PWA</td>
 <td>localhost:3000</td>
 </tr>
 <tr>
-<td><code>system.tealus.dev</code></td>
+<td><code>system.your-domain.example</code></td>
 <td>ダッシュボード</td>
 <td>localhost:5174</td>
 </tr>
 <tr>
-<td><code>api.tealus.dev</code></td>
+<td><code>api.your-domain.example</code></td>
 <td>Agent Server</td>
 <td>localhost:4000</td>
 </tr>
 </tbody>
 </table>
-<p>Cloudflare Free プランでSSL自動発行・DDoS保護・CDN・IP隠蔽がすべて無償で利用できます。</p>
+<p>Cloudflare Free プランでも SSL 自動発行・基本的な DDoS 緩和・CDN・オリジン IP 隠蔽が利用できますが、<strong>業務利用では帯域・WAF ルール・Bot 対策など要件に応じて Pro / Business プランを検討</strong>してください。</p>
 <div class="admonition warning">
 <p class="admonition-title">WebRTCポート</p>
 <p>音声・ビデオ通話（mediasoup）を使用する場合、UDPポート <strong>10000〜10100</strong> をルーターで開放する必要があります。</p>

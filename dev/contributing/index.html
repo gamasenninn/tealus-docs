@@ -1906,6 +1906,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        セキュリティに関する注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         ライセンス
       
     </span>
@@ -2074,6 +2085,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        セキュリティに関する注意
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         ライセンス
       
     </span>
@@ -2121,7 +2143,15 @@
 <li>メンバーシップチェックは共通ミドルウェアを使用</li>
 <li>Socket.IOハンドラは <code>handlers/</code> ディレクトリに機能別分割</li>
 </ul>
-<h2 id="_6">ライセンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">セキュリティに関する注意<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>ドキュメントやコード例を記述する際は、以下のルールを守ってください。</p>
+<ul>
+<li><strong>シークレット値をサンプルに含めない</strong>: JWT シークレット、DB パスワード、API キー等の例示には <code>&lt;your_secret&gt;</code> のような placeholder を使用する</li>
+<li><strong>弱いパスワードを本番用として記載しない</strong>: <code>password123</code> 等を例示する場合は、必ず「localhost 検証用」と明記し <code>!!! warning</code> callout を付ける</li>
+<li><strong>実在のドメインを設定例に使わない</strong>: 設定例には <code>your-domain.example</code> 等の placeholder を使用する</li>
+<li><strong>環境変数のデフォルト値</strong>: 開発用デフォルト値を記載する場合は、本番では変更が必要な旨を明記する</li>
+</ul>
+<h2 id="_7">ライセンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>MIT License</p>
 
 
