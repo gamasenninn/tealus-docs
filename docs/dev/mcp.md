@@ -30,16 +30,19 @@ Claude Code や他のMCPクライアントの設定ファイル（`mcp_config.js
   "mcpServers": {
     "tealus": {
       "command": "node",
-      "args": ["C:/app/tealus/mcp-server/src/index.js"],
+      "args": ["/path/to/tealus/mcp-server/src/index.js"],
       "env": {
         "TEALUS_API_URL": "http://localhost:3000",
-        "TEALUS_BOT_ID": "AI_AGENT",
-        "TEALUS_BOT_PASS": "1234"
+        "TEALUS_BOT_ID": "<your_bot_id>",
+        "TEALUS_BOT_PASS": "<your_bot_password>"
       }
     }
   }
 }
 ```
+
+!!! warning
+    `<your_bot_id>` と `<your_bot_password>` は実際のBotユーザーの認証情報に置き換えてください。`args` のパスも環境に合わせて変更してください。
 
 ### 環境変数
 

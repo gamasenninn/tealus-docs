@@ -16,9 +16,12 @@ npx github:gamasenninn/tealus
 
 ```
 TEALUS_SERVER=http://localhost:3000
-TEALUS_BOT_ID=BOT001
-TEALUS_BOT_PASS=bot_password
+TEALUS_BOT_ID=<your_bot_id>
+TEALUS_BOT_PASS=<your_bot_password>
 ```
+
+!!! warning
+    `<your_bot_id>` と `<your_bot_password>` は実際のBotユーザーの認証情報に置き換えてください。
 
 ## コマンド
 

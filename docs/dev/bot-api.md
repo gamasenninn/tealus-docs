@@ -9,10 +9,10 @@
 Bot用ユーザーを作成し、`/api/auth/login` でJWTを取得します。
 
 ```bash
-# JWTを取得
+# JWTを取得（<your_bot_id> と <your_bot_password> を実際の値に置き換えてください）
 TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"login_id":"BOT001","password":"bot_password"}' \
+  -d '{"login_id":"<your_bot_id>","password":"<your_bot_password>"}' \
   | jq -r '.token')
 ```
 
