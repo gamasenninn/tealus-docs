@@ -54,18 +54,21 @@ npx web-push generate-vapid-keys
 
 ### 全環境変数一覧
 
-| 変数名 | デフォルト | 説明 |
+!!! danger "本番運用前の必須変更"
+    下表の **「開発用デフォルト」列は localhost 検証用の値** です。**本番ではすべて固有の値に置換してください**。特に `JWT_SECRET` / `DB_PASSWORD` を未変更のまま外部公開した場合、トークン偽造や DB 侵入の対象になります。
+
+| 変数名 | 開発用デフォルト | 説明 |
 |---|---|---|
 | `PORT` | 3000 | サーバーポート |
 | `DB_HOST` | localhost | PostgreSQLホスト |
 | `DB_PORT` | 5432 | PostgreSQLポート |
 | `DB_NAME` | tealus | データベース名 |
 | `DB_USER` | tealus | データベースユーザー |
-| `DB_PASSWORD` | tealus_dev | データベースパスワード |
-| `JWT_SECRET` | tealus-dev-secret | JWT署名シークレット |
-| `VAPID_PUBLIC_KEY` | — | Web Push公開鍵 |
-| `VAPID_PRIVATE_KEY` | — | Web Push秘密鍵 |
-| `VAPID_SUBJECT` | mailto:admin@tealus.local | Web Push送信者メール |
+| `DB_PASSWORD` | **本番では必ず固有値に変更** | データベースパスワード |
+| `JWT_SECRET` | **本番では必ず固有値を生成** （`openssl rand -hex 32` 等）| JWT署名シークレット |
+| `VAPID_PUBLIC_KEY` | — | Web Push公開鍵（`npx web-push generate-vapid-keys` で生成） |
+| `VAPID_PRIVATE_KEY` | — | Web Push秘密鍵（同上） |
+| `VAPID_SUBJECT` | `mailto:admin@example.com` | Web Push送信者メール（運用ドメインのアドレスに） |
 | `OPENAI_API_KEY` | — | OpenAI APIキー |
 | `MEDIA_ROOT` | ../../media | アップロードファイル保存先 |
 | `AGENT_PORT` | 4000 | エージェントサーバーポート |
@@ -112,6 +115,9 @@ npm run build
 ## 5. 初回ユーザー登録
 
 ブラウザで `http://localhost:5173` を開いても、初期状態ではユーザーが存在しません。APIで管理者ユーザーを登録します。
+
+!!! warning "パスワードについて"
+    下記の `password123` は **localhost 検証用のサンプル値** です。本番運用では必ず強固なパスワード（12 文字以上、英数記号混在）に置き換えてください。
 
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
@@ -190,17 +196,17 @@ server {
 }
 ```
 
-### Cloudflare + NAS構成
+### Cloudflare + NAS構成（参考）
 
-`tealus.dev` ドメインをCloudflare経由でNASに接続する構成が利用可能です。
+NAS 上で運用する場合、所有ドメイン（例: `your-domain.example`）を Cloudflare 経由で NAS に接続する構成が便利です。
 
-| サブドメイン | 用途 | 転送先 |
+| サブドメイン例 | 用途 | 転送先 |
 |---|---|---|
-| `app.tealus.dev` | Tealus PWA | localhost:3000 |
-| `system.tealus.dev` | ダッシュボード | localhost:5174 |
-| `api.tealus.dev` | Agent Server | localhost:4000 |
+| `app.your-domain.example` | Tealus PWA | localhost:3000 |
+| `system.your-domain.example` | ダッシュボード | localhost:5174 |
+| `api.your-domain.example` | Agent Server | localhost:4000 |
 
-Cloudflare Free プランでSSL自動発行・DDoS保護・CDN・IP隠蔽がすべて無償で利用できます。
+Cloudflare Free プランでも SSL 自動発行・基本的な DDoS 緩和・CDN・オリジン IP 隠蔽が利用できますが、**業務利用では帯域・WAF ルール・Bot 対策など要件に応じて Pro / Business プランを検討**してください。
 
 !!! warning "WebRTCポート"
     音声・ビデオ通話（mediasoup）を使用する場合、UDPポート **10000〜10100** をルーターで開放する必要があります。

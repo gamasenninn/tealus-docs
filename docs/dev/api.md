@@ -32,7 +32,7 @@
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"login_id":"admin","password":"password123"}'
+  -d '{"login_id":"admin","password":"<your_password>"}'
 ```
 
 ```json
