@@ -3210,7 +3210,7 @@
 </tbody>
 </table>
 <h2 id="bot-api-v01x">Bot API 拡張（v0.1.x）<a class="headerlink" href="#bot-api-v01x" title="Permanent link">&para;</a></h2>
-<p>v0.1.x で追加された 3 つの Bot API endpoint の詳細です。これらは <a href="../mcp/">MCP Server</a> からも利用可能で、AI エージェントが横断検索や TODO 完了化、画像視認を自律的に行えるようになっています。</p>
+<p>v0.1.x で追加された 3 つの Bot API endpoint の詳細です。<strong>いずれも <code>server/src/routes/bot.js</code> に実装された通常の HTTP API</strong> で、Bot 認証（JWT）で直接呼び出せます。<a href="https://github.com/gamasenninn/tealus-mcp">tealus-mcp</a> の <code>search_messages</code> / <code>get_message_media</code> / <code>mark_tag_done</code> ツールは、これら HTTP API のラッパーとして AI エージェント向けに提供されているものです。</p>
 <h3 id="get-apibotsearch"><code>GET /api/bot/search</code> — メッセージ全文検索<a class="headerlink" href="#get-apibotsearch" title="Permanent link">&para;</a></h3>
 <p>メッセージ・音声文字起こしを横断的に検索します。<code>pg_trgm</code> GIN index と UNION クエリにより、3 文字以上のキーワードで 70-80x の高速化を実現しています（<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a>）。</p>
 <p><strong>Query parameters</strong>:</p>
@@ -3330,7 +3330,7 @@
 <tbody>
 <tr>
 <td>画像</td>
-<td>binary stream（Content-Type: <code>image/*</code>）。MCP 経由では image content として返却され、AI が画像内容を直接認識可能</td>
+<td>binary stream（Content-Type: <code>image/*</code>）。MCP ツール（<code>get_message_media</code>）経由では MCP 仕様の image content に変換され、AI が画像内容を直接認識可能</td>
 </tr>
 <tr>
 <td>音声</td>
@@ -3344,8 +3344,8 @@
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>-o<span class="w"> </span>output.jpg
 </code></pre></div>
 <div class="admonition info">
-<p class="admonition-title">MCP 経由での利用</p>
-<p>AI エージェントから利用する場合は、Bot API を直接叩くより <a href="../mcp/">MCP Server</a> の <code>get_message_media</code> ツールを使うのが標準です。MCP 側で画像/音声の種別判定と適切な返却形式（image content / 文字起こしテキスト）への変換が行われます。</p>
+<p class="admonition-title">MCP ツールとの関係</p>
+<p><a href="../mcp/">Tealus MCP</a> の <code>get_message_media</code> ツールは、本 HTTP API のラッパーです。AI エージェントから利用する場合は MCP ツール経由が標準で、MCP 側で画像/音声の種別判定と MCP 仕様の返却形式（image content / 文字起こしテキスト）への変換が行われます。HTTP API として直接呼ぶことも可能です。</p>
 </div>
 <h2 id="_20">ヘルスチェック<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
 <table>
