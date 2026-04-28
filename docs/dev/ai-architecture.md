@@ -93,12 +93,17 @@ Agent Server (port 4000)
 
 | ソース | ファイル | 優先度 |
 |---|---|---|
-| デフォルト | `config/default_system_prompt.md` | 基本 |
-| カスタム | `config/system_prompt.md` | グローバル上書き |
+| デフォルト | `config/default_system_prompt.md` | 基本（リポジトリ管理、Tealus MCP 利用ガイダンスを含む） |
+| カスタム | `config/system_prompt.md` | グローバル上書き（**`.gitignore` 対象、user カスタム枠**） |
 | ルーム固有 | `{workspace}/light_prompt.md` | ルーム個別の指示 |
 | メモリ | `{workspace}/memory/MEMORY.md` | エージェントの記憶 |
 
+!!! info "config/system_prompt.md の運用"
+    `agent-server/config/system_prompt.md` は `.gitignore` で除外されており、各運用者が自由にカスタマイズできる枠として確保されています。default を上書きしたい場合のみ作成し、リポジトリにはコミットされません。
+
 ### ツール
+
+#### ローカルツール（OpenAI Agents SDK ビルトイン）
 
 | ツール名 | 説明 |
 |---|---|
@@ -109,7 +114,41 @@ Agent Server (port 4000)
 | `generate_image` | DALL-E による画像生成（設定でON/OFF可） |
 | `code_interpreter` | Python コード実行（設定でON/OFF可） |
 
+#### Tealus MCP ツール（Light/Deep 共通、v0.1.x）
+
+[Tealus MCP](mcp.md) を介して Light Agent も以下 9 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
+
+| ツール名 | 説明 |
+|---|---|
+| `send_message` | テキストメッセージ送信 |
+| `send_image` | 画像送信（base64） |
+| `get_messages` | メッセージ履歴取得 |
+| `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先） |
+| `search_messages` | キーワード/タグ/期間/発言者で全文検索 |
+| `mark_tag_done` | タグの完了状態（is_done）を更新 |
+| `list_rooms` | 参加中ルーム一覧 |
+| `join_room` | ルーム参加 |
+| `mark_read` | メッセージ既読化 |
+
 ツール実行時には UI にステータスが自動通知されます（例: 「検索中...」「画像生成中...」）。
+
+### Tealus MCP 統合（Light/Deep 共通）
+
+v0.1.x までは MCP は Deep Agent 専用でしたが、`agent-server/src/mcp/roomMcpManager.js` の `getOrCreateSharedGlobal()` により Light Agent にも programmatic に MCP を注入する仕組みが追加されました。
+
+```
+agent-server 起動時
+  ├─ TEALUS_USER_ID / TEALUS_PASSWORD が config に存在?
+  │    └─ Yes: MCPServerStdio で `npx -y github:gamasenninn/tealus-mcp` を spawn
+  │           → Light/Deep 両 Agent が同じ MCP プロセスを共有
+  └─ No: MCP なしで起動（ローカルツールのみ）
+```
+
+この設計により:
+
+- **外部クライアント（Claude Code 等）と本番 AI が同一ツールセット**で動作 — 開発体験と本番挙動が乖離しない
+- **MCP プロセスは Light/Deep で共有** — リソース効率がよく、起動オーバーヘッドが 1 回で済む
+- **環境変数の有無で自動切替** — 認証情報を渡さない構成では従来通り MCP なしで動作
 
 ## Deep Agent — Claude Code CLI
 

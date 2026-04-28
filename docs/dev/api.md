@@ -197,10 +197,115 @@ Bot用ユーザーとしてJWT認証が必要です。
 | POST | `/api/bot/media` | メディア送信 |
 | POST | `/api/bot/status` | ステータス送信 |
 | GET | `/api/bot/messages` | メッセージ取得（ポーリング） |
+| GET | `/api/bot/messages/:id/media` | メッセージのメディア取得（画像/音声、AI 直接視認用、v0.1.x） |
+| GET | `/api/bot/search` | メッセージ全文検索（v0.1.x） |
 | GET | `/api/bot/unread` | 未読メッセージ取得 |
 | POST | `/api/bot/mark-read` | 既読マーク |
+| PATCH | `/api/bot/messages/:id/tags/:tag_name/done` | タグの完了状態（is_done）を更新（v0.1.x） |
 | GET | `/api/bot/rooms` | ルーム一覧 |
 | POST | `/api/bot/rooms` | ルーム作成 |
+
+## Bot API 拡張（v0.1.x）
+
+v0.1.x で追加された 3 つの Bot API endpoint の詳細です。これらは [MCP Server](mcp.md) からも利用可能で、AI エージェントが横断検索や TODO 完了化、画像視認を自律的に行えるようになっています。
+
+### `GET /api/bot/search` — メッセージ全文検索
+
+メッセージ・音声文字起こしを横断的に検索します。`pg_trgm` GIN index と UNION クエリにより、3 文字以上のキーワードで 70-80x の高速化を実現しています（[#194](https://github.com/gamasenninn/tealus/issues/194)）。
+
+**Query parameters**:
+
+| パラメータ | 型 | 説明 |
+|---|---|---|
+| `q` | string | キーワード（ILIKE、3 文字以上推奨） |
+| `room_id` | string | 単一ルームに絞り込み |
+| `sender_id` | string | 発言者の user ID で絞り込み |
+| `type` | enum | `text` / `image` / `voice` / `video` / `stamp` / `system` |
+| `tag_names` | string | CSV、タグ AND 検索（例: `TODO,important`） |
+| `is_done` | bool | TODO 完了状態（`tag_names` 指定時のみ有効） |
+| `since` | ISO 8601 | 開始日時 |
+| `until` | ISO 8601 | 終了日時 |
+| `limit` | number | 1-50（デフォルト 10） |
+| `offset` | number | デフォルト 0、`has_more=true` 時の続きは `next_offset` |
+
+!!! warning "narrowing filter 必須"
+    `q` / `room_id` / `sender_id` / `since` / `tag_names` / `type` のうち**最低 1 つ**を指定する必要があります。open-ended な全 DB スキャンを防ぐためです。
+
+**Response**:
+
+```json
+{
+  "results": [
+    {
+      "message_id": "...",
+      "room_id": "...",
+      "room_name": "業務メモ",
+      "sender_id": "...",
+      "sender_display_name": "田中太郎",
+      "type": "text",
+      "created_at": "2026-04-28T05:54:16.861Z",
+      "snippet": "..."
+    }
+  ],
+  "has_more": false,
+  "next_offset": null
+}
+```
+
+**curl サンプル**:
+
+```bash
+curl -G "http://localhost:3000/api/bot/search" \
+  -H "Authorization: Bearer $TOKEN" \
+  --data-urlencode "q=TTS" \
+  --data-urlencode "since=2026-04-26T00:00:00Z" \
+  --data-urlencode "limit=10"
+```
+
+### `PATCH /api/bot/messages/:id/tags/:tag_name/done` — TODO 完了マーク
+
+メッセージに付与されたタグの `is_done` 状態を切り替えます。voice メモから AI が抽出した TODO の完了化などに利用します（[#197](https://github.com/gamasenninn/tealus/issues/197)）。
+
+**Body**:
+
+```json
+{ "is_done": true }
+```
+
+**Response**:
+
+```json
+{ "success": true, "updated": 1 }
+```
+
+**curl サンプル**:
+
+```bash
+curl -X PATCH "http://localhost:3000/api/bot/messages/$MSG_ID/tags/TODO/done" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"is_done": true}'
+```
+
+### `GET /api/bot/messages/:id/media` — メッセージのメディア取得
+
+画像メッセージ・音声メッセージのメディアデータを取得します。AI エージェントが画像を**直接視認**するためのエンドポイントです（[#185](https://github.com/gamasenninn/tealus/issues/185)）。
+
+| メディア種別 | レスポンス |
+|---|---|
+| 画像 | binary stream（Content-Type: `image/*`）。MCP 経由では image content として返却され、AI が画像内容を直接認識可能 |
+| 音声 | 文字起こしテキストを優先返却（`voice_transcriptions.formatted_text`）。生 wav が必要な場合は `?raw=1` |
+
+**curl サンプル**:
+
+```bash
+curl "http://localhost:3000/api/bot/messages/$MSG_ID/media" \
+  -H "Authorization: Bearer $TOKEN" \
+  -o output.jpg
+```
+
+!!! info "MCP 経由での利用"
+    AI エージェントから利用する場合は、Bot API を直接叩くより [MCP Server](mcp.md) の `get_message_media` ツールを使うのが標準です。MCP 側で画像/音声の種別判定と適切な返却形式（image content / 文字起こしテキスト）への変換が行われます。
 
 ## ヘルスチェック
 

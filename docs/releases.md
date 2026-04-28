@@ -1,5 +1,46 @@
 # リリースノート
 
+## v0.1.x — OSS 公開後の中間アップデート（2026年4月26日〜）
+
+v0.1.0 OSS 公開後、Docker 化・TTS 配信刷新・MCP エコシステム拡張を中心に多数の改善が入りました。
+
+### Docker フルデプロイ化（[#188](https://github.com/gamasenninn/tealus/issues/188)）
+
+- `docker-compose.full.yml` で server / agent-server を 1 コマンド起動
+- `docker-compose.rtc.yml` で rtc-server をオプショナル追加（Linux 限定）
+- 各サービスに multi-stage Dockerfile（server ~312MB / agent-server ~261MB / rtc-server ~307MB）
+- Mac / Windows / Linux 全対応（rtc-server 抜き default で host 制約なし）
+
+### TTS 配信刷新（[#189](https://github.com/gamasenninn/tealus/issues/189)）
+
+- 旧来の mediasoup PlainTransport 配信 → **Socket.IO blob 配信**を default に
+- 結果: rtc-server なしで Aivis 高品質 TTS が動作可能に
+- legacy 互換: `TTS_BROADCAST_MEDIASOUP=true` で旧経路に切替可能
+- TTS 自動接続ロジック削除（[#190](https://github.com/gamasenninn/tealus/issues/190)）
+
+### TTS 音量補正（[#198](https://github.com/gamasenninn/tealus/issues/198)）
+
+- ユーザー単位の `voiceVolume`（Profile スライダー、`localStorage` 管理、0-100%）
+- クライアントの組み込み倍率 `TTS_VOLUME_BOOST`（`client/src/constants/ui.js`、現在 3.0）
+- Web Audio API GainNode で `<audio>.volume` の上限 1.0 を超える音量に対応
+
+### MCP エコシステム拡張
+
+- **MCP 独立 repo 化** ([#187](https://github.com/gamasenninn/tealus/issues/187)): `gamasenninn/tealus-mcp` を `npx -y github:gamasenninn/tealus-mcp` で zero-config 利用可能に
+- **AI 画像視認** ([#185](https://github.com/gamasenninn/tealus/issues/185)): `get_message_media` で AI が画像を直接認識
+- **全文検索 MCP** ([#194](https://github.com/gamasenninn/tealus/issues/194)): `search_messages` 追加、`pg_trgm` GIN index + UNION クエリで 70-80x 高速化
+- **TODO 完了化 MCP** ([#197](https://github.com/gamasenninn/tealus/issues/197)): `mark_tag_done` でタグ `is_done` 切替
+- **Light agent MCP 統合** ([#199](https://github.com/gamasenninn/tealus/issues/199)): Light/Deep agent が共通 Tealus MCP を共有、外部クライアントと本番 AI が同一ツールセットで動作
+
+### UI 改善
+
+- **Confirm 自前モーダル化** ([#191](https://github.com/gamasenninn/tealus/issues/191)): `window.confirm()` 全箇所を Zustand `confirmStore` + `<ConfirmModal />` に置換（ホスト名露出回避、ESC/Enter/overlay 対応）
+
+### 環境変数の追加
+
+- `TTS_BROADCAST_MEDIASOUP`（default `false`、legacy 互換用）
+- agent-server の Bot 認証は `TEALUS_USER_ID` / `TEALUS_PASSWORD` を推奨（旧 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` も互換 fallback）
+
 ## v0.1.0 準備 — OSS 公開前リネーム（2026年4月24日）
 
 !!! warning "破壊的変更"
