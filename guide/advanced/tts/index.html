@@ -1211,6 +1211,56 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        音量設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="音量設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voicevolume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voiceVolume（ルーム単位）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tts_volume_boost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS_VOLUME_BOOST（環境変数 / グローバル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-audio-api-gainnode-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Audio API GainNode による 1.0 超ブースト
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         長文メッセージの折りたたみ
       
     </span>
@@ -2183,6 +2233,56 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        音量設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="音量設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voicevolume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voiceVolume（ルーム単位）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tts_volume_boost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS_VOLUME_BOOST（環境変数 / グローバル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#web-audio-api-gainnode-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Audio API GainNode による 1.0 超ブースト
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         長文メッセージの折りたたみ
       
     </span>
@@ -2215,11 +2315,15 @@
 <h2 id="_1">仕組み<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>AIが回答テキストを生成
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  → Aivis Cloud API で音声合成（WAV）
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  → ffmpeg で Opus エンコード → RTP 送信
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  → mediasoup PlainTransport 経由
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  → ブラウザのトランシーバーで再生
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  → Socket.IO emit (binary blob) でルーム全員に配信
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  → ブラウザの &lt;audio&gt; 要素で再生
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>      （Web Audio API GainNode で音量補正）
 </code></pre></div>
 <p>テキストメッセージの送信と音声合成は並行して処理されるため、チャットへのテキスト表示がブロックされることはありません。</p>
+<div class="admonition info">
+<p class="admonition-title">配信経路の切替</p>
+<p>上記は default の経路です。環境変数 <code>TTS_BROADCAST_MEDIASOUP=true</code> を設定すると、旧来の <strong>mediasoup PlainTransport 経由</strong>の legacy 経路に切り替わります。詳細は <a href="../../../dev/architecture/">アーキテクチャ</a> の「TTS 音声合成パイプライン」セクションを参照してください。</p>
+</div>
 <h2 id="_2">使い方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="1">1. 読み上げを有効にする<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <p>プロフィール設定の「AI回答の読み上げ」をONにします。</p>
@@ -2314,7 +2418,19 @@
 <p class="admonition-title">声はエージェントの性格の一部</p>
 <p>音声モデルはプロンプトと同じレイヤで管理されています。エージェントのキャラクター設定に合わせて声を選ぶことで、より自然なコミュニケーションが実現できます。</p>
 </div>
-<h2 id="_6">長文メッセージの折りたたみ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">音量設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>TTS 音声の音量は <strong>ルーム単位の倍率</strong> と <strong>サーバー全体のグローバル倍率</strong> の 2 段階で調整できます（<a href="https://github.com/gamasenninn/tealus/issues/198">#198</a>）。トランシーバー音声と TTS 音声のバランス調整に活用してください。</p>
+<h3 id="voicevolume">voiceVolume（ルーム単位）<a class="headerlink" href="#voicevolume" title="Permanent link">&para;</a></h3>
+<p>ルーム設定の <strong>voiceVolume</strong> で TTS 音量倍率を指定できます。<code>1.0</code> が原音、<code>2.0</code> で 2 倍にブーストされます。エージェントの声が小さく聞こえるルームで個別に上げる、といった運用に向きます。</p>
+<h3 id="tts_volume_boost">TTS_VOLUME_BOOST（環境変数 / グローバル）<a class="headerlink" href="#tts_volume_boost" title="Permanent link">&para;</a></h3>
+<p>サーバー全体の TTS 音量倍率を環境変数 <code>TTS_VOLUME_BOOST</code> で指定できます。複数ルームに跨がる全体的な音量バランス調整に利用してください。</p>
+<h3 id="web-audio-api-gainnode-10">Web Audio API GainNode による 1.0 超ブースト<a class="headerlink" href="#web-audio-api-gainnode-10" title="Permanent link">&para;</a></h3>
+<p>ブラウザ標準の <code>&lt;audio&gt;.volume</code> プロパティは上限が <code>1.0</code> ですが、Tealus は <strong>Web Audio API の GainNode</strong> を介して再生することで <code>1.0</code> を超える音量にも対応しています。これにより、トランシーバー由来のマイク音声と比較して TTS の声量が小さい環境でも、設定だけで補正できます。</p>
+<div class="admonition tip">
+<p class="admonition-title">音量バランス調整のコツ</p>
+<p>まずは <code>voiceVolume = 1.5</code> 程度から試し、トランシーバー音声と聞き比べて違和感のない値に調整するのが運用しやすい手順です。極端に大きい値（例: 4.0 以上）はクリッピング（音割れ）の原因になるため避けてください。</p>
+</div>
+<h2 id="_7">長文メッセージの折りたたみ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>300文字を超えるメッセージは自動的に折りたたまれ、「もっとみる」ボタンが表示されます。クリックで展開、「閉じる」で再折りたたみできます。これはTTSとは独立した表示機能ですが、AIの長文回答が読みやすくなります。</p>
 
 

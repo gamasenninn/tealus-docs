@@ -1740,27 +1740,39 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tts-plaintransport" class="md-nav__link">
+  <a href="#tts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TTS 音声合成パイプライン（PlainTransport）
+        TTS 音声合成パイプライン
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="TTS 音声合成パイプライン（PlainTransport）">
+    <nav class="md-nav" aria-label="TTS 音声合成パイプライン">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#default-socketio-blob" class="md-nav__link">
     <span class="md-ellipsis">
       
-        処理フロー
+        default 経路: Socket.IO blob 配信
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#legacy-mediasoup-plaintransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        legacy 経路: mediasoup PlainTransport
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="legacy 経路: mediasoup PlainTransport">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#plaintransport" class="md-nav__link">
@@ -1778,6 +1790,22 @@
     <span class="md-ellipsis">
       
         ffmpeg パラメータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路の選択
       
     </span>
   </a>
@@ -2232,27 +2260,39 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tts-plaintransport" class="md-nav__link">
+  <a href="#tts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TTS 音声合成パイプライン（PlainTransport）
+        TTS 音声合成パイプライン
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="TTS 音声合成パイプライン（PlainTransport）">
+    <nav class="md-nav" aria-label="TTS 音声合成パイプライン">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#default-socketio-blob" class="md-nav__link">
     <span class="md-ellipsis">
       
-        処理フロー
+        default 経路: Socket.IO blob 配信
       
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#legacy-mediasoup-plaintransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        legacy 経路: mediasoup PlainTransport
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="legacy 経路: mediasoup PlainTransport">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#plaintransport" class="md-nav__link">
@@ -2270,6 +2310,22 @@
     <span class="md-ellipsis">
       
         ffmpeg パラメータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路の選択
       
     </span>
   </a>
@@ -2327,14 +2383,18 @@
 <a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│  │     :5432             │  │   在席管理)      │ │
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>│  └───────────────────────┘  └─────────────────┘ │
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>└──────────┬──────────────────────┬────────────────┘
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>           │ Webhook              │ Proxy
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>           │ Webhook              │ Proxy（通話 / TTS legacy）
 <a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>           ▼                      ▼
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>┌──────────────────┐   ┌──────────────────┐
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│  Agent Server    │   │  RTC Server      │
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│  (AI エージェント) │   │  (mediasoup SFU) │
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│  :4000           │   │  :3100           │
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>└──────────────────┘   └──────────────────┘
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>┌──────────────────┐   ┌──────────────────────────┐
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│  Agent Server    │   │  RTC Server (オプショナル) │
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>│  (AI エージェント) │   │  (mediasoup SFU)          │
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>│  :4000           │   │  :3100                     │
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>└──────────────────┘   └──────────────────────────┘
 </code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">RTC Server はオプショナル</p>
+<p>RTC Server は <strong>通話機能</strong> および <strong>TTS の legacy 配信経路</strong>（<code>TTS_BROADCAST_MEDIASOUP=true</code>）で利用されます。default の TTS 配信は Socket.IO blob 経由のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。</p>
+</div>
 <h2 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="client">フロントエンド（client/）<a class="headerlink" href="#client" title="Permanent link">&para;</a></h3>
 <table>
@@ -2556,29 +2616,66 @@
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>req.user にユーザー情報を設定
 </code></pre></div>
 <p>Socket.IO接続時も <code>handshake.auth.token</code> でJWTを検証します。</p>
-<h2 id="tts-plaintransport">TTS 音声合成パイプライン（PlainTransport）<a class="headerlink" href="#tts-plaintransport" title="Permanent link">&para;</a></h2>
-<p>AIエージェントの回答を音声で読み上げる際、mediasoup の <strong>PlainTransport</strong> を使って WebRTC スタックなしで音声を注入します。</p>
-<h3 id="_8">処理フロー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="tts">TTS 音声合成パイプライン<a class="headerlink" href="#tts" title="Permanent link">&para;</a></h2>
+<p>AIエージェントの回答を音声で読み上げる経路には <strong>default（Socket.IO blob）</strong> と <strong>legacy（mediasoup PlainTransport）</strong> の 2 種類があります。default は rtc-server なしで動作するため、Mac / Windows を含む全プラットフォームでセットアップが容易です。</p>
+<h3 id="default-socketio-blob">default 経路: Socket.IO blob 配信<a class="headerlink" href="#default-socketio-blob" title="Permanent link">&para;</a></h3>
+<p>環境変数 <code>TTS_BROADCAST_MEDIASOUP</code> が未設定または <code>false</code> のときの default 経路です（<a href="https://github.com/gamasenninn/tealus/issues/189">#189</a>）。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>agent-server: speakMessage(roomId, text)
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → テキスト前処理（Markdown除去・URL省略・500文字制限）
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → sendViaPlainTransport(wavFile, roomId)
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      ├── WebSocket → rtc-server (localhost:3100)
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>      ├── join → createPlainTransport(comedia: true)
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>      ├── plainProduce(ssrc: 1111)
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>      ├── Consumer セットアップ待ち 2秒
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>      └── ffmpeg → Opus RTP → PlainTransport → Router
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>          → WebRTC Consumer → ブラウザで再生
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → server (HTTP) に WAV をPOST
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      └── Socket.IO emit `tts:audio` (binary blob, room broadcast)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>          → 各 client が &lt;audio&gt; 要素で再生
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>              └── Web Audio API GainNode で音量補正（1.0 超のブースト可能）
 </code></pre></div>
-<h3 id="plaintransport">PlainTransport の仕組み<a class="headerlink" href="#plaintransport" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>メリット</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rtc-server 不要</td>
+<td>Mac / Windows ホストでも追加サービスなしで動作</td>
+</tr>
+<tr>
+<td>ホスト制約なし</td>
+<td>mediasoup の C++ 拡張ビルドが不要</td>
+</tr>
+<tr>
+<td>実装が単純</td>
+<td>Socket.IO の binary 送信機能をそのまま利用</td>
+</tr>
+<tr>
+<td>音量補正が柔軟</td>
+<td>Web Audio API GainNode で <code>&lt;audio&gt;.volume</code> の上限 1.0 を超える音量に対応（<a href="https://github.com/gamasenninn/tealus/issues/198">#198</a>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="legacy-mediasoup-plaintransport">legacy 経路: mediasoup PlainTransport<a class="headerlink" href="#legacy-mediasoup-plaintransport" title="Permanent link">&para;</a></h3>
+<p>環境変数 <code>TTS_BROADCAST_MEDIASOUP=true</code> を設定したとき、または既存運用との互換性が必要な場合に利用します。mediasoup の <strong>PlainTransport</strong> で WebRTC スタックなしに音声を注入する経路です。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>agent-server: speakMessage(roomId, text)
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  → テキスト前処理（Markdown除去・URL省略・500文字制限）
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  → sendViaPlainTransport(wavFile, roomId)
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>      ├── WebSocket → rtc-server (localhost:3100)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>      ├── join → createPlainTransport(comedia: true)
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>      ├── plainProduce(ssrc: 1111)
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>      ├── Consumer セットアップ待ち 2秒
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>      └── ffmpeg → Opus RTP → PlainTransport → Router
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>          → WebRTC Consumer → ブラウザで再生
+</code></pre></div>
+<h4 id="plaintransport">PlainTransport の仕組み<a class="headerlink" href="#plaintransport" title="Permanent link">&para;</a></h4>
 <p>通常の WebRTC 通話では、ブラウザ間で DTLS/SRTP を使った暗号化通信を行います。一方 PlainTransport は <strong>暗号化なしの RTP/RTCP を直接受け取る</strong>トランスポートで、サーバーサイドの音声ソース（ffmpeg 等）から mediasoup に音声を注入する用途に適しています。</p>
 <p><strong>comedia モード</strong>: 送信元の IP:port を事前に指定する代わりに、最初の RTP パケットから自動検知します。ローカルホスト内の通信で利用しています。</p>
-<h3 id="ffmpeg">ffmpeg パラメータ<a class="headerlink" href="#ffmpeg" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ffmpeg<span class="w"> </span>-re<span class="w"> </span>-i<span class="w"> </span>&lt;wavFile&gt;<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-af<span class="w"> </span><span class="nv">adelay</span><span class="o">=</span><span class="m">300</span><span class="p">|</span><span class="m">300</span>,apad<span class="o">=</span><span class="nv">pad_dur</span><span class="o">=</span>500ms<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-c:a<span class="w"> </span>libopus<span class="w"> </span>-ac<span class="w"> </span><span class="m">2</span><span class="w"> </span>-ar<span class="w"> </span><span class="m">48000</span><span class="w"> </span>-b:a<span class="w"> </span>32k<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-f<span class="w"> </span>rtp<span class="w"> </span>-ssrc<span class="w"> </span><span class="m">1111</span><span class="w"> </span>-payload_type<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>rtp://127.0.0.1:&lt;port&gt;
+<h4 id="ffmpeg">ffmpeg パラメータ<a class="headerlink" href="#ffmpeg" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ffmpeg<span class="w"> </span>-re<span class="w"> </span>-i<span class="w"> </span>&lt;wavFile&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>-af<span class="w"> </span><span class="nv">adelay</span><span class="o">=</span><span class="m">300</span><span class="p">|</span><span class="m">300</span>,apad<span class="o">=</span><span class="nv">pad_dur</span><span class="o">=</span>500ms<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-c:a<span class="w"> </span>libopus<span class="w"> </span>-ac<span class="w"> </span><span class="m">2</span><span class="w"> </span>-ar<span class="w"> </span><span class="m">48000</span><span class="w"> </span>-b:a<span class="w"> </span>32k<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>-f<span class="w"> </span>rtp<span class="w"> </span>-ssrc<span class="w"> </span><span class="m">1111</span><span class="w"> </span>-payload_type<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>rtp://127.0.0.1:&lt;port&gt;
 </code></pre></div>
 <table>
 <thead>
@@ -2628,6 +2725,29 @@
 <td><code>-payload_type 100</code></td>
 <td>100</td>
 <td>mediasoup と合わせた PT 番号</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">経路の選択<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>推奨経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新規導入 / Mac / Windows / Docker で簡素化したい</td>
+<td><strong>default</strong>（Socket.IO blob）</td>
+</tr>
+<tr>
+<td>既存の mediasoup 運用と互換性を維持したい</td>
+<td>legacy（<code>TTS_BROADCAST_MEDIASOUP=true</code>）</td>
+</tr>
+<tr>
+<td>通話機能と音声 mixing を共通インフラで処理したい</td>
+<td>legacy</td>
 </tr>
 </tbody>
 </table>
