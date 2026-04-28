@@ -207,7 +207,7 @@ Bot用ユーザーとしてJWT認証が必要です。
 
 ## Bot API 拡張（v0.1.x）
 
-v0.1.x で追加された 3 つの Bot API endpoint の詳細です。これらは [MCP Server](mcp.md) からも利用可能で、AI エージェントが横断検索や TODO 完了化、画像視認を自律的に行えるようになっています。
+v0.1.x で追加された 3 つの Bot API endpoint の詳細です。**いずれも `server/src/routes/bot.js` に実装された通常の HTTP API** で、Bot 認証（JWT）で直接呼び出せます。[tealus-mcp](https://github.com/gamasenninn/tealus-mcp) の `search_messages` / `get_message_media` / `mark_tag_done` ツールは、これら HTTP API のラッパーとして AI エージェント向けに提供されているものです。
 
 ### `GET /api/bot/search` — メッセージ全文検索
 
@@ -293,7 +293,7 @@ curl -X PATCH "http://localhost:3000/api/bot/messages/$MSG_ID/tags/TODO/done" \
 
 | メディア種別 | レスポンス |
 |---|---|
-| 画像 | binary stream（Content-Type: `image/*`）。MCP 経由では image content として返却され、AI が画像内容を直接認識可能 |
+| 画像 | binary stream（Content-Type: `image/*`）。MCP ツール（`get_message_media`）経由では MCP 仕様の image content に変換され、AI が画像内容を直接認識可能 |
 | 音声 | 文字起こしテキストを優先返却（`voice_transcriptions.formatted_text`）。生 wav が必要な場合は `?raw=1` |
 
 **curl サンプル**:
@@ -304,8 +304,8 @@ curl "http://localhost:3000/api/bot/messages/$MSG_ID/media" \
   -o output.jpg
 ```
 
-!!! info "MCP 経由での利用"
-    AI エージェントから利用する場合は、Bot API を直接叩くより [MCP Server](mcp.md) の `get_message_media` ツールを使うのが標準です。MCP 側で画像/音声の種別判定と適切な返却形式（image content / 文字起こしテキスト）への変換が行われます。
+!!! info "MCP ツールとの関係"
+    [Tealus MCP](mcp.md) の `get_message_media` ツールは、本 HTTP API のラッパーです。AI エージェントから利用する場合は MCP ツール経由が標準で、MCP 側で画像/音声の種別判定と MCP 仕様の返却形式（image content / 文字起こしテキスト）への変換が行われます。HTTP API として直接呼ぶことも可能です。
 
 ## ヘルスチェック
 
