@@ -1899,6 +1899,89 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v01x-oss-2026426" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.1.x — OSS 公開後の中間アップデート（2026年4月26日〜）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.1.x — OSS 公開後の中間アップデート（2026年4月26日〜）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-188" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker フルデプロイ化（#188）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tts-189" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 配信刷新（#189）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tts-198" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 音量補正（#198）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP エコシステム拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UI 改善
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        環境変数の追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v010-oss-2026424" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2016,6 +2099,89 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v01x-oss-2026426" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.1.x — OSS 公開後の中間アップデート（2026年4月26日〜）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.1.x — OSS 公開後の中間アップデート（2026年4月26日〜）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-188" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker フルデプロイ化（#188）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tts-189" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 配信刷新（#189）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tts-198" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TTS 音量補正（#198）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP エコシステム拡張
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UI 改善
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        環境変数の追加
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v010-oss-2026424" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2119,6 +2285,45 @@
 
 
 <h1 id="_1">リリースノート<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="v01x-oss-2026426">v0.1.x — OSS 公開後の中間アップデート（2026年4月26日〜）<a class="headerlink" href="#v01x-oss-2026426" title="Permanent link">&para;</a></h2>
+<p>v0.1.0 OSS 公開後、Docker 化・TTS 配信刷新・MCP エコシステム拡張を中心に多数の改善が入りました。</p>
+<h3 id="docker-188">Docker フルデプロイ化（<a href="https://github.com/gamasenninn/tealus/issues/188">#188</a>）<a class="headerlink" href="#docker-188" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>docker-compose.full.yml</code> で server / agent-server を 1 コマンド起動</li>
+<li><code>docker-compose.rtc.yml</code> で rtc-server をオプショナル追加（Linux 限定）</li>
+<li>各サービスに multi-stage Dockerfile（server ~312MB / agent-server ~261MB / rtc-server ~307MB）</li>
+<li>Mac / Windows / Linux 全対応（rtc-server 抜き default で host 制約なし）</li>
+</ul>
+<h3 id="tts-189">TTS 配信刷新（<a href="https://github.com/gamasenninn/tealus/issues/189">#189</a>）<a class="headerlink" href="#tts-189" title="Permanent link">&para;</a></h3>
+<ul>
+<li>旧来の mediasoup PlainTransport 配信 → <strong>Socket.IO blob 配信</strong>を default に</li>
+<li>結果: rtc-server なしで Aivis 高品質 TTS が動作可能に</li>
+<li>legacy 互換: <code>TTS_BROADCAST_MEDIASOUP=true</code> で旧経路に切替可能</li>
+<li>TTS 自動接続ロジック削除（<a href="https://github.com/gamasenninn/tealus/issues/190">#190</a>）</li>
+</ul>
+<h3 id="tts-198">TTS 音量補正（<a href="https://github.com/gamasenninn/tealus/issues/198">#198</a>）<a class="headerlink" href="#tts-198" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ユーザー単位の <code>voiceVolume</code>（Profile スライダー、<code>localStorage</code> 管理、0-100%）</li>
+<li>クライアントの組み込み倍率 <code>TTS_VOLUME_BOOST</code>（<code>client/src/constants/ui.js</code>、現在 3.0）</li>
+<li>Web Audio API GainNode で <code>&lt;audio&gt;.volume</code> の上限 1.0 を超える音量に対応</li>
+</ul>
+<h3 id="mcp">MCP エコシステム拡張<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>MCP 独立 repo 化</strong> (<a href="https://github.com/gamasenninn/tealus/issues/187">#187</a>): <code>gamasenninn/tealus-mcp</code> を <code>npx -y github:gamasenninn/tealus-mcp</code> で zero-config 利用可能に</li>
+<li><strong>AI 画像視認</strong> (<a href="https://github.com/gamasenninn/tealus/issues/185">#185</a>): <code>get_message_media</code> で AI が画像を直接認識</li>
+<li><strong>全文検索 MCP</strong> (<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a>): <code>search_messages</code> 追加、<code>pg_trgm</code> GIN index + UNION クエリで 70-80x 高速化</li>
+<li><strong>TODO 完了化 MCP</strong> (<a href="https://github.com/gamasenninn/tealus/issues/197">#197</a>): <code>mark_tag_done</code> でタグ <code>is_done</code> 切替</li>
+<li><strong>Light agent MCP 統合</strong> (<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>): Light/Deep agent が共通 Tealus MCP を共有、外部クライアントと本番 AI が同一ツールセットで動作</li>
+</ul>
+<h3 id="ui">UI 改善<a class="headerlink" href="#ui" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Confirm 自前モーダル化</strong> (<a href="https://github.com/gamasenninn/tealus/issues/191">#191</a>): <code>window.confirm()</code> 全箇所を Zustand <code>confirmStore</code> + <code>&lt;ConfirmModal /&gt;</code> に置換（ホスト名露出回避、ESC/Enter/overlay 対応）</li>
+</ul>
+<h3 id="_2">環境変数の追加<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>TTS_BROADCAST_MEDIASOUP</code>（default <code>false</code>、legacy 互換用）</li>
+<li>agent-server の Bot 認証は <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> を推奨（旧 <code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code> も互換 fallback）</li>
+</ul>
 <h2 id="v010-oss-2026424">v0.1.0 準備 — OSS 公開前リネーム（2026年4月24日）<a class="headerlink" href="#v010-oss-2026424" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">破壊的変更</p>

@@ -1411,10 +1411,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-dockerpostgresql-redis" class="md-nav__link">
+  <a href="#2-docker-db-redis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Docker起動（PostgreSQL + Redis）
+        2. Docker 起動（開発用: DB + Redis のみ）
       
     </span>
   </a>
@@ -1422,7 +1422,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#25-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Docker フルデプロイ（本番想定）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 Docker フルデプロイ（本番想定）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 つの構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各 Dockerfile の概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#media_root-bind-mount" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEDIA_ROOT の bind mount
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rtc-server-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rtc-server が Linux 限定の理由
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         3. サーバーセットアップ
@@ -2177,10 +2238,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-dockerpostgresql-redis" class="md-nav__link">
+  <a href="#2-docker-db-redis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Docker起動（PostgreSQL + Redis）
+        2. Docker 起動（開発用: DB + Redis のみ）
       
     </span>
   </a>
@@ -2188,7 +2249,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#25-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Docker フルデプロイ（本番想定）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 Docker フルデプロイ（本番想定）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 つの構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各 Dockerfile の概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#media_root-bind-mount" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MEDIA_ROOT の bind mount
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rtc-server-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rtc-server が Linux 限定の理由
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         3. サーバーセットアップ
@@ -2402,10 +2524,10 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gamasenninn/tealus.git
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>tealus
 </code></pre></div>
-<h2 id="2-dockerpostgresql-redis">2. Docker起動（PostgreSQL + Redis）<a class="headerlink" href="#2-dockerpostgresql-redis" title="Permanent link">&para;</a></h2>
+<h2 id="2-docker-db-redis">2. Docker 起動（開発用: DB + Redis のみ）<a class="headerlink" href="#2-docker-db-redis" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker-compose<span class="w"> </span>up<span class="w"> </span>-d
 </code></pre></div>
-<p>以下のサービスが起動します。</p>
+<p>以下のサービスが起動します。アプリケーション本体（server / agent-server）はホスト側で <code>npm run dev</code> する開発フロー想定です。</p>
 <table>
 <thead>
 <tr>
@@ -2432,9 +2554,94 @@
 </tr>
 </tbody>
 </table>
-<h2 id="3">3. サーバーセットアップ<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span>server
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>npm<span class="w"> </span>install
+<h2 id="25-docker">2.5 Docker フルデプロイ（本番想定）<a class="headerlink" href="#25-docker" title="Permanent link">&para;</a></h2>
+<p>v0.1.x（<a href="https://github.com/gamasenninn/tealus/issues/188">#188</a>）から、server / agent-server / rtc-server を含む全サービスを Docker で一括起動できるようになりました。3 構成から運用形態に合わせて選択します。</p>
+<h3 id="3">3 つの構成<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th>起動コマンド</th>
+<th>含まれるサービス</th>
+<th>対応OS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>開発（DB + Redis のみ）</td>
+<td><code>docker-compose up -d</code></td>
+<td>postgres / postgres-test / redis</td>
+<td>Mac / Windows / Linux</td>
+</tr>
+<tr>
+<td><strong>フル</strong>（server + agent 含む）</td>
+<td><code>docker-compose -f docker-compose.full.yml up -d</code></td>
+<td>上記 + server:3000 + agent-server:4000</td>
+<td>Mac / Windows / Linux</td>
+</tr>
+<tr>
+<td>+ RTC（通話・legacy TTS）</td>
+<td><code>docker-compose -f docker-compose.full.yml -f docker-compose.rtc.yml up -d</code></td>
+<td>上記 + rtc-server:3100</td>
+<td><strong>Linux のみ</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">TTS のみなら rtc-server は不要</p>
+<p>v0.1.x の default TTS 配信は Socket.IO blob 経由のため、TTS だけ使うなら <strong>+RTC 構成は不要</strong>です。WebRTC 通話機能を使う場合、または <code>TTS_BROADCAST_MEDIASOUP=true</code> で legacy mediasoup TTS を使う場合のみ rtc-server が必要になります。</p>
+</div>
+<h3 id="dockerfile">各 Dockerfile の概要<a class="headerlink" href="#dockerfile" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>ベースイメージ</th>
+<th>構成</th>
+<th>主な特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>server</td>
+<td><code>node:20-alpine</code></td>
+<td>3 段階 multi-stage（client build → dashboard build → runtime）</td>
+<td>client/dist と dashboard/dist を同梱、最終 ~312MB</td>
+</tr>
+<tr>
+<td>agent-server</td>
+<td><code>node:20-alpine</code></td>
+<td>単段ビルド</td>
+<td>webhook + AI agent のみで軽量、最終 ~261MB</td>
+</tr>
+<tr>
+<td>rtc-server</td>
+<td><code>node:20-bookworm-slim</code></td>
+<td>2 段階 multi-stage（builder bookworm-slim → runtime bookworm-slim）</td>
+<td>mediasoup の native worker が glibc 必須のため bookworm（Debian）ベース、最終 ~307MB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="media_root-bind-mount">MEDIA_ROOT の bind mount<a class="headerlink" href="#media_root-bind-mount" title="Permanent link">&para;</a></h3>
+<p>アップロードファイル（画像・動画・音声）の保存先は環境変数 <code>MEDIA_ROOT</code> で指定します。Docker 運用時は <strong>ホスト側の永続パスを bind mount</strong> することで、コンテナ再作成後もファイルが保持されます。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># docker-compose.full.yml の例</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">services</span><span class="p">:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">server</span><span class="p">:</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./media:/app/media</span><span class="w">   </span><span class="c1"># ホストの ./media をコンテナ /app/media に bind</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">MEDIA_ROOT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/app/media</span>
+</code></pre></div>
+<h3 id="rtc-server-linux">rtc-server が Linux 限定の理由<a class="headerlink" href="#rtc-server-linux" title="Permanent link">&para;</a></h3>
+<p>rtc-server は以下 2 つの理由で Linux ホストでのみ動作します。</p>
+<ol>
+<li><strong>mediasoup の native worker が glibc 必須</strong>: musl ベースの Alpine では動作不可のため、Dockerfile も bookworm-slim を使用</li>
+<li><strong><code>network_mode: host</code> 必須</strong>: WebRTC の UDP ポート 10000-10100 を NAT 越えなしに公開する必要があり、Docker の host network mode が利用できる Linux 限定</li>
+</ol>
+<p>Mac / Windows ホストで通話機能を使いたい場合は、別途 Linux ホストに rtc-server を立てる構成（または開発時は <code>npm run dev</code> でホストに直接起動）を検討してください。</p>
+<h2 id="3_1">3. サーバーセットアップ<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">cd</span><span class="w"> </span>server
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>npm<span class="w"> </span>install
 </code></pre></div>
 <h3 id="_3">環境変数の設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p><code>server/.env</code> にはデフォルト値が設定されていますが、本番環境では以下を必ず変更してください。</p>
@@ -2475,7 +2682,7 @@
 </tbody>
 </table>
 <h4 id="vapid">VAPID鍵の生成<a class="headerlink" href="#vapid" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npx<span class="w"> </span>web-push<span class="w"> </span>generate-vapid-keys
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>npx<span class="w"> </span>web-push<span class="w"> </span>generate-vapid-keys
 </code></pre></div>
 <h3 id="_4">全環境変数一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="admonition danger">
@@ -2559,7 +2766,12 @@
 <tr>
 <td><code>RTC_PORT</code></td>
 <td>3100</td>
-<td>mediasoupシグナリングポート</td>
+<td>mediasoupシグナリングポート（rtc-server を使う場合）</td>
+</tr>
+<tr>
+<td><code>TTS_BROADCAST_MEDIASOUP</code></td>
+<td><code>false</code></td>
+<td>TTS を mediasoup 経由で配信（legacy）。<code>true</code> で v0.1.0 以前の rtc-server 経由配信に切替（<a href="https://github.com/gamasenninn/tealus/issues/189">#189</a>）</td>
 </tr>
 <tr>
 <td><code>LOG_LEVEL</code></td>
@@ -2574,23 +2786,23 @@
 </tbody>
 </table>
 <h3 id="db">DBマイグレーション<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate
 </code></pre></div>
-<p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（001〜018）が順に実行されます。</p>
+<p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（001〜021）が順に実行されます。<code>021</code> で全文検索高速化用の <code>pg_trgm</code> 拡張と GIN index が追加されます（v0.1.x、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a>）。</p>
 <h3 id="_5">サーバー起動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w">    </span><span class="c1"># 開発モード（nodemon で自動再起動）</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>npm<span class="w"> </span>start<span class="w">      </span><span class="c1"># 本番モード</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w">    </span><span class="c1"># 開発モード（nodemon で自動再起動）</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>npm<span class="w"> </span>start<span class="w">      </span><span class="c1"># 本番モード</span>
 </code></pre></div>
 <p>サーバーは <code>http://localhost:3000</code> で起動します。</p>
 <h2 id="4">4. クライアントセットアップ<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">cd</span><span class="w"> </span>client
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>npm<span class="w"> </span>install
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>client
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>npm<span class="w"> </span>install
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
 </code></pre></div>
 <p>クライアントは <code>http://localhost:5173</code> で起動します。Viteのプロキシ設定により <code>/api/*</code> と <code>/socket.io</code> は自動的にサーバーに転送されます。</p>
 <h3 id="_6">本番ビルド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>client
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>npm<span class="w"> </span>run<span class="w"> </span>build
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">cd</span><span class="w"> </span>client
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>npm<span class="w"> </span>run<span class="w"> </span>build
 </code></pre></div>
 <p><code>dist/</code> ディレクトリにビルド成果物が生成されます。</p>
 <h2 id="5">5. 初回ユーザー登録<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
@@ -2599,9 +2811,9 @@
 <p class="admonition-title">パスワードについて</p>
 <p>下記の <code>password123</code> は <strong>localhost 検証用のサンプル値</strong> です。本番運用では必ず強固なパスワード（12 文字以上、英数記号混在）に置き換えてください。</p>
 </div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/auth/register<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;login_id&quot;:&quot;admin&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/auth/register<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;login_id&quot;:&quot;admin&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -2610,9 +2822,9 @@
 <p>以降はログイン画面からユーザーIDとパスワードでログインできます。</p>
 <h2 id="6-ai">6. AIエージェントサーバー（オプション）<a class="headerlink" href="#6-ai" title="Permanent link">&para;</a></h2>
 <p>AI機能を使用する場合は、エージェントサーバーも起動します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>agent-server
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>npm<span class="w"> </span>install
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">cd</span><span class="w"> </span>agent-server
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>npm<span class="w"> </span>install
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
 </code></pre></div>
 <p>エージェントサーバーは <code>http://localhost:4000</code> で起動します。</p>
 <h3 id="_7">エージェント環境変数<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
@@ -2630,11 +2842,11 @@
 <td>Tealus本体のURL（例: <code>http://localhost:3000</code>）</td>
 </tr>
 <tr>
-<td><code>TEALUS_BOT_ID</code></td>
+<td><code>TEALUS_USER_ID</code></td>
 <td>BotユーザーのユーザーID</td>
 </tr>
 <tr>
-<td><code>TEALUS_BOT_PASS</code></td>
+<td><code>TEALUS_PASSWORD</code></td>
 <td>Botユーザーのパスワード</td>
 </tr>
 <tr>
@@ -2663,39 +2875,43 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">旧環境変数名との互換</p>
+<p>旧名 <code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code> も内部で fallback されますが、新規セットアップでは <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> の使用を推奨します（v0.1.x、Tealus MCP との表記統一）。</p>
+</div>
 <h2 id="7">7. 本番デプロイ<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <h3 id="nginx">Nginx設定例<a class="headerlink" href="#nginx" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="c1"># React PWA（ビルド済みの静的ファイル）</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/tealus/client/dist</span><span class="p">;</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.html</span><span class="p">;</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="c1"># REST API</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/api/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">    </span><span class="c1"># WebSocket（Socket.IO）</span>
-<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/socket.io/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
-<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>
-<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">    </span><span class="c1"># メディアファイル配信</span>
-<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/media/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="w">        </span><span class="kn">alias</span><span class="w"> </span><span class="s">/var/tealus/media/</span><span class="p">;</span>
-<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">30d</span><span class="p">;</span>
-<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="c1"># React PWA（ビルド済みの静的ファイル）</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/tealus/client/dist</span><span class="p">;</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.html</span><span class="p">;</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="c1"># REST API</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/api/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">    </span><span class="c1"># WebSocket（Socket.IO）</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/socket.io/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="w">    </span><span class="c1"># メディアファイル配信</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/media/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="w">        </span><span class="kn">alias</span><span class="w"> </span><span class="s">/var/tealus/media/</span><span class="p">;</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">30d</span><span class="p">;</span>
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="cloudflare-nas">Cloudflare + NAS構成（参考）<a class="headerlink" href="#cloudflare-nas" title="Permanent link">&para;</a></h3>
 <p>NAS 上で運用する場合、所有ドメイン（例: <code>your-domain.example</code>）を Cloudflare 経由で NAS に接続する構成が便利です。</p>

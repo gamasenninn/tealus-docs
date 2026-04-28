@@ -1738,6 +1738,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="ツール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openai-agents-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ローカルツール（OpenAI Agents SDK ビルトイン）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tealus-mcp-lightdeep-v01x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tealus MCP ツール（Light/Deep 共通、v0.1.x）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tealus-mcp-lightdeep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tealus MCP 統合（Light/Deep 共通）
+      
+    </span>
+  </a>
+  
 </li>
         
       </ul>
@@ -2330,6 +2369,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="ツール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openai-agents-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ローカルツール（OpenAI Agents SDK ビルトイン）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tealus-mcp-lightdeep-v01x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tealus MCP ツール（Light/Deep 共通、v0.1.x）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tealus-mcp-lightdeep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tealus MCP 統合（Light/Deep 共通）
+      
+    </span>
+  </a>
+  
 </li>
         
       </ul>
@@ -2671,12 +2749,12 @@
 <tr>
 <td>デフォルト</td>
 <td><code>config/default_system_prompt.md</code></td>
-<td>基本</td>
+<td>基本（リポジトリ管理、Tealus MCP 利用ガイダンスを含む）</td>
 </tr>
 <tr>
 <td>カスタム</td>
 <td><code>config/system_prompt.md</code></td>
-<td>グローバル上書き</td>
+<td>グローバル上書き（<strong><code>.gitignore</code> 対象、user カスタム枠</strong>）</td>
 </tr>
 <tr>
 <td>ルーム固有</td>
@@ -2690,7 +2768,12 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition info">
+<p class="admonition-title">config/system_prompt.md の運用</p>
+<p><code>agent-server/config/system_prompt.md</code> は <code>.gitignore</code> で除外されており、各運用者が自由にカスタマイズできる枠として確保されています。default を上書きしたい場合のみ作成し、リポジトリにはコミットされません。</p>
+</div>
 <h3 id="_3">ツール<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h4 id="openai-agents-sdk">ローカルツール（OpenAI Agents SDK ビルトイン）<a class="headerlink" href="#openai-agents-sdk" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
 <tr>
@@ -2725,14 +2808,76 @@
 </tr>
 </tbody>
 </table>
+<h4 id="tealus-mcp-lightdeep-v01x">Tealus MCP ツール（Light/Deep 共通、v0.1.x）<a class="headerlink" href="#tealus-mcp-lightdeep-v01x" title="Permanent link">&para;</a></h4>
+<p><a href="../mcp/">Tealus MCP</a> を介して Light Agent も以下 9 ツールを利用できます（<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）。Deep Agent と<strong>同一のツールセット</strong>です。</p>
+<table>
+<thead>
+<tr>
+<th>ツール名</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>send_message</code></td>
+<td>テキストメッセージ送信</td>
+</tr>
+<tr>
+<td><code>send_image</code></td>
+<td>画像送信（base64）</td>
+</tr>
+<tr>
+<td><code>get_messages</code></td>
+<td>メッセージ履歴取得</td>
+</tr>
+<tr>
+<td><code>get_message_media</code></td>
+<td>メディア取得（画像はAIが直接視認、音声は文字起こし優先）</td>
+</tr>
+<tr>
+<td><code>search_messages</code></td>
+<td>キーワード/タグ/期間/発言者で全文検索</td>
+</tr>
+<tr>
+<td><code>mark_tag_done</code></td>
+<td>タグの完了状態（is_done）を更新</td>
+</tr>
+<tr>
+<td><code>list_rooms</code></td>
+<td>参加中ルーム一覧</td>
+</tr>
+<tr>
+<td><code>join_room</code></td>
+<td>ルーム参加</td>
+</tr>
+<tr>
+<td><code>mark_read</code></td>
+<td>メッセージ既読化</td>
+</tr>
+</tbody>
+</table>
 <p>ツール実行時には UI にステータスが自動通知されます（例: 「検索中...」「画像生成中...」）。</p>
+<h3 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h3>
+<p>v0.1.x までは MCP は Deep Agent 専用でしたが、<code>agent-server/src/mcp/roomMcpManager.js</code> の <code>getOrCreateSharedGlobal()</code> により Light Agent にも programmatic に MCP を注入する仕組みが追加されました。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>agent-server 起動時
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ├─ TEALUS_USER_ID / TEALUS_PASSWORD が config に存在?
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  │    └─ Yes: MCPServerStdio で `npx -y github:gamasenninn/tealus-mcp` を spawn
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  │           → Light/Deep 両 Agent が同じ MCP プロセスを共有
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  └─ No: MCP なしで起動（ローカルツールのみ）
+</code></pre></div>
+<p>この設計により:</p>
+<ul>
+<li><strong>外部クライアント（Claude Code 等）と本番 AI が同一ツールセット</strong>で動作 — 開発体験と本番挙動が乖離しない</li>
+<li><strong>MCP プロセスは Light/Deep で共有</strong> — リソース効率がよく、起動オーバーヘッドが 1 回で済む</li>
+<li><strong>環境変数の有無で自動切替</strong> — 認証情報を渡さない構成では従来通り MCP なしで動作</li>
+</ul>
 <h2 id="deep-agent-claude-code-cli">Deep Agent — Claude Code CLI<a class="headerlink" href="#deep-agent-claude-code-cli" title="Permanent link">&para;</a></h2>
 <p>複雑なコード生成、分析、長いワークフローを処理する高度なエージェントです。</p>
 <h3 id="_4">起動方式<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>claude<span class="w"> </span>-p<span class="w"> </span>-<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--dangerously-skip-permissions<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--mcp-config<span class="w"> </span>&lt;動的設定ファイル&gt;<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="o">[</span>--resume<span class="w"> </span>&lt;sessionId&gt;<span class="o">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>claude<span class="w"> </span>-p<span class="w"> </span>-<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--dangerously-skip-permissions<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--mcp-config<span class="w"> </span>&lt;動的設定ファイル&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="o">[</span>--resume<span class="w"> </span>&lt;sessionId&gt;<span class="o">]</span>
 </code></pre></div>
 <ul>
 <li>プロンプトは <strong>stdin</strong> から送信</li>
@@ -2773,8 +2918,8 @@
 <p>Agent Server がメッセージを受け取り、エージェントに渡すまでの制御を担います。</p>
 <h3 id="_6">ルーム別キュー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>同一ルームへの並行応答を防止するため、<code>roomQueues</code>（Map）でルームごとにメッセージをシリアライズします。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ルーム A: メッセージ1 → メッセージ2 → メッセージ3（順次処理）
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ルーム B: メッセージ1 → メッセージ2（並行して処理）
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ルーム A: メッセージ1 → メッセージ2 → メッセージ3（順次処理）
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ルーム B: メッセージ1 → メッセージ2（並行して処理）
 </code></pre></div>
 <p>異なるルームのメッセージは並行処理されますが、同じルーム内のメッセージは前のメッセージの処理が完了してから次に進みます。</p>
 <h3 id="_7">無限ループ防止<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
@@ -2810,19 +2955,19 @@
 </div>
 <h3 id="fifo">FIFO キュー管理<a class="headerlink" href="#fifo" title="Permanent link">&para;</a></h3>
 <p><code>isProcessing</code> フラグによる排他制御で、同時読み上げを防止します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>speakMessage() → queue に追加
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>                    ↓
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>              processQueue()
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>              isProcessing = true
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                    ↓
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>              テキスト前処理
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>                    ↓
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>              Aivis Cloud API (0.3-0.5秒)
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                    ↓
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>              ffmpeg → RTP 送信
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                    ↓
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>              isProcessing = false
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>              → キューに次があれば再度 processQueue()
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>speakMessage() → queue に追加
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                    ↓
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>              processQueue()
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>              isProcessing = true
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                    ↓
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>              テキスト前処理
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>                    ↓
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>              Aivis Cloud API (0.3-0.5秒)
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>                    ↓
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>              ffmpeg → RTP 送信
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>                    ↓
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>              isProcessing = false
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>              → キューに次があれば再度 processQueue()
 </code></pre></div>
 <p>複数のメッセージが短時間に発生しても、キューに積まれた順序で逐次処理されます。</p>
 <h3 id="_9">テキスト前処理<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
