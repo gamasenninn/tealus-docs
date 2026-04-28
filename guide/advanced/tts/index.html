@@ -1220,10 +1220,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#voicevolume" class="md-nav__link">
+  <a href="#voicevolumeprofile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        voiceVolume（ルーム単位）
+        voiceVolume（Profile から設定）
       
     </span>
   </a>
@@ -1234,7 +1234,7 @@
   <a href="#tts_volume_boost" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TTS_VOLUME_BOOST（環境変数 / グローバル）
+        TTS_VOLUME_BOOST（クライアントの組み込み倍率）
       
     </span>
   </a>
@@ -2242,10 +2242,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#voicevolume" class="md-nav__link">
+  <a href="#voicevolumeprofile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        voiceVolume（ルーム単位）
+        voiceVolume（Profile から設定）
       
     </span>
   </a>
@@ -2256,7 +2256,7 @@
   <a href="#tts_volume_boost" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TTS_VOLUME_BOOST（環境変数 / グローバル）
+        TTS_VOLUME_BOOST（クライアントの組み込み倍率）
       
     </span>
   </a>
@@ -2419,16 +2419,20 @@
 <p>音声モデルはプロンプトと同じレイヤで管理されています。エージェントのキャラクター設定に合わせて声を選ぶことで、より自然なコミュニケーションが実現できます。</p>
 </div>
 <h2 id="_6">音量設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>TTS 音声の音量は <strong>ルーム単位の倍率</strong> と <strong>サーバー全体のグローバル倍率</strong> の 2 段階で調整できます（<a href="https://github.com/gamasenninn/tealus/issues/198">#198</a>）。トランシーバー音声と TTS 音声のバランス調整に活用してください。</p>
-<h3 id="voicevolume">voiceVolume（ルーム単位）<a class="headerlink" href="#voicevolume" title="Permanent link">&para;</a></h3>
-<p>ルーム設定の <strong>voiceVolume</strong> で TTS 音量倍率を指定できます。<code>1.0</code> が原音、<code>2.0</code> で 2 倍にブーストされます。エージェントの声が小さく聞こえるルームで個別に上げる、といった運用に向きます。</p>
-<h3 id="tts_volume_boost">TTS_VOLUME_BOOST（環境変数 / グローバル）<a class="headerlink" href="#tts_volume_boost" title="Permanent link">&para;</a></h3>
-<p>サーバー全体の TTS 音量倍率を環境変数 <code>TTS_VOLUME_BOOST</code> で指定できます。複数ルームに跨がる全体的な音量バランス調整に利用してください。</p>
+<p>TTS 音声の音量は <strong>ユーザー単位の voiceVolume</strong>（0-100%）と <strong>クライアント全体の boost 定数</strong> の組み合わせで決まります（<a href="https://github.com/gamasenninn/tealus/issues/198">#198</a>）。トランシーバー音声と TTS 音声のバランス調整に活用してください。</p>
+<h3 id="voicevolumeprofile">voiceVolume（Profile から設定）<a class="headerlink" href="#voicevolumeprofile" title="Permanent link">&para;</a></h3>
+<p>各ユーザーが Profile の音量スライダーで 0-100% を指定します。値は <code>localStorage.voiceVolume</code> に保存されるため、ブラウザごとに独立した設定となります（同一ユーザーが別ブラウザで使うと値は共有されません）。トランシーバー / 音声メッセージ / TTS すべての再生にこの倍率が適用されます。</p>
+<h3 id="tts_volume_boost">TTS_VOLUME_BOOST（クライアントの組み込み倍率）<a class="headerlink" href="#tts_volume_boost" title="Permanent link">&para;</a></h3>
+<p>client 側ソース（<code>client/src/constants/ui.js</code>）に定義された定数で、TTS 経路にのみ追加で掛かるブースト値です（現在 <code>3.0</code>）。録音音声やトランシーバーと比較して TTS の loudness が低く感じる傾向への補正として用いられます。</p>
+<div class="admonition warning">
+<p class="admonition-title">環境変数ではありません</p>
+<p><code>TTS_VOLUME_BOOST</code> は <strong>クライアント側のビルド時定数</strong> です。サーバー側の環境変数でもユーザー設定でもなく、変更には <strong>クライアントの再ビルド</strong>が必要です。</p>
+</div>
 <h3 id="web-audio-api-gainnode-10">Web Audio API GainNode による 1.0 超ブースト<a class="headerlink" href="#web-audio-api-gainnode-10" title="Permanent link">&para;</a></h3>
-<p>ブラウザ標準の <code>&lt;audio&gt;.volume</code> プロパティは上限が <code>1.0</code> ですが、Tealus は <strong>Web Audio API の GainNode</strong> を介して再生することで <code>1.0</code> を超える音量にも対応しています。これにより、トランシーバー由来のマイク音声と比較して TTS の声量が小さい環境でも、設定だけで補正できます。</p>
+<p>ブラウザ標準の <code>&lt;audio&gt;.volume</code> プロパティは上限が <code>1.0</code> ですが、Tealus は <strong>Web Audio API の GainNode</strong> を介して再生することで <code>1.0</code> を超える実効音量を出せるようにしています。これにより <code>voiceVolume × TTS_VOLUME_BOOST &gt; 1.0</code> の組み合わせも正しく反映されます。</p>
 <div class="admonition tip">
-<p class="admonition-title">音量バランス調整のコツ</p>
-<p>まずは <code>voiceVolume = 1.5</code> 程度から試し、トランシーバー音声と聞き比べて違和感のない値に調整するのが運用しやすい手順です。極端に大きい値（例: 4.0 以上）はクリッピング（音割れ）の原因になるため避けてください。</p>
+<p class="admonition-title">音量バランス調整の手順</p>
+<p>まず Profile の <strong>voiceVolume</strong> を調整してみてください。それでもバランスが悪い場合に限り <code>TTS_VOLUME_BOOST</code> を上下する、という手順が運用しやすいです。極端に大きい値（例: 4.0 以上）はクリッピング（音割れ）の原因になるため避けてください。</p>
 </div>
 <h2 id="_7">長文メッセージの折りたたみ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>300文字を超えるメッセージは自動的に折りたたまれ、「もっとみる」ボタンが表示されます。クリックで展開、「閉じる」で再折りたたみできます。これはTTSとは独立した表示機能ですが、AIの長文回答が読みやすくなります。</p>
