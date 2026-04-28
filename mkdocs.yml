@@ -104,6 +104,7 @@ nav:
     - はじめに: dev/index.md
     - アーキテクチャ: dev/architecture.md
     - AI アーキテクチャ: dev/ai-architecture.md
+    - Agent ガイド: dev/agents.md
     - API リファレンス: dev/api.md
     - Socket.IO イベント: dev/socketio.md
     - Bot API / Webhook: dev/bot-api.md
