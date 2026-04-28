@@ -27,14 +27,17 @@
 │  │     :5432             │  │   在席管理)      │ │
 │  └───────────────────────┘  └─────────────────┘ │
 └──────────┬──────────────────────┬────────────────┘
-           │ Webhook              │ Proxy
+           │ Webhook              │ Proxy（通話 / TTS legacy）
            ▼                      ▼
-┌──────────────────┐   ┌──────────────────┐
-│  Agent Server    │   │  RTC Server      │
-│  (AI エージェント) │   │  (mediasoup SFU) │
-│  :4000           │   │  :3100           │
-└──────────────────┘   └──────────────────┘
+┌──────────────────┐   ┌──────────────────────────┐
+│  Agent Server    │   │  RTC Server (オプショナル) │
+│  (AI エージェント) │   │  (mediasoup SFU)          │
+│  :4000           │   │  :3100                     │
+└──────────────────┘   └──────────────────────────┘
 ```
+
+!!! info "RTC Server はオプショナル"
+    RTC Server は **通話機能** および **TTS の legacy 配信経路**（`TTS_BROADCAST_MEDIASOUP=true`）で利用されます。default の TTS 配信は Socket.IO blob 経由のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。
 
 ## コンポーネント構成
 
@@ -121,11 +124,34 @@ req.user にユーザー情報を設定
 
 Socket.IO接続時も `handshake.auth.token` でJWTを検証します。
 
-## TTS 音声合成パイプライン（PlainTransport）
+## TTS 音声合成パイプライン
 
-AIエージェントの回答を音声で読み上げる際、mediasoup の **PlainTransport** を使って WebRTC スタックなしで音声を注入します。
+AIエージェントの回答を音声で読み上げる経路には **default（Socket.IO blob）** と **legacy（mediasoup PlainTransport）** の 2 種類があります。default は rtc-server なしで動作するため、Mac / Windows を含む全プラットフォームでセットアップが容易です。
 
-### 処理フロー
+### default 経路: Socket.IO blob 配信
+
+環境変数 `TTS_BROADCAST_MEDIASOUP` が未設定または `false` のときの default 経路です（[#189](https://github.com/gamasenninn/tealus/issues/189)）。
+
+```
+agent-server: speakMessage(roomId, text)
+  → テキスト前処理（Markdown除去・URL省略・500文字制限）
+  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
+  → server (HTTP) に WAV をPOST
+      └── Socket.IO emit `tts:audio` (binary blob, room broadcast)
+          → 各 client が <audio> 要素で再生
+              └── Web Audio API GainNode で音量補正（1.0 超のブースト可能）
+```
+
+| メリット | 内容 |
+|---|---|
+| rtc-server 不要 | Mac / Windows ホストでも追加サービスなしで動作 |
+| ホスト制約なし | mediasoup の C++ 拡張ビルドが不要 |
+| 実装が単純 | Socket.IO の binary 送信機能をそのまま利用 |
+| 音量補正が柔軟 | Web Audio API GainNode で `<audio>.volume` の上限 1.0 を超える音量に対応（[#198](https://github.com/gamasenninn/tealus/issues/198)） |
+
+### legacy 経路: mediasoup PlainTransport
+
+環境変数 `TTS_BROADCAST_MEDIASOUP=true` を設定したとき、または既存運用との互換性が必要な場合に利用します。mediasoup の **PlainTransport** で WebRTC スタックなしに音声を注入する経路です。
 
 ```
 agent-server: speakMessage(roomId, text)
@@ -140,13 +166,13 @@ agent-server: speakMessage(roomId, text)
           → WebRTC Consumer → ブラウザで再生
 ```
 
-### PlainTransport の仕組み
+#### PlainTransport の仕組み
 
 通常の WebRTC 通話では、ブラウザ間で DTLS/SRTP を使った暗号化通信を行います。一方 PlainTransport は **暗号化なしの RTP/RTCP を直接受け取る**トランスポートで、サーバーサイドの音声ソース（ffmpeg 等）から mediasoup に音声を注入する用途に適しています。
 
 **comedia モード**: 送信元の IP:port を事前に指定する代わりに、最初の RTP パケットから自動検知します。ローカルホスト内の通信で利用しています。
 
-### ffmpeg パラメータ
+#### ffmpeg パラメータ
 
 ```bash
 ffmpeg -re -i <wavFile> \
@@ -166,3 +192,11 @@ ffmpeg -re -i <wavFile> \
 | `-b:a 32k` | 32kbps | ビットレート |
 | `-ssrc 1111` | 固定値 | RTP ストリーム識別子 |
 | `-payload_type 100` | 100 | mediasoup と合わせた PT 番号 |
+
+### 経路の選択
+
+| 状況 | 推奨経路 |
+|---|---|
+| 新規導入 / Mac / Windows / Docker で簡素化したい | **default**（Socket.IO blob） |
+| 既存の mediasoup 運用と互換性を維持したい | legacy（`TTS_BROADCAST_MEDIASOUP=true`） |
+| 通話機能と音声 mixing を共通インフラで処理したい | legacy |
