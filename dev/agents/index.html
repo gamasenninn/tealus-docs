@@ -12,31 +12,31 @@
         <meta name="author" content="Tealus Project">
       
       
-        <link rel="canonical" href="https://gamasenninn.github.io/tealus-docs/dev/">
+        <link rel="canonical" href="https://gamasenninn.github.io/tealus-docs/dev/agents/">
       
       
-        <link rel="prev" href="../admin/operations/">
+        <link rel="prev" href="../ai-architecture/">
       
       
-        <link rel="next" href="architecture/">
+        <link rel="next" href="../api/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>はじめに - Tealus ドキュメント</title>
+        <title>Agent ガイド - Tealus ドキュメント</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,7 +55,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#agent-light-deep" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -94,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
-    <a href=".." title="Tealus ドキュメント" class="md-header__button md-logo" aria-label="Tealus ドキュメント" data-md-component="logo">
+    <a href="../.." title="Tealus ドキュメント" class="md-header__button md-logo" aria-label="Tealus ドキュメント" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              はじめに
+              Agent ガイド
             
           </span>
         </div>
@@ -227,7 +227,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -248,7 +248,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../guide/" class="md-tabs__link">
+        <a href="../../guide/" class="md-tabs__link">
           
   
   
@@ -266,7 +266,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../usecases/" class="md-tabs__link">
+      <a href="../../usecases/" class="md-tabs__link">
         
   
   
@@ -287,7 +287,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../admin/" class="md-tabs__link">
+        <a href="../../admin/" class="md-tabs__link">
           
   
   
@@ -309,7 +309,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -327,7 +327,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../faq/" class="md-tabs__link">
+      <a href="../../faq/" class="md-tabs__link">
         
   
   
@@ -346,7 +346,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../releases/" class="md-tabs__link">
+      <a href="../../releases/" class="md-tabs__link">
         
   
   
@@ -381,7 +381,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Tealus ドキュメント" class="md-nav__button md-logo" aria-label="Tealus ドキュメント" data-md-component="logo">
+    <a href="../.." title="Tealus ドキュメント" class="md-nav__button md-logo" aria-label="Tealus ドキュメント" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -411,7 +411,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -492,7 +492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/" class="md-nav__link">
+      <a href="../../guide/" class="md-nav__link">
         
   
   
@@ -520,7 +520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/setup/" class="md-nav__link">
+      <a href="../../guide/setup/" class="md-nav__link">
         
   
   
@@ -602,7 +602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basic/" class="md-nav__link">
+      <a href="../../guide/basic/" class="md-nav__link">
         
   
   
@@ -630,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basic/login/" class="md-nav__link">
+      <a href="../../guide/basic/login/" class="md-nav__link">
         
   
   
@@ -658,7 +658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basic/chat/" class="md-nav__link">
+      <a href="../../guide/basic/chat/" class="md-nav__link">
         
   
   
@@ -686,7 +686,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basic/group/" class="md-nav__link">
+      <a href="../../guide/basic/group/" class="md-nav__link">
         
   
   
@@ -714,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basic/media/" class="md-nav__link">
+      <a href="../../guide/basic/media/" class="md-nav__link">
         
   
   
@@ -742,7 +742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/basic/voice/" class="md-nav__link">
+      <a href="../../guide/basic/voice/" class="md-nav__link">
         
   
   
@@ -832,7 +832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/" class="md-nav__link">
+      <a href="../../guide/advanced/" class="md-nav__link">
         
   
   
@@ -860,7 +860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/search/" class="md-nav__link">
+      <a href="../../guide/advanced/search/" class="md-nav__link">
         
   
   
@@ -888,7 +888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/reaction/" class="md-nav__link">
+      <a href="../../guide/advanced/reaction/" class="md-nav__link">
         
   
   
@@ -916,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/mention/" class="md-nav__link">
+      <a href="../../guide/advanced/mention/" class="md-nav__link">
         
   
   
@@ -944,7 +944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/stamp/" class="md-nav__link">
+      <a href="../../guide/advanced/stamp/" class="md-nav__link">
         
   
   
@@ -972,7 +972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/todo/" class="md-nav__link">
+      <a href="../../guide/advanced/todo/" class="md-nav__link">
         
   
   
@@ -1000,7 +1000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/call/" class="md-nav__link">
+      <a href="../../guide/advanced/call/" class="md-nav__link">
         
   
   
@@ -1028,7 +1028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/advanced/tts/" class="md-nav__link">
+      <a href="../../guide/advanced/tts/" class="md-nav__link">
         
   
   
@@ -1118,7 +1118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/settings/profile/" class="md-nav__link">
+      <a href="../../guide/settings/profile/" class="md-nav__link">
         
   
   
@@ -1146,7 +1146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/settings/display/" class="md-nav__link">
+      <a href="../../guide/settings/display/" class="md-nav__link">
         
   
   
@@ -1174,7 +1174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guide/settings/notification/" class="md-nav__link">
+      <a href="../../guide/settings/notification/" class="md-nav__link">
         
   
   
@@ -1217,7 +1217,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usecases/" class="md-nav__link">
+      <a href="../../usecases/" class="md-nav__link">
         
   
   
@@ -1298,7 +1298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../admin/" class="md-nav__link">
+      <a href="../../admin/" class="md-nav__link">
         
   
   
@@ -1326,7 +1326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../admin/server-setup/" class="md-nav__link">
+      <a href="../../admin/server-setup/" class="md-nav__link">
         
   
   
@@ -1354,7 +1354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../admin/user-management/" class="md-nav__link">
+      <a href="../../admin/user-management/" class="md-nav__link">
         
   
   
@@ -1382,7 +1382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../admin/dashboard/" class="md-nav__link">
+      <a href="../../admin/dashboard/" class="md-nav__link">
         
   
   
@@ -1410,7 +1410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../admin/agent/" class="md-nav__link">
+      <a href="../../admin/agent/" class="md-nav__link">
         
   
   
@@ -1438,7 +1438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../admin/operations/" class="md-nav__link">
+      <a href="../../admin/operations/" class="md-nav__link">
         
   
   
@@ -1527,37 +1527,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    はじめに
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -1573,48 +1546,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        対象読者
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        目次
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1627,7 +1558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/" class="md-nav__link">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
@@ -1655,7 +1586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ai-architecture/" class="md-nav__link">
+      <a href="../ai-architecture/" class="md-nav__link">
         
   
   
@@ -1680,10 +1611,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="agents/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent ガイド
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1699,6 +1657,98 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        比較表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        選択基準
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="選択基準">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        使い分けの実用指針
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tealus-mcp-lightdeep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tealus MCP 統合（Light/Deep 共通）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        システムプロンプトのフロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1711,7 +1761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/" class="md-nav__link">
+      <a href="../api/" class="md-nav__link">
         
   
   
@@ -1739,7 +1789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="socketio/" class="md-nav__link">
+      <a href="../socketio/" class="md-nav__link">
         
   
   
@@ -1767,7 +1817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="bot-api/" class="md-nav__link">
+      <a href="../bot-api/" class="md-nav__link">
         
   
   
@@ -1795,7 +1845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="mcp/" class="md-nav__link">
+      <a href="../mcp/" class="md-nav__link">
         
   
   
@@ -1823,7 +1873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cli/" class="md-nav__link">
+      <a href="../cli/" class="md-nav__link">
         
   
   
@@ -1851,7 +1901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="testing/" class="md-nav__link">
+      <a href="../testing/" class="md-nav__link">
         
   
   
@@ -1879,7 +1929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -1914,7 +1964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../faq/" class="md-nav__link">
+      <a href="../../faq/" class="md-nav__link">
         
   
   
@@ -1941,7 +1991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../releases/" class="md-nav__link">
+      <a href="../../releases/" class="md-nav__link">
         
   
   
@@ -1988,10 +2038,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対象読者
+        比較表
       
     </span>
   </a>
@@ -1999,10 +2049,60 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        選択基準
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="選択基準">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        目次
+        使い分けの実用指針
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tealus-mcp-lightdeep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tealus MCP 統合（Light/Deep 共通）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        システムプロンプトのフロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連
       
     </span>
   </a>
@@ -2029,21 +2129,217 @@
   
 
 
-<h1 id="_1">開発者ガイド<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Tealus の内部アーキテクチャ、API仕様、拡張開発について説明します。</p>
-<h2 id="_2">対象読者<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>このガイドは、Tealus の開発・カスタマイズ・拡張を行う開発者を対象としています。</p>
-<h2 id="_3">目次<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h1 id="agent-light-deep">Agent ガイド（Light / Deep の選び分け）<a class="headerlink" href="#agent-light-deep" title="Permanent link">&para;</a></h1>
+<p>Tealus は 2 種類の AI Agent を併用する 3 層構造（Router + Light + Deep）を採用しています。本ページは <strong>どちらの Agent をどのケースで選ぶか</strong> に焦点を当てた実用ガイドです。AI 統合の全体像と Router 判定ロジックは <a href="../ai-architecture/">AI アーキテクチャ</a> を参照してください。</p>
+<h2 id="_1">比較表<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>比較軸</th>
+<th>Light Agent</th>
+<th>Deep Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実装基盤</td>
+<td>OpenAI Agents SDK</td>
+<td>Claude Code CLI</td>
+</tr>
+<tr>
+<td>モデル</td>
+<td>gpt-5.4-mini</td>
+<td>Claude（MAX プラン or API 課金）</td>
+</tr>
+<tr>
+<td>起動形態</td>
+<td>プロセス常駐</td>
+<td>コマンド毎に CLI を spawn</td>
+</tr>
+<tr>
+<td>コンテキスト</td>
+<td>直近 20 件（<code>LIGHT_CONTEXT_MESSAGES</code>）</td>
+<td><code>--resume tealus-room-{roomId}</code> で継続セッション</td>
+</tr>
+<tr>
+<td>月額目安</td>
+<td>$80〜$280</td>
+<td>$100（MAX 固定） / API は変動</td>
+</tr>
+<tr>
+<td>得意領域</td>
+<td>日常会話、軽量 Q&amp;A、定型タスク、自然言語検索</td>
+<td>コード生成・分析、長いワークフロー、リファクタリング</td>
+</tr>
+<tr>
+<td>ローカルツール</td>
+<td><code>write_memory</code> / <code>read_memory</code> / <code>get_current_time</code> / <code>list_workspace_files</code> / <code>generate_image</code> / <code>code_interpreter</code></td>
+<td>Claude Code 標準ツール（ファイル編集・bash 実行など）</td>
+</tr>
+<tr>
+<td>Tealus MCP</td>
+<td>共通 9 ツール（v0.1.x、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）</td>
+<td>共通 9 ツール</td>
+</tr>
+<tr>
+<td>タイムアウト</td>
+<td>短め（リアルタイム前提）</td>
+<td>5 分（<code>DEEP_TIMEOUT</code>）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">選択基準<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>Router が以下の優先順位で振り分けます。詳細は <a href="../ai-architecture/">AI アーキテクチャ</a> の「Router — 2段階振り分け」セクションを参照してください。</p>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>条件</th>
+<th>振り分け先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>/light</code> / <code>/deep</code> コマンド</td>
+<td>明示指定通り</td>
+</tr>
+<tr>
+<td>2</td>
+<td>挨拶 / 短文（こんにちは、ありがとう等）</td>
+<td>Router が直接応答（Agent を呼ばない）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Deep キーワード（コード / リファクタ / デバッグ / 実装 / PR 等）</td>
+<td>Deep Agent</td>
+</tr>
+<tr>
+<td>4</td>
+<td>上記すべて該当しない</td>
+<td>LLM（gpt-5.4-mini）が <code>light</code> / <code>deep</code> を判定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">使い分けの実用指針<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>推奨 Agent</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>チャット履歴の検索・要約</td>
+<td><strong>Light</strong></td>
+<td>レスポンスが速く、コンテキスト 20 件で十分</td>
+</tr>
+<tr>
+<td>TODO 管理（完了マーク・一覧）</td>
+<td><strong>Light</strong></td>
+<td>MCP ツール（<code>mark_tag_done</code> / <code>search_messages</code>）の組み合わせのみで完結</td>
+</tr>
+<tr>
+<td>画像の内容認識・OCR 的依頼</td>
+<td><strong>Light</strong></td>
+<td><code>get_message_media</code> で画像視認、コード生成は不要</td>
+</tr>
+<tr>
+<td>ファイル編集・コードレビュー</td>
+<td><strong>Deep</strong></td>
+<td>Claude Code の編集ツール群が必須</td>
+</tr>
+<tr>
+<td>長いリファクタリング・複数ファイル変更</td>
+<td><strong>Deep</strong></td>
+<td>5 分のタイムアウトと <code>--resume</code> での継続セッション</td>
+</tr>
+<tr>
+<td>Issue ↔ コード ↔ 履歴の横断調査</td>
+<td><strong>Deep</strong></td>
+<td>Tealus MCP + ローカルファイル + Web 検索を組み合わせやすい</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h2>
+<p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.js</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、環境変数 <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> の有無で自動切替されます。</p>
+<p>利用可能な 9 ツール（<a href="../mcp/">MCP Server</a> と同一）:</p>
+<table>
+<thead>
+<tr>
+<th>ツール名</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>send_message</code></td>
+<td>テキスト送信</td>
+</tr>
+<tr>
+<td><code>send_image</code></td>
+<td>画像送信（base64）</td>
+</tr>
+<tr>
+<td><code>get_messages</code></td>
+<td>メッセージ履歴取得</td>
+</tr>
+<tr>
+<td><code>get_message_media</code></td>
+<td>メディア取得（画像視認 / 音声文字起こし）</td>
+</tr>
+<tr>
+<td><code>search_messages</code></td>
+<td>キーワード/タグ/期間/発言者で全文検索</td>
+</tr>
+<tr>
+<td><code>mark_tag_done</code></td>
+<td>タグの完了状態（is_done）切替</td>
+</tr>
+<tr>
+<td><code>list_rooms</code></td>
+<td>参加中ルーム一覧</td>
+</tr>
+<tr>
+<td><code>join_room</code></td>
+<td>ルーム参加</td>
+</tr>
+<tr>
+<td><code>mark_read</code></td>
+<td>メッセージ既読化</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">外部クライアントとの一貫性</p>
+<p>Tealus MCP は独立 repo（<code>gamasenninn/tealus-mcp</code>）で配布されており、Claude Code など外部 MCP クライアントからも <code>npx -y github:gamasenninn/tealus-mcp</code> で利用できます。Tealus 内蔵の Light/Deep agent と同じツールセットなので、開発体験と本番挙動が乖離しません。</p>
+</div>
+<h2 id="_4">システムプロンプトのフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>両 Agent は共通のシステムプロンプト合成フローを使います。優先度の高い層が低い層を上書きします。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>default_system_prompt.md         (リポジトリ管理、Tealus MCP 利用ガイダンス内蔵)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>        ↓ 上書き（任意）
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>system_prompt.md                 (.gitignored、user カスタム枠)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        ↓ ルーム個別の上書き（任意）
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>{workspace}/light_prompt.md      (Light Agent 用)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>{workspace}/deep_prompt.md       (Deep Agent 用)
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        ↓ メモリ追加
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>{workspace}/memory/MEMORY.md     (Agent の記憶、長期保存)
+</code></pre></div>
 <ul>
-<li><a href="architecture/">アーキテクチャ</a> — システム全体の設計</li>
-<li><a href="ai-architecture/">AI アーキテクチャ</a> — AI統合の技術詳細</li>
-<li><a href="api/">API リファレンス</a> — REST API 一覧</li>
-<li><a href="socketio/">Socket.IO イベント</a> — リアルタイム通信イベント</li>
-<li><a href="bot-api/">Bot API / Webhook</a> — 外部連携</li>
-<li><a href="mcp/">MCP Server</a> — AI連携のための MCP ツール</li>
-<li><a href="cli/">CLI ツール</a> — コマンドラインツール</li>
-<li><a href="testing/">テスト</a> — テストの実行方法</li>
-<li><a href="contributing/">コントリビューション</a> — 開発への参加方法</li>
+<li><strong><code>default_system_prompt.md</code></strong>: リポジトリにコミットされる共通プロンプト。Tealus MCP の使い方ガイダンスを含む</li>
+<li><strong><code>system_prompt.md</code></strong>: <code>.gitignore</code> 対象。運用者ごとに自由カスタマイズする枠</li>
+<li><strong>ルーム別プロンプト</strong>: ワークスペース配下に置くと、そのルーム内では追加コンテキストとして合成される</li>
+<li><strong>メモリ</strong>: Agent が <code>write_memory</code> ツールで自分宛に書き込む長期記憶</li>
+</ul>
+<p>ルーム単位でエージェントの性格・口調を切り替える運用が可能です（声と合わせた管理は <a href="../ai-architecture/">AI アーキテクチャ</a> の「声は人格の一部」セクションを参照）。</p>
+<h2 id="_5">関連<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../ai-architecture/">AI アーキテクチャ</a>: 全体構造、Router の判定ロジック、Webhook Dispatcher、コスト設計</li>
+<li><a href="../mcp/">MCP Server</a>: 9 ツールの詳細仕様と外部クライアントからの利用方法</li>
+<li><a href="../../admin/agent/">AIエージェント設定</a>: 運用者向けの設定手順</li>
+<li>関連 issue: <a href="https://github.com/gamasenninn/tealus/issues/185">#185</a> MCP umbrella、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a> search_messages、<a href="https://github.com/gamasenninn/tealus/issues/197">#197</a> mark_tag_done、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a> Light agent MCP 統合</li>
 </ul>
 
 
@@ -2122,10 +2418,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

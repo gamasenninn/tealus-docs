@@ -1062,6 +1062,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ai-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI による TODO 操作
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI による TODO 操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完了マーク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未完了一覧の取得
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        手動操作との併用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任意タグ運用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任意タグ運用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ジェネリックな運用例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        「完了状態」を持つチェックリストとして
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1692,6 +1781,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../dev/agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent ガイド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../dev/api/" class="md-nav__link">
         
   
@@ -1990,6 +2107,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ai-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI による TODO 操作
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI による TODO 操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        完了マーク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未完了一覧の取得
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        手動操作との併用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任意タグ運用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任意タグ運用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ジェネリックな運用例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        「完了状態」を持つチェックリストとして
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2043,6 +2249,58 @@
 <p class="admonition-title">Tip</p>
 <p>TODOは既存のタグシステムを利用しているため、タグでの分類・絞り込みが可能です。</p>
 </div>
+<h2 id="ai-todo">AI による TODO 操作<a class="headerlink" href="#ai-todo" title="Permanent link">&para;</a></h2>
+<p>UI 操作だけでなく、AI（<a href="../../../dev/agents/">Light / Deep agent</a>）にも TODO の管理を依頼できます。AI は MCP ツール経由で検索・完了マークを自律的に行います（<a href="https://github.com/gamasenninn/tealus/issues/197">#197</a>）。</p>
+<h3 id="_1">完了マーク<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>AI に「このタスク完了でマークして」「○○の件、完了として」と依頼すると、<code>mark_tag_done</code> ツールでメッセージのタグの <code>is_done</code> 状態が切り替わります。UI の チェックボックス操作と同じ結果になります。</p>
+<h3 id="_2">未完了一覧の取得<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>「未完了の TODO を教えて」「やり残しを一覧して」のような依頼に対し、AI は <code>search_messages(tag_names="TODO", is_done=false)</code> で未完了タスクのみを抽出して返します。検索パラメータの詳細は <a href="../search/">メッセージ検索</a> の「AI による検索（自然言語）」セクションを参照してください。</p>
+<h3 id="_3">手動操作との併用<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>手動マーク（UI のチェックボックス）と AI による完了化は同じデータを更新するため、いずれの方法で完了化しても他方の表示に即座に反映されます。チームで使う場合、人間が UI で操作したものを AI が後から把握することも、AI が一括完了したものを UI で確認することも可能です。</p>
+<h2 id="_4">任意タグ運用<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>TODO 機能は内部的に<strong>汎用タグシステム</strong>を利用しており、<code>TODO</code> 以外の任意タグも自由に作成・運用できます（<a href="https://github.com/gamasenninn/tealus/issues/185">#185</a>）。</p>
+<h3 id="_5">ジェネリックな運用例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>タグ名（例）</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TODO</code></td>
+<td>未着手のタスク</td>
+</tr>
+<tr>
+<td><code>重要</code></td>
+<td>優先的に確認すべき内容</td>
+</tr>
+<tr>
+<td><code>検討</code></td>
+<td>議論が必要な議題</td>
+</tr>
+<tr>
+<td><code>完了</code></td>
+<td>終わった項目（is_done と独立した運用も可）</td>
+</tr>
+<tr>
+<td><code>日常業務</code></td>
+<td>ルーチンタスク</td>
+</tr>
+<tr>
+<td><code>tealus関係</code> <code>製品X</code> 等</td>
+<td>プロジェクト・トピック別の分類</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">「完了状態」を持つチェックリストとして<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><code>mark_tag_done</code> は <strong>任意タグの <code>is_done</code> 状態切替</strong>に使えるため、TODO に限らず「完了状態を持つチェックリスト」全般として活用できます。</p>
+<ul>
+<li>「<code>検討</code> タグの完了マーク」= 議論が結論に至った印</li>
+<li>「<code>重要</code> タグの完了マーク」= 確認済みの印</li>
+</ul>
+<p>タグ命名と運用ルールは利用者の裁量です。Tealus はタグの意味を固定せず、<code>mark_tag_done</code> / <code>search_messages</code> という primitive のみを提供します。チームの運用に合わせて自由に設計してください。</p>
 
 
 

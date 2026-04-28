@@ -972,6 +972,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI による検索（自然言語）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI による検索（自然言語）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI への話しかけ方
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snippet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        snippet 索引パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグ運用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1714,6 +1764,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../dev/agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent ガイド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../dev/api/" class="md-nav__link">
         
   
@@ -2034,6 +2112,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI による検索（自然言語）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI による検索（自然言語）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI への話しかけ方
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snippet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        snippet 索引パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグ運用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2078,6 +2206,72 @@
 <li>音声メッセージの文字起こしテキスト</li>
 <li>すべての参加ルームが横断検索の対象</li>
 </ul>
+<h2 id="ai">AI による検索（自然言語）<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h2>
+<p>UI の検索バーと同じ検索基盤を、AI（<a href="../../../dev/agents/">Light / Deep agent</a>）も MCP ツール <code>search_messages</code> 経由で利用できます（<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a>）。「先週の議論をまとめて」のような自然言語で AI に依頼すると、AI が適切な検索パラメータを組み立てて結果を返します。</p>
+<h3 id="ai_1">AI への話しかけ方<a class="headerlink" href="#ai_1" title="Permanent link">&para;</a></h3>
+<p>ジェネリックな依頼例と、AI が組み立てる検索パラメータの対応です。</p>
+<table>
+<thead>
+<tr>
+<th>話しかけ方の例</th>
+<th>AI が組み立てるパラメータ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>「先週の議論をまとめて」</td>
+<td><code>since</code> / <code>until</code> を直近 7 日間にセット</td>
+</tr>
+<tr>
+<td>「未完了の TODO を教えて」</td>
+<td><code>tag_names="TODO"</code> + <code>is_done=false</code></td>
+</tr>
+<tr>
+<td>「○○について話していたメッセージを探して」</td>
+<td><code>q="○○"</code></td>
+</tr>
+<tr>
+<td>「△△さんが先月言っていたことを思い出して」</td>
+<td><code>sender_id=△△</code> + <code>since</code> を先月初日</td>
+</tr>
+<tr>
+<td>「画像だけまとめて」</td>
+<td><code>type="image"</code></td>
+</tr>
+<tr>
+<td>「<code>tealus関係</code> タグで完了済みのもの」</td>
+<td><code>tag_names="tealus関係"</code> + <code>is_done=true</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">narrowing filter は最低 1 つ必要</p>
+<p><code>q</code> / <code>room_id</code> / <code>sender_id</code> / <code>since</code> / <code>tag_names</code> / <code>type</code> のうち最低 1 つを指定する設計です。AI も自然言語の文脈からどれか 1 つは導出してくれますが、抽象的すぎる依頼（「全部教えて」など）には narrowing を促し返してきます。</p>
+</div>
+<h3 id="snippet">snippet 索引パターン<a class="headerlink" href="#snippet" title="Permanent link">&para;</a></h3>
+<p><code>search_messages</code> の結果には各メッセージの <strong>snippet（抜粋）</strong>が含まれます。AI はこれを「索引」として扱い、必要な詳細だけ後から取得する 2 段階アクセスが推奨パターンです。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ユーザー: 「先週の TTS 議論まとめて」
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>     ↓
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>AI: search_messages(q=&quot;TTS&quot;, since=&quot;先週&quot;, limit=10)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>     ↓ snippet を 10 件取得 = 索引
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>AI: 「以下が候補です。詳細が必要なものを指定してください」
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>     ↓ ユーザーが選んだら
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>AI: get_messages(message_id) で本文を展開
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>     ↓
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>AI: ユーザーに要約 / 詳細回答
+</code></pre></div>
+<p>snippet だけで要約できる場合は本文取得をスキップすることで、コンテキスト消費を抑えながら効率的に議論を辿れます。</p>
+<h3 id="_6">タグ運用<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>タグは <strong>user が自由に命名</strong> できます。システム固定タグはありません（<a href="https://github.com/gamasenninn/tealus/issues/185">#185</a>）。</p>
+<ul>
+<li>例: <code>TODO</code> / <code>tealus関係</code> / <code>重要</code> / <code>検討</code> / <code>完了</code> / <code>日常業務</code> …</li>
+<li><code>tag_names</code> パラメータは CSV で <strong>AND 検索</strong>（例: <code>tag_names="TODO,important"</code> で両方付いたメッセージのみ）</li>
+<li><code>is_done</code> で完了状態フィルタ（<code>tag_names</code> 指定時のみ有効）</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">API は意味を固定せず primitive を提供</p>
+<p>Tealus はタグ自体に「TODO」のような特別な意味を持たせず、汎用的な「メッセージに付けられる文字列ラベル」として提供します。タグ命名と運用ルールは利用者の裁量に委ねられており、AI もそのタグ体系に追従して検索・更新します（詳細は <a href="../todo/">TODO機能</a> の「AI による TODO 操作」セクションを参照）。</p>
+</div>
 
 
 
