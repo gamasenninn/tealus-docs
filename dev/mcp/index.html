@@ -2299,7 +2299,7 @@
 <p>Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラップし、Claude Code や他の MCP クライアントから Tealus をネイティブツールとして操作できます。</p>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（v0.6.0）</li>
+<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（v0.7.0）</li>
 <li>配布: npm publish ではなく <strong>GitHub から直接 install</strong>（<code>npx -y github:gamasenninn/tealus-mcp</code>）</li>
 <li>通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)</li>
 <li>技術スタック: <code>@modelcontextprotocol/sdk</code>、<code>zod</code>、<code>node-fetch</code>、<code>form-data</code></li>
@@ -2328,7 +2328,7 @@
 <tr>
 <td><code>get_messages</code></td>
 <td>メッセージ履歴取得</td>
-<td><code>room_id</code> / <code>limit?</code>（最大100）</td>
+<td><code>room_id</code> / <code>limit?</code>（最大100） / <code>include_transcription?</code>（v0.7.0、default true） / <code>include_raw?</code>（v0.7.0、default false）</td>
 </tr>
 <tr>
 <td><code>get_message_media</code></td>
@@ -2372,6 +2372,33 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition info">
+<p class="admonition-title">get_messages の transcription verbosity 制御（v0.7.0〜）</p>
+<p>voice メッセージの文字起こしを <code>include_transcription</code> / <code>include_raw</code> で 3 段階に出し分けできます。</p>
+<table>
+<thead>
+<tr>
+<th>組合せ</th>
+<th><code>transcription</code> field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>include_transcription=false</code></td>
+<td><code>{id, status, version}</code>（id-only、軽量モード）</td>
+</tr>
+<tr>
+<td><strong>default</strong>（<code>include_raw=false</code>）</td>
+<td><code>{id, status, version, formatted_text}</code></td>
+</tr>
+<tr>
+<td><code>include_raw=true</code></td>
+<td><code>{id, status, version, formatted_text, raw_text}</code></td>
+</tr>
+</tbody>
+</table>
+<p>AI が要約したいときは default、生 wav の文字起こし全文が必要なときだけ <code>include_raw=true</code> という使い分けが推奨です。</p>
+</div>
 <div class="admonition info">
 <p class="admonition-title">search_messages の使い方</p>
 <p><code>q</code> / <code>room_id</code> / <code>sender_id</code> / <code>since</code> / <code>tag_names</code> / <code>type</code> のうち少なくとも1つを指定する必要があります。日本語2文字のクエリは index が効きにくいため<strong>3文字以上推奨</strong>。snippet を索引として使い、詳細が必要なら <code>get_messages</code> で再取得する設計です。</p>

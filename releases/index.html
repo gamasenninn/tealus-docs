@@ -1938,6 +1938,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tealus-mcp-v070-get_messages-verbosity-202652" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tealus-mcp v0.7.0 — get_messages verbosity 制御（2026年5月2日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v021-installonboarding-patch202651" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2243,6 +2254,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tealus-mcp-v070-get_messages-verbosity-202652" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tealus-mcp v0.7.0 — get_messages verbosity 制御（2026年5月2日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v021-installonboarding-patch202651" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2530,6 +2552,13 @@
 <li><strong>voice 再文字起こし機能</strong>（<a href="https://github.com/gamasenninn/tealus/issues/216">#216</a>）: 文字起こしが失敗 / 不適切な voice メッセージを手動 retry 可能に。新 endpoint <code>POST /api/messages/:id/transcription/retranscribe</code></li>
 <li><strong>gpt-4o-transcribe default 採用</strong>（<a href="https://github.com/gamasenninn/tealus/issues/217">#217</a>）: whisper-1 の hallucination（TV 字幕由来 noise 等）が大幅軽減。env <code>WHISPER_MODEL</code> で旧モデル戻し可</li>
 <li><strong>tealus-cli credentials defensive</strong>（<a href="https://github.com/gamasenninn/tealus/issues/212">#212</a>）: watch モードで JWT 再取得時の再発バグに対する起動時 freeze 防御層</li>
+</ul>
+<h2 id="tealus-mcp-v070-get_messages-verbosity-202652">tealus-mcp v0.7.0 — get_messages verbosity 制御（2026年5月2日）<a class="headerlink" href="#tealus-mcp-v070-get_messages-verbosity-202652" title="Permanent link">&para;</a></h2>
+<p>tealus 本体は <code>[Unreleased]</code> だが、tealus-mcp 側は初の versioned release。</p>
+<ul>
+<li><code>get_messages</code> ツールに <code>include_transcription</code> / <code>include_raw</code> の 2 flag 追加（<a href="https://github.com/gamasenninn/tealus-mcp/issues/1">tealus-mcp #1</a> / <a href="https://github.com/gamasenninn/tealus/issues/219">tealus #219</a>）</li>
+<li>voice transcription inline 形式が 3 段階に: id-only / default（formatted_text のみ）/ +raw_text</li>
+<li>本体側 consumer は <code>formatted_text || raw_text</code> fallback chain で動作、整形空 voice で raw garbage を LLM に渡さない improvement として動作</li>
 </ul>
 <h2 id="v021-installonboarding-patch202651">v0.2.1 — install/onboarding patch（2026年5月1日）<a class="headerlink" href="#v021-installonboarding-patch202651" title="Permanent link">&para;</a></h2>
 <p>v0.2.0 公開直後の他マシン install テストで発見された 2 件のバグを即日 fix した patch release。</p>

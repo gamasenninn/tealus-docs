@@ -1989,6 +1989,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#voice-transcription-verbosityv070" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voice transcription verbosity（v0.7.0）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2551,6 +2562,17 @@
     <span class="md-ellipsis">
       
         GET /api/bot/messages/:id/media — メッセージのメディア取得
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voice-transcription-verbosityv070" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voice transcription verbosity（v0.7.0）
       
     </span>
   </a>
@@ -3205,7 +3227,7 @@
 <tr>
 <td>GET</td>
 <td><code>/api/bot/messages</code></td>
-<td>メッセージ取得（ポーリング）</td>
+<td>メッセージ取得（ポーリング、v0.7.0〜 <code>include_transcription</code> / <code>include_raw</code> query parameter で文字起こし verbosity 制御）</td>
 </tr>
 <tr>
 <td>GET</td>
@@ -3381,6 +3403,60 @@
 <div class="admonition info">
 <p class="admonition-title">MCP ツールとの関係</p>
 <p><a href="../mcp/">Tealus MCP</a> の <code>get_message_media</code> ツールは、本 HTTP API のラッパーです。AI エージェントから利用する場合は MCP ツール経由が標準で、MCP 側で画像/音声の種別判定と MCP 仕様の返却形式（image content / 文字起こしテキスト）への変換が行われます。HTTP API として直接呼ぶことも可能です。</p>
+</div>
+<h3 id="voice-transcription-verbosityv070">voice transcription verbosity（v0.7.0）<a class="headerlink" href="#voice-transcription-verbosityv070" title="Permanent link">&para;</a></h3>
+<p><code>GET /api/bot/messages</code> および MCP <code>get_messages</code> で、voice メッセージの文字起こしを 3 段階で出し分けできます（<a href="https://github.com/gamasenninn/tealus/issues/219">tealus #219</a> / <a href="https://github.com/gamasenninn/tealus-mcp/issues/1">tealus-mcp #1</a>）。</p>
+<p><strong>Query parameters</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>型</th>
+<th>デフォルト</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>include_transcription</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td><code>false</code> で transcription 全体を <code>{id, status, version}</code> のみに圧縮（id-only、軽量モード）</td>
+</tr>
+<tr>
+<td><code>include_raw</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td><code>true</code> で <code>raw_text</code>（生 wav 文字起こし）も含める</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response の <code>transcription</code> field 3 段階</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>組合せ</th>
+<th><code>transcription</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>include_transcription=false</code></td>
+<td><code>{id, status, version}</code></td>
+</tr>
+<tr>
+<td><strong>default</strong>（<code>include_raw=false</code>）</td>
+<td><code>{id, status, version, formatted_text}</code></td>
+</tr>
+<tr>
+<td><code>include_raw=true</code></td>
+<td><code>{id, status, version, formatted_text, raw_text}</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">後方互換と improvement</p>
+<p>旧形式 <code>{raw_text, formatted_text, status}</code> から default 振る舞いが変わります（<code>raw_text</code> 省略 + <code>id</code> / <code>version</code> 追加）。本体側 consumer（<code>agent-server/src/media/messageAdapter.js</code> 等）は <code>formatted_text || raw_text</code> fallback chain で機能するため実害なし、むしろ整形空 voice で raw garbage を LLM に渡さなくなる improvement として動きます。</p>
 </div>
 <h2 id="_20">ヘルスチェック<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
 <table>
