@@ -120,6 +120,9 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 |---|---|---|---|
 | PUT | `/api/messages/:id/transcription` | 文字起こしテキスト編集 | 必要 |
 | GET | `/api/messages/:id/transcription/history` | 編集履歴取得 | 必要 |
+| POST | `/api/messages/:id/transcription/retranscribe` | 文字起こし retry（v0.2.2〜、新 version 作成） | 必要 |
+
+`retranscribe` は文字起こしが失敗した（`status=error`）場合や結果が不適切な場合の手動 retry 用です（[#216](https://github.com/gamasenninn/tealus/issues/216)）。新しい version の文字起こしを生成し、Socket.IO 経由でリアルタイムに UI が更新されます。既存の編集機構（PUT route）と同じく version 履歴は保持されます。
 
 ## 既読
 

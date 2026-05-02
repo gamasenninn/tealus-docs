@@ -1,24 +1,26 @@
 # AIエージェント設定
 
-Tealus には3層構造のAIエージェントシステムが統合されています。
+Tealus の agent-server は「**メッセージ → 適切な処理者へ dispatch**」する hub として機能し、3 種類の処理者に振り分けます（v0.2.2〜「AI 班 dispatcher」化、[#213](https://github.com/gamasenninn/tealus/issues/213)）。
 
 ## アーキテクチャ概要
 
 ```
 ユーザーメッセージ
     ↓
-  Router（GPT-4o-mini）
-  ├── 日常タスク → Light Agent（GPT-4o-mini）
-  └── 複雑タスク → Deep Agent（Claude Code）
+  Router（gpt-5.4-mini）
+  ├── 日常タスク      → Light Agent（gpt-5.4-mini）
+  ├── 複雑タスク      → Deep Agent（Claude Code CLI）
+  └── @cc-{project}  → Claude Code session（cc-tealus、v0.2.2〜）
     ↓
   Bot API → Tealus チャット
 ```
 
-| エージェント | モデル | 用途 |
+| エージェント | 実装基盤 | 用途 |
 |---|---|---|
-| Router | GPT-4o-mini | メッセージの意図分類・複雑度判定 |
-| Light Agent | GPT-4o-mini | 日常Q&A・翻訳・簡単なタスク |
-| Deep Agent | Claude Code（MAXプラン） | コード生成・複雑な分析・長いワークフロー |
+| Router | gpt-5.4-mini | メッセージの意図分類・複雑度判定 |
+| Light Agent | gpt-5.4-mini | 日常Q&A・翻訳・簡単なタスク |
+| Deep Agent | Claude Code CLI（MAXプラン） | コード生成・複雑な分析・長いワークフロー |
+| Claude Code session（cc-tealus） | 採用者の手元 Claude Code | `@cc-{project}` mention でリアルタイム連携（[#213](https://github.com/gamasenninn/tealus/issues/213)、詳細は [Agent ガイド](../dev/agents.md)） |
 
 ## Agent Server
 
