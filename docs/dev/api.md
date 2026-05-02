@@ -199,7 +199,7 @@ Bot用ユーザーとしてJWT認証が必要です。
 | POST | `/api/bot/voice` | 音声送信（自動文字起こし、default `gpt-4o-transcribe`） |
 | POST | `/api/bot/media` | メディア送信 |
 | POST | `/api/bot/status` | ステータス送信 |
-| GET | `/api/bot/messages` | メッセージ取得（ポーリング） |
+| GET | `/api/bot/messages` | メッセージ取得（ポーリング、v0.7.0〜 `include_transcription` / `include_raw` query parameter で文字起こし verbosity 制御） |
 | GET | `/api/bot/messages/:id/media` | メッセージのメディア取得（画像/音声、AI 直接視認用、v0.1.x） |
 | GET | `/api/bot/search` | メッセージ全文検索（v0.1.x） |
 | GET | `/api/bot/unread` | 未読メッセージ取得 |
@@ -309,6 +309,28 @@ curl "http://localhost:3000/api/bot/messages/$MSG_ID/media" \
 
 !!! info "MCP ツールとの関係"
     [Tealus MCP](mcp.md) の `get_message_media` ツールは、本 HTTP API のラッパーです。AI エージェントから利用する場合は MCP ツール経由が標準で、MCP 側で画像/音声の種別判定と MCP 仕様の返却形式（image content / 文字起こしテキスト）への変換が行われます。HTTP API として直接呼ぶことも可能です。
+
+### voice transcription verbosity（v0.7.0）
+
+`GET /api/bot/messages` および MCP `get_messages` で、voice メッセージの文字起こしを 3 段階で出し分けできます（[tealus #219](https://github.com/gamasenninn/tealus/issues/219) / [tealus-mcp #1](https://github.com/gamasenninn/tealus-mcp/issues/1)）。
+
+**Query parameters**:
+
+| パラメータ | 型 | デフォルト | 説明 |
+|---|---|---|---|
+| `include_transcription` | bool | `true` | `false` で transcription 全体を `{id, status, version}` のみに圧縮（id-only、軽量モード） |
+| `include_raw` | bool | `false` | `true` で `raw_text`（生 wav 文字起こし）も含める |
+
+**Response の `transcription` field 3 段階**:
+
+| 組合せ | `transcription` |
+|---|---|
+| `include_transcription=false` | `{id, status, version}` |
+| **default**（`include_raw=false`） | `{id, status, version, formatted_text}` |
+| `include_raw=true` | `{id, status, version, formatted_text, raw_text}` |
+
+!!! note "後方互換と improvement"
+    旧形式 `{raw_text, formatted_text, status}` から default 振る舞いが変わります（`raw_text` 省略 + `id` / `version` 追加）。本体側 consumer（`agent-server/src/media/messageAdapter.js` 等）は `formatted_text || raw_text` fallback chain で機能するため実害なし、むしろ整形空 voice で raw garbage を LLM に渡さなくなる improvement として動きます。
 
 ## ヘルスチェック
 

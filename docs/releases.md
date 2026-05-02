@@ -9,6 +9,14 @@
 - **gpt-4o-transcribe default 採用**（[#217](https://github.com/gamasenninn/tealus/issues/217)）: whisper-1 の hallucination（TV 字幕由来 noise 等）が大幅軽減。env `WHISPER_MODEL` で旧モデル戻し可
 - **tealus-cli credentials defensive**（[#212](https://github.com/gamasenninn/tealus/issues/212)）: watch モードで JWT 再取得時の再発バグに対する起動時 freeze 防御層
 
+## tealus-mcp v0.7.0 — get_messages verbosity 制御（2026年5月2日）
+
+tealus 本体は `[Unreleased]` だが、tealus-mcp 側は初の versioned release。
+
+- `get_messages` ツールに `include_transcription` / `include_raw` の 2 flag 追加（[tealus-mcp #1](https://github.com/gamasenninn/tealus-mcp/issues/1) / [tealus #219](https://github.com/gamasenninn/tealus/issues/219)）
+- voice transcription inline 形式が 3 段階に: id-only / default（formatted_text のみ）/ +raw_text
+- 本体側 consumer は `formatted_text || raw_text` fallback chain で動作、整形空 voice で raw garbage を LLM に渡さない improvement として動作
+
 ## v0.2.1 — install/onboarding patch（2026年5月1日）
 
 v0.2.0 公開直後の他マシン install テストで発見された 2 件のバグを即日 fix した patch release。
