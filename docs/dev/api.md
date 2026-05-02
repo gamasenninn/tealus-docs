@@ -193,7 +193,7 @@ Bot用ユーザーとしてJWT認証が必要です。
 |---|---|---|
 | POST | `/api/bot/push` | テキストメッセージ送信 |
 | POST | `/api/bot/push-image` | 画像送信 |
-| POST | `/api/bot/voice` | 音声送信（Whisper自動文字起こし） |
+| POST | `/api/bot/voice` | 音声送信（自動文字起こし、default `gpt-4o-transcribe`） |
 | POST | `/api/bot/media` | メディア送信 |
 | POST | `/api/bot/status` | ステータス送信 |
 | GET | `/api/bot/messages` | メッセージ取得（ポーリング） |

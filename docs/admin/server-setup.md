@@ -2,9 +2,12 @@
 
 ## 前提条件
 
-- Node.js 18+
+- **Node.js 20 以上必須**（v0.2.1〜、`engine-strict=true` でハードフェイル）
 - Docker / Docker Compose
 - Git
+
+!!! warning "Node 18 では install 失敗"
+    v0.2.1（[#210](https://github.com/gamasenninn/tealus/issues/210)）から全 6 package.json に `engines.node: ">=20.0.0"` + ルート `.npmrc` に `engine-strict=true` が設定されています。**Node 18 環境では `npm install` 自体が `EBADENGINE` で hard fail** します（原因: Node 18 に `File` global が未実装で `undici` v6+ が crash）。Node 20 系のインストールには nvm（推奨）または NodeSource パッケージを利用してください。
 
 ## 1. リポジトリのクローン
 
@@ -172,8 +175,8 @@ curl -X POST http://localhost:3000/api/auth/register \
   -d '{"login_id":"admin","display_name":"管理者","password":"password123"}'
 ```
 
-!!! warning
-    初回に登録したユーザーを管理者にするには、データベースで直接 `role` を `admin` に設定する必要があります。
+!!! info "最初のユーザーは自動的に admin"
+    v0.2.1（[#211](https://github.com/gamasenninn/tealus/issues/211)）から、**最初の非 Bot ユーザー**（`is_bot=false` の COUNT が 0 の状態で `register` を呼んだユーザー）が自動的に `admin` role で作成されます。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターンです。2 人目以降は通常 `user` role で作成され、必要に応じて管理者ダッシュボードから昇格させてください。
 
 以降はログイン画面からユーザーIDとパスワードでログインできます。
 
@@ -204,6 +207,7 @@ npm run dev
 | `AIVIS_MODEL_UUID` | デフォルト音声モデル UUID（デフォルト: 凛音エル） |
 | `TTS_ENABLED` | TTS 読み上げの有効/無効（`"false"` で無効化、デフォルト: 有効） |
 | `TTS_MAX_LENGTH` | 読み上げ最大文字数（デフォルト: 500） |
+| `WHISPER_MODEL` | 音声文字起こしモデル（v0.2.2〜、default `gpt-4o-transcribe`、旧モデルに戻すなら `whisper-1`、半額の選択肢として `gpt-4o-mini-transcribe`） |
 
 !!! note "旧環境変数名との互換"
     旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` も内部で fallback されますが、新規セットアップでは `TEALUS_USER_ID` / `TEALUS_PASSWORD` の使用を推奨します（v0.1.x、Tealus MCP との表記統一）。

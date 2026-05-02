@@ -100,7 +100,7 @@
 
 | テーブル | 役割 |
 |---|---|
-| `voice_transcriptions` | 音声文字起こし（Whisper連携） |
+| `voice_transcriptions` | 音声文字起こし（OpenAI 文字起こし API 連携、default `gpt-4o-transcribe`、env `WHISPER_MODEL` で切替可） |
 | `tags` / `message_tags` | タグ・TODO機能 |
 | `stamp_packs` / `stamps` | AIスタンプ |
 | `webhooks` | Webhook設定 |

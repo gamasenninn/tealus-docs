@@ -114,9 +114,9 @@ Agent Server (port 4000)
 | `generate_image` | DALL-E による画像生成（設定でON/OFF可） |
 | `code_interpreter` | Python コード実行（設定でON/OFF可） |
 
-#### Tealus MCP ツール（Light/Deep 共通、v0.1.x）
+#### Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）
 
-[Tealus MCP](mcp.md) を介して Light Agent も以下 9 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
+[Tealus MCP](mcp.md) を介して Light Agent も以下 11 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
 
 | ツール名 | 説明 |
 |---|---|
@@ -126,6 +126,8 @@ Agent Server (port 4000)
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先） |
 | `search_messages` | キーワード/タグ/期間/発言者で全文検索 |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 |
+| `create_room` | グループルームを作成（v0.2.0、bot は admin として自動追加） |
+| `delete_room` | グループルームをアーカイブ（v0.2.0、creator + solo member のみ） |
 | `list_rooms` | 参加中ルーム一覧 |
 | `join_room` | ルーム参加 |
 | `mark_read` | メッセージ既読化 |

@@ -54,7 +54,7 @@ curl -X POST http://localhost:3000/api/bot/voice \
   -F "voice=@/path/to/audio.wav"
 ```
 
-音声送信時は自動的にWhisper文字起こし + AI整形が実行されます。
+音声送信時は自動的に文字起こし（v0.2.2〜default `gpt-4o-transcribe`、env `WHISPER_MODEL` で切替可）+ AI整形が実行されます。
 
 ### メッセージ取得（ポーリング）
 
