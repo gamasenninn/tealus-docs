@@ -2815,12 +2815,21 @@
 <td>—</td>
 <td><code>production</code> 設定時にCORSを制限</td>
 </tr>
+<tr>
+<td><code>VITE_ALLOWED_HOSTS</code></td>
+<td>—</td>
+<td>外部ホスト経由で vite dev server に access する場合に許可ホストを指定（v0.2.0〜の注意点）</td>
+</tr>
 </tbody>
 </table>
 <h3 id="db">DBマイグレーション<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate
 </code></pre></div>
 <p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（001〜021）が順に実行されます。<code>021</code> で全文検索高速化用の <code>pg_trgm</code> 拡張と GIN index が追加されます（v0.1.x、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a>）。</p>
+<div class="admonition warning">
+<p class="admonition-title">managed PostgreSQL 環境での注意</p>
+<p>migration 021 は <code>pg_trgm</code> extension を要求します。<code>CREATE EXTENSION</code> 権限がない managed PostgreSQL 環境（一部のクラウド DB）では migration が失敗するため、運用前に extension 作成権限を確認してください。</p>
+</div>
 <h3 id="_5">サーバー起動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w">    </span><span class="c1"># 開発モード（nodemon で自動再起動）</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>npm<span class="w"> </span>start<span class="w">      </span><span class="c1"># 本番モード</span>
