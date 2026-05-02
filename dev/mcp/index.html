@@ -1797,10 +1797,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9" class="md-nav__link">
+  <a href="#11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        利用可能なツール（9個）
+        利用可能なツール（11個）
       
     </span>
   </a>
@@ -1896,6 +1896,17 @@
     <span class="md-ellipsis">
       
         TODO 完了マーク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-v020" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI による能動的なルーム編成（v0.2.0）
       
     </span>
   </a>
@@ -2121,10 +2132,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9" class="md-nav__link">
+  <a href="#11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        利用可能なツール（9個）
+        利用可能なツール（11個）
       
     </span>
   </a>
@@ -2227,6 +2238,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#ai-v020" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI による能動的なルーム編成（v0.2.0）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#light-agent-deep-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2277,13 +2299,13 @@
 <p>Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラップし、Claude Code や他の MCP クライアントから Tealus をネイティブツールとして操作できます。</p>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（v0.4.0）</li>
+<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（v0.6.0）</li>
 <li>配布: npm publish ではなく <strong>GitHub から直接 install</strong>（<code>npx -y github:gamasenninn/tealus-mcp</code>）</li>
 <li>通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)</li>
 <li>技術スタック: <code>@modelcontextprotocol/sdk</code>、<code>zod</code>、<code>node-fetch</code>、<code>form-data</code></li>
 <li>Tealus 本体（<code>gamasenninn/tealus</code>）には移転 stub のみ残存</li>
 </ul>
-<h2 id="9">利用可能なツール（9個）<a class="headerlink" href="#9" title="Permanent link">&para;</a></h2>
+<h2 id="11">利用可能なツール（11個）<a class="headerlink" href="#11" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2322,6 +2344,16 @@
 <td><code>mark_tag_done</code></td>
 <td>タグの完了状態（is_done）を更新</td>
 <td><code>message_id</code> / <code>tag_name</code> / <code>is_done</code></td>
+</tr>
+<tr>
+<td><code>create_room</code></td>
+<td>グループルームを作成（v0.2.0、bot は admin として自動追加）</td>
+<td><code>name</code> / <code>member_ids?</code> / <code>type?</code>（現状 <code>'group'</code> のみ）</td>
+</tr>
+<tr>
+<td><code>delete_room</code></td>
+<td>グループルームをアーカイブ（v0.2.0、creator + solo member のみ、破壊的・CASCADE 削除）</td>
+<td><code>room_id</code></td>
 </tr>
 <tr>
 <td><code>list_rooms</code></td>
@@ -2409,6 +2441,9 @@
 </code></pre></div>
 <h3 id="todo">TODO 完了マーク<a class="headerlink" href="#todo" title="Permanent link">&para;</a></h3>
 <p><code>mark_tag_done</code> でメッセージのタグの完了状態を切り替えられます。voice メモから自動抽出した TODO を AI が完了化する、といったワークフローに活用できます。</p>
+<h3 id="ai-v020">AI による能動的なルーム編成（v0.2.0）<a class="headerlink" href="#ai-v020" title="Permanent link">&para;</a></h3>
+<p><code>create_room</code> / <code>delete_room</code> により、AI が<strong>読む</strong>だけでなく<strong>ルーム編成にも参加</strong>できるようになりました（v0.2.0、<a href="https://github.com/gamasenninn/tealus/issues/200">#200</a> / <a href="https://github.com/gamasenninn/tealus/issues/207">#207</a>）。「議題ごとに新しいルームを作って整理して」「役目を終えたルームをアーカイブして」のような依頼を AI が直接実行できます。</p>
+<p><code>delete_room</code> には安全制約として <strong>creator のみ + solo member のみ + グループルーム限定</strong> が課されています（破壊的操作のため）。</p>
 <h3 id="light-agent-deep-agent">Light agent / Deep agent 共有<a class="headerlink" href="#light-agent-deep-agent" title="Permanent link">&para;</a></h3>
 <p>Tealus の AI エージェント（Light/Deep の 2 層）はいずれもこの同一 MCP を共有します。Claude Code のような外部クライアントと、Tealus 内蔵 AI が<strong>同じツールセット</strong>で動作するため、開発者と本番 AI の体験が乖離しません。</p>
 <h2 id="issuetealus">関連 issue（tealus 本体）<a class="headerlink" href="#issuetealus" title="Permanent link">&para;</a></h2>
@@ -2417,6 +2452,8 @@
 <li><a href="https://github.com/gamasenninn/tealus/issues/194">#194 search_messages MCP tool</a></li>
 <li><a href="https://github.com/gamasenninn/tealus/issues/197">#197 mark_tag_done MCP tool</a></li>
 <li><a href="https://github.com/gamasenninn/tealus/issues/199">#199 Light agent も Tealus MCP 統合</a></li>
+<li><a href="https://github.com/gamasenninn/tealus/issues/200">#200 create_room MCP tool</a></li>
+<li><a href="https://github.com/gamasenninn/tealus/issues/207">#207 delete_room MCP tool</a></li>
 </ul>
 
 

@@ -2178,8 +2178,8 @@
 </tr>
 <tr>
 <td>Tealus MCP</td>
-<td>共通 9 ツール（v0.1.x、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）</td>
-<td>共通 9 ツール</td>
+<td>共通 11 ツール（v0.2.0〜、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）</td>
+<td>共通 11 ツール</td>
 </tr>
 <tr>
 <td>タイムアウト</td>
@@ -2265,7 +2265,7 @@
 </table>
 <h2 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h2>
 <p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.js</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、環境変数 <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> の有無で自動切替されます。</p>
-<p>利用可能な 9 ツール（<a href="../mcp/">MCP Server</a> と同一）:</p>
+<p>利用可能な 11 ツール（<a href="../mcp/">MCP Server</a> と同一）:</p>
 <table>
 <thead>
 <tr>
@@ -2297,6 +2297,14 @@
 <tr>
 <td><code>mark_tag_done</code></td>
 <td>タグの完了状態（is_done）切替</td>
+</tr>
+<tr>
+<td><code>create_room</code></td>
+<td>グループルームを作成（v0.2.0、bot は admin として自動追加）</td>
+</tr>
+<tr>
+<td><code>delete_room</code></td>
+<td>グループルームをアーカイブ（v0.2.0、creator + solo member のみ）</td>
 </tr>
 <tr>
 <td><code>list_rooms</code></td>
@@ -2337,9 +2345,9 @@
 <h2 id="_5">関連<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../ai-architecture/">AI アーキテクチャ</a>: 全体構造、Router の判定ロジック、Webhook Dispatcher、コスト設計</li>
-<li><a href="../mcp/">MCP Server</a>: 9 ツールの詳細仕様と外部クライアントからの利用方法</li>
+<li><a href="../mcp/">MCP Server</a>: 11 ツールの詳細仕様と外部クライアントからの利用方法</li>
 <li><a href="../../admin/agent/">AIエージェント設定</a>: 運用者向けの設定手順</li>
-<li>関連 issue: <a href="https://github.com/gamasenninn/tealus/issues/185">#185</a> MCP umbrella、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a> search_messages、<a href="https://github.com/gamasenninn/tealus/issues/197">#197</a> mark_tag_done、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a> Light agent MCP 統合</li>
+<li>関連 issue: <a href="https://github.com/gamasenninn/tealus/issues/185">#185</a> MCP umbrella、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a> search_messages、<a href="https://github.com/gamasenninn/tealus/issues/197">#197</a> mark_tag_done、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a> Light agent MCP 統合、<a href="https://github.com/gamasenninn/tealus/issues/200">#200</a> create_room、<a href="https://github.com/gamasenninn/tealus/issues/207">#207</a> delete_room</li>
 </ul>
 
 

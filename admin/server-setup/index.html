@@ -2544,10 +2544,14 @@
 <h1 id="_1">サーバー構築<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="_2">前提条件<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Node.js 18+</li>
+<li><strong>Node.js 20 以上必須</strong>（v0.2.1〜、<code>engine-strict=true</code> でハードフェイル）</li>
 <li>Docker / Docker Compose</li>
 <li>Git</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Node 18 では install 失敗</p>
+<p>v0.2.1（<a href="https://github.com/gamasenninn/tealus/issues/210">#210</a>）から全 6 package.json に <code>engines.node: "&gt;=20.0.0"</code> + ルート <code>.npmrc</code> に <code>engine-strict=true</code> が設定されています。<strong>Node 18 環境では <code>npm install</code> 自体が <code>EBADENGINE</code> で hard fail</strong> します（原因: Node 18 に <code>File</code> global が未実装で <code>undici</code> v6+ が crash）。Node 20 系のインストールには nvm（推奨）または NodeSource パッケージを利用してください。</p>
+</div>
 <h2 id="1">1. リポジトリのクローン<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gamasenninn/tealus.git
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>tealus
@@ -2843,9 +2847,9 @@
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;login_id&quot;:&quot;admin&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
 </code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>初回に登録したユーザーを管理者にするには、データベースで直接 <code>role</code> を <code>admin</code> に設定する必要があります。</p>
+<div class="admonition info">
+<p class="admonition-title">最初のユーザーは自動的に admin</p>
+<p>v0.2.1（<a href="https://github.com/gamasenninn/tealus/issues/211">#211</a>）から、<strong>最初の非 Bot ユーザー</strong>（<code>is_bot=false</code> の COUNT が 0 の状態で <code>register</code> を呼んだユーザー）が自動的に <code>admin</code> role で作成されます。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターンです。2 人目以降は通常 <code>user</code> role で作成され、必要に応じて管理者ダッシュボードから昇格させてください。</p>
 </div>
 <p>以降はログイン画面からユーザーIDとパスワードでログインできます。</p>
 <h2 id="6-ai">6. AIエージェントサーバー（オプション）<a class="headerlink" href="#6-ai" title="Permanent link">&para;</a></h2>
@@ -2900,6 +2904,10 @@
 <tr>
 <td><code>TTS_MAX_LENGTH</code></td>
 <td>読み上げ最大文字数（デフォルト: 500）</td>
+</tr>
+<tr>
+<td><code>WHISPER_MODEL</code></td>
+<td>音声文字起こしモデル（v0.2.2〜、default <code>gpt-4o-transcribe</code>、旧モデルに戻すなら <code>whisper-1</code>、半額の選択肢として <code>gpt-4o-mini-transcribe</code>）</td>
 </tr>
 </tbody>
 </table>

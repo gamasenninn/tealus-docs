@@ -2480,7 +2480,7 @@
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">&quot;room_id=ルームUUID&quot;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">&quot;voice=@/path/to/audio.wav&quot;</span>
 </code></pre></div>
-<p>音声送信時は自動的にWhisper文字起こし + AI整形が実行されます。</p>
+<p>音声送信時は自動的に文字起こし（v0.2.2〜default <code>gpt-4o-transcribe</code>、env <code>WHISPER_MODEL</code> で切替可）+ AI整形が実行されます。</p>
 <h3 id="_5">メッセージ取得（ポーリング）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>Webhookが使えない環境では、ポーリングでメッセージを取得できます。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span><span class="s2">&quot;http://localhost:3000/api/bot/messages?room_id=UUID&amp;since=2026-04-23T00:00:00Z&quot;</span><span class="w"> </span><span class="se">\</span>
