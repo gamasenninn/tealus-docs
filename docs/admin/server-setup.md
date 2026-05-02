@@ -125,6 +125,7 @@ npx web-push generate-vapid-keys
 | `TTS_BROADCAST_MEDIASOUP` | `false` | TTS を mediasoup 経由で配信（legacy）。`true` で v0.1.0 以前の rtc-server 経由配信に切替（[#189](https://github.com/gamasenninn/tealus/issues/189)） |
 | `LOG_LEVEL` | debug（開発） / info（本番） | ログレベル |
 | `NODE_ENV` | — | `production` 設定時にCORSを制限 |
+| `VITE_ALLOWED_HOSTS` | — | 外部ホスト経由で vite dev server に access する場合に許可ホストを指定（v0.2.0〜の注意点） |
 
 ### DBマイグレーション
 
@@ -133,6 +134,9 @@ npm run migrate
 ```
 
 マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（001〜021）が順に実行されます。`021` で全文検索高速化用の `pg_trgm` 拡張と GIN index が追加されます（v0.1.x、[#194](https://github.com/gamasenninn/tealus/issues/194)）。
+
+!!! warning "managed PostgreSQL 環境での注意"
+    migration 021 は `pg_trgm` extension を要求します。`CREATE EXTENSION` 権限がない managed PostgreSQL 環境（一部のクラウド DB）では migration が失敗するため、運用前に extension 作成権限を確認してください。
 
 ### サーバー起動
 

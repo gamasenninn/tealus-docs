@@ -69,6 +69,9 @@ node tealus-cli.js send "グループ名" --watch /path/to/directory
 !!! info "ファイル書き込み完了検知"
     watchモードはファイルサイズが2回連続で同一になるまで待機してから送信します。書き込み途中のファイルが送信されることはありません。
 
+!!! note "v0.2.2〜の credentials 保護"
+    watch モードは長時間動作するため、JWT 期限切れ時に再認証が発生します。v0.2.2（[#212](https://github.com/gamasenninn/tealus/issues/212)）から起動時に `Object.freeze` で認証情報を固定 capture することで、runtime 中の credentials 漏洩から保護されています。動作上の変更はありません（再発性 bug への防御層追加）。
+
 ## VOX音声連携
 
 トランシーバーのVOX音声出力ディレクトリをwatchモードで監視することで、トランシーバーの音声を自動的にTealusに投稿できます。
