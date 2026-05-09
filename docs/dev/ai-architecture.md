@@ -191,6 +191,16 @@ claude -p - \
 | 出力分割 | 4000字単位でチャットに送信 |
 | プロセス終了 | SIGTERM（Windows: `taskkill /T /F`） |
 
+### ユーザーによる中断（`[Unreleased]`、[#250](https://github.com/gamasenninn/tealus/issues/250)）
+
+Deep Agent が暴走したり、想定以上の長時間実行になった場合に、ユーザーが**応答途中でキャンセル**できる機構が追加されました。
+
+- 進行中の Deep Agent には UI から **「中断」** ボタンが表示され、タップすると `claude` プロセスを終了して即座に応答を打ち切ります
+- Windows 環境では子プロセスツリー全体を確実に kill するため `taskkill /T /F` を使用（[#252](https://github.com/gamasenninn/tealus/issues/252) で修正された critical bug への対応）
+- 中断後の冗長な timeout / error メッセージは抑制されます（[#251](https://github.com/gamasenninn/tealus/issues/251)）
+
+長いリファクタリングや誤った方向に進み始めた応答を、ユーザー側で軽くやめさせられるため、Deep Agent の運用感が大きく改善します。
+
 ## Webhook Dispatcher
 
 Agent Server がメッセージを受け取り、エージェントに渡すまでの制御を担います。

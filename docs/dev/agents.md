@@ -180,7 +180,7 @@ v0.2.2 で agent-server が **採用者の手元 Claude Code session** にも di
 
 `@cc-{project}` が**メッセージ行頭にある場合のみ** match します。AI reply の本文中に過去 mention が含まれていても、先頭ではないため自然にスキップされます。`CC_SKIP_SENDER_IDS` env で特定 bot の skip 追加も可能です（defense in depth）。
 
-### `cc-aliases.json` — alias を設定ファイル化（`[Unreleased]`、[#263](https://github.com/gamasenninn/tealus/issues/263)）
+### `cc-aliases.json` — alias を設定ファイル化（`[Unreleased]`、[#263](https://github.com/gamasenninn/tealus/issues/263)） {#cc-aliases-json}
 
 `@cc-{project}` 以外に、より自然な mention 名（例: `@Claude`、`@AI`）からも同じ queue へ routing できるようにする alias 機構です。code 変更不要で alias を追加できます。
 

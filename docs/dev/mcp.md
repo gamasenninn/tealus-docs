@@ -80,6 +80,17 @@ Claude Code や他の MCP クライアントの設定ファイル（`mcp_config.
 !!! note "旧環境変数名との互換"
     旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` も内部で fallback されますが、新規セットアップでは `TEALUS_USER_ID` / `TEALUS_PASSWORD` の使用を推奨します。
 
+!!! warning "`TEALUS_` prefix なしの env 名は silent fail（`[Unreleased]`、[tealus #267](https://github.com/gamasenninn/tealus/issues/267)）"
+    tealus-mcp は **`TEALUS_` prefix 付きの env のみ** を読み込みます（multi-MCP 環境での衝突回避設計）。`API_URL` / `BOT_ID` / `BOT_PASS` のような prefix なし短縮名は無視され、`TEALUS_API_URL` は default の `http://localhost:3000` に fallback します。
+
+    | ❌ 誤り | ✅ 正しい |
+    |---|---|
+    | `API_URL=...` | `TEALUS_API_URL=...` |
+    | `BOT_ID=...` | `TEALUS_USER_ID=...`（旧 `TEALUS_BOT_ID` も互換） |
+    | `BOT_PASS=...` | `TEALUS_PASSWORD=...`（旧 `TEALUS_BOT_PASS` も互換） |
+
+    症状としては、認証が通らず接続エラーになる、または接続先がローカル開発環境にずれます。設定変更後は MCP クライアント（Claude Code 等）の **再起動** が必要です。
+
 ## 活用例
 
 ### AIエージェントからチャット投稿
