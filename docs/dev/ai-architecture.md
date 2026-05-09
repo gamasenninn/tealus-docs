@@ -116,15 +116,19 @@ Agent Server (port 4000)
 
 #### Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）
 
-[Tealus MCP](mcp.md) を介して Light Agent も以下 11 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
+[Tealus MCP](mcp.md) を介して Light Agent も以下 15 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
 
 | ツール名 | 説明 |
 |---|---|
 | `send_message` | テキストメッセージ送信 |
 | `send_image` | 画像送信（base64） |
+| `send_text_as_file` | 長文 text を file として投稿（v0.11.0） |
+| `generate_and_send_image` | DALL-E 3 で画像生成 → 投稿（v0.11.0、`OPENAI_API_KEY` 必須） |
 | `get_messages` | メッセージ履歴取得 |
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先） |
+| `read_document` | 添付 PDF / DOCX / XLSX を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback） |
 | `search_messages` | キーワード/タグ/期間/発言者で全文検索 |
+| `list_tags` | bot 全 room の tag 一覧を usage 順で返す（v0.10.0） |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 |
 | `create_room` | グループルームを作成（v0.2.0、bot は admin として自動追加） |
 | `delete_room` | グループルームをアーカイブ（v0.2.0、creator + solo member のみ） |

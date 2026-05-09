@@ -1,5 +1,45 @@
 # リリースノート
 
+## tealus-mcp v0.11.1 — parseError → vision fallback robustness（2026年5月8日）
+
+[tealus #262](https://github.com/gamasenninn/tealus/issues/262)（E2E harness）の Phase 2 で発覚した `read_document` の隠れた制限を修正。
+
+- **`pdf-parse` の parseError も vision fallback の trigger 条件に追加**: 旧実装は `Invalid PDF structure` / `bad XRef entry` 等を投げると即 return していたため、image-only PDF / 構造異常 PDF は **vision fallback path が skip** されていた
+- 修正後: parseError も「library で本文取れなかった」signal として扱い、Gemini Vision にエスカレーション。fallback 成功時は `extraction_method=vision_gemini` を返す
+- 既存の「nonWsLength < 50」path と equivalent な扱い、Light v1 / v2 両方で恩恵
+- README に env 名の trap 警告 callout を追加（採用者保護、`API_URL`（prefix なし）vs `TEALUS_API_URL` の silent fail 予防、[tealus #267](https://github.com/gamasenninn/tealus/issues/267)）
+
+## tealus-mcp v0.11.0 — Light v2 機能 parity（2026年5月8日）
+
+Light v2（codex SDK backed、[tealus #258](https://github.com/gamasenninn/tealus/issues/258)）から Light v1 と同じ機能セットを使えるようにする MCP 拡張（[tealus #260](https://github.com/gamasenninn/tealus/issues/260)）。
+
+- **`send_text_as_file` ツール追加**: 長文 text を file（.txt / .md 等）として Tealus に投稿、chat 流れを切らず添付。`mime_type` 省略時は `.md` → `text/markdown`、それ以外 → `text/plain` auto detect
+- **`generate_and_send_image` ツール追加**: DALL-E 3 で画像生成 → 投稿の composite action。`size` は `1024x1024` / `1792x1024` / `1024x1792` から選択、`OPENAI_API_KEY` env 必須（subscription mode の Light v2 でも image gen は API 経由、別 cost）
+- 背景: Light v1 の custom tool（`share_text_as_file` / `generate_image`）を MCP 化、Light v2（codex SDK）からも同じ動作で使えるようにする
+- ツール 13 → **15**
+
+## tealus-mcp v0.10.0 — list_tags discovery primitive（2026年5月5日）
+
+LLM が tag 名を「正解を当てるゲーム」せず discovery できる primitive を追加（[tealus #254](https://github.com/gamasenninn/tealus/issues/254)）。
+
+- **`list_tags` ツール追加**: bot メンバー全 room の tag 一覧を usage 順で返す。response: `{ tags: [{ name, is_todo, total_usage }] }`、`limit?`（default 30、max 100）
+- **新 server endpoint**: `GET /api/bot/tags?limit=N`（bot JWT scope）
+- 背景: 5/5 セッションで LLM が「tealus関係」tag を 5 候補 guess して全 miss、user に教えてもらい解決した実例。LLM 向け MCP は CRUD だけでなく **list / discovery primitive** が必須という教訓
+- 既存の `search_messages` / `mark_tag_done` と組み合わせて「discover → search → mark done」の閉じた flow が完成
+- ツール 12 → 13
+
+## tealus-mcp v0.8.0 / v0.9.0 — read_document foundation + Gemini Vision fallback（2026年5月4日）
+
+採用者の **PDF / DOCX / XLSX 解析** を MCP 化、scan PDF にも自動対応する 2 段階リリース（[tealus #232](https://github.com/gamasenninn/tealus/issues/232) / [tealus #233](https://github.com/gamasenninn/tealus/issues/233)）。
+
+- **v0.8.0**: `read_document` ツール追加。対応 format は PDF（pdf-parse）/ DOCX（mammoth）/ XLSX（exceljs）。size 上限 binary 10MB / text 1M chars、scan PDF / image-only PDF は heuristic 検出（text < 50 chars）で warning 付き返却
+- **v0.8.1**: scan PDF 検出 heuristic 強化（生 length → 空白除外 non-whitespace char 数で判定、改行のみ返ってくる scan PDF も catch）
+- **v0.9.0**: **Gemini Vision API fallback 統合**。`extractPdf` で text 取れない時のみ vision にエスカレーション、`GOOGLE_API_KEY` env 設定で自動有効化、`extraction_method` field で透過性確保。default model `gemini-2.5-flash-lite`、`DOCUMENT_VISION_MAX_PAGES=20` で cost protection
+- ツール 11 → 12（v0.8.0 で `read_document` 追加）
+
+!!! warning "Gemini Vision fallback の Privacy 注意"
+    Gemini free tier は Google が製品改善に利用、human reviewer が input/output を処理する可能性あり。社内文書を扱う場合は **paid billing account に紐付けた key 推奨**、または `DOCUMENT_VISION_PROVIDER=none` で disable。
+
 ## v0.2.2 — cc-tealus + transcription quality jump（2026年5月2日）
 
 業務メモから 5/2 朝に届いた現場声 3 件を 6 時間サイクルで Issue 起票 → 実装 → close まで完遂したリリース。Tealus の self-improving 哲学を release process そのもので体現。
