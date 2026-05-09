@@ -202,11 +202,13 @@ Bot用ユーザーとしてJWT認証が必要です。
 | GET | `/api/bot/messages` | メッセージ取得（ポーリング、v0.7.0〜 `include_transcription` / `include_raw` query parameter で文字起こし verbosity 制御） |
 | GET | `/api/bot/messages/:id/media` | メッセージのメディア取得（画像/音声、AI 直接視認用、v0.1.x） |
 | GET | `/api/bot/search` | メッセージ全文検索（v0.1.x） |
+| GET | `/api/bot/tags` | タグ一覧を usage 順で返す discovery primitive（`[Unreleased]`、[tealus #254](https://github.com/gamasenninn/tealus/issues/254)） |
 | GET | `/api/bot/unread` | 未読メッセージ取得 |
 | POST | `/api/bot/mark-read` | 既読マーク |
 | PATCH | `/api/bot/messages/:id/tags/:tag_name/done` | タグの完了状態（is_done）を更新（v0.1.x） |
 | GET | `/api/bot/rooms` | ルーム一覧 |
 | POST | `/api/bot/rooms` | ルーム作成 |
+| POST | `/api/bot/push-file` | text 内容を file（.txt / .md 等）として投稿（`[Unreleased]`、tealus-mcp v0.11.0 の `send_text_as_file` の wrapper） |
 
 ## Bot API 拡張（v0.1.x）
 
@@ -288,6 +290,39 @@ curl -X PATCH "http://localhost:3000/api/bot/messages/$MSG_ID/tags/TODO/done" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"is_done": true}'
+```
+
+### `GET /api/bot/tags` — タグ一覧 discovery（`[Unreleased]`、[#254](https://github.com/gamasenninn/tealus/issues/254)）
+
+bot がメンバーである全 room の tag 一覧を usage 順（利用回数 desc）で返します。LLM が `search_messages` で `tag_names` filter を組み立てる時、tag 名を知らないと「正解の名前を当てるゲーム」を強いられる構造的問題への対応として、**list / discovery primitive** を提供する endpoint です。
+
+**Query parameters**:
+
+| パラメータ | 型 | デフォルト | 説明 |
+|---|---|---|---|
+| `limit` | number | 30 | 取得件数（max 100） |
+
+**Response**:
+
+```json
+{
+  "tags": [
+    { "name": "TODO", "is_todo": true, "total_usage": 42 },
+    { "name": "important", "is_todo": false, "total_usage": 18 }
+  ]
+}
+```
+
+- `is_todo`: `mark_tag_done` で完了状態を切り替えできる TODO 系 tag かどうか
+- `total_usage`: bot が参加している全 room を横断した利用回数
+
+`search_messages` の `tag_names` 指定の前段で discovery として呼び出すと、`is_done` filter と組み合わせて TODO 進捗管理 flow が成立します（tealus-mcp 側では `list_tags` ツールとしてラップされています）。
+
+**curl サンプル**:
+
+```bash
+curl "http://localhost:3000/api/bot/tags?limit=20" \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 ### `GET /api/bot/messages/:id/media` — メッセージのメディア取得

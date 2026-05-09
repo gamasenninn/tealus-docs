@@ -58,7 +58,8 @@ Agent Server (port 4000)
 | パターン | 振り分け先 |
 |---|---|
 | `/deep` コマンド | Deep Agent |
-| `/light` コマンド | Light Agent |
+| `/light` コマンド | Light Agent v1（OpenAI Agents SDK） |
+| `/light2` コマンド（`[Unreleased]`、[#258](https://github.com/gamasenninn/tealus/issues/258)） | Light Agent v2（codex SDK backed） |
 | 挨拶パターン（こんにちは、ありがとう等） | Router が直接応答 |
 | Deep キーワード（コード、リファクタ、デバッグ、実装、PR等） | Deep Agent |
 | 該当なし | 第2段へ |
@@ -75,9 +76,9 @@ Agent Server (port 4000)
 !!! tip "なぜ2段階か"
     ルールベース判定はコストゼロ・遅延ゼロで処理できます。LLM を呼ぶのは判定が難しいケースだけに限定することで、Router のコストを月 $3〜$13 に抑えています。
 
-## Light Agent — OpenAI Agents SDK
+## Light Agent — OpenAI Agents SDK（v1）/ codex SDK（v2）
 
-日常的な質問やタスクを高速に処理する軽量エージェントです。
+日常的な質問やタスクを高速に処理する軽量エージェントです。Light は v0.1.0 以来の **OpenAI Agents SDK 実装（v1）** に加え、`[Unreleased]`（Phase 4）で **codex SDK backed の v2**（`/light2` prefix、[#258](https://github.com/gamasenninn/tealus/issues/258)）が並列追加されました。本セクションは主に Light v1 の構造を扱います。Light v1 と v2 の選び分けは [Agent ガイド](agents.md#light-v1-v2) を参照してください。
 
 ### セッション管理（TealusSession）
 
