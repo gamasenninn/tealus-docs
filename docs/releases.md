@@ -1,44 +1,72 @@
 # リリースノート
 
-## tealus-mcp v0.11.1 — parseError → vision fallback robustness（2026年5月8日）
+## tealus-mcp v0.12.0 - v0.12.3 — HTTP transport（cross-machine 構成）（2026年5月8-10日）
 
-[tealus #262](https://github.com/gamasenninn/tealus/issues/262)（E2E harness）の Phase 2 で発覚した `read_document` の隠れた制限を修正。
+cross-machine MCP 構成への構造解として、**StreamableHTTPServerTransport** を導入（[tealus #264](https://github.com/gamasenninn/tealus/issues/264) Phase 1 alpha）。stdio path は default 維持で既存採用者環境は無変更、HTTP transport は **opt-in の選択肢**。
 
-- **`pdf-parse` の parseError も vision fallback の trigger 条件に追加**: 旧実装は `Invalid PDF structure` / `bad XRef entry` 等を投げると即 return していたため、image-only PDF / 構造異常 PDF は **vision fallback path が skip** されていた
-- 修正後: parseError も「library で本文取れなかった」signal として扱い、Gemini Vision にエスカレーション。fallback 成功時は `extraction_method=vision_gemini` を返す
-- 既存の「nonWsLength < 50」path と equivalent な扱い、Light v1 / v2 両方で恩恵
-- README に env 名の trap 警告 callout を追加（採用者保護、`API_URL`（prefix なし）vs `TEALUS_API_URL` の silent fail 予防、[tealus #267](https://github.com/gamasenninn/tealus/issues/267)）
+| version | 内容 |
+|---|---|
+| **v0.12.0**（5/8） | StreamableHTTPServerTransport 導入、初版 |
+| **v0.12.1**（5/10） | dotenv で `.env` 読み込み追加（host mode 運用の友好度向上） |
+| **v0.12.2**（5/10） | `/mcp/health` endpoint 追加（proxy 経由 reachability check） |
+| **v0.12.3**（5/10） | **stateful session 管理**（proper MCP client = Claude Code 対応の構造 fix、`tools/list` failure を解消） |
 
-## tealus-mcp v0.11.0 — Light v2 機能 parity（2026年5月8日）
+tealus 本体側で `/mcp` proxy 追加（[tealus commit `b3fb3f7`](https://github.com/gamasenninn/tealus/commit/b3fb3f7) + pathRewrite fix [`6181ff0`](https://github.com/gamasenninn/tealus/commit/6181ff0)）、採用者向け walkthrough は本体 `setup-cc-tealus-bridge.md` ステップ 5A。
 
-Light v2（codex SDK backed、[tealus #258](https://github.com/gamasenninn/tealus/issues/258)）から Light v1 と同じ機能セットを使えるようにする MCP 拡張（[tealus #260](https://github.com/gamasenninn/tealus/issues/260)）。
+!!! info "公開 docs 側の HTTP transport 反映は別 issue で進行中"
+    `dev/mcp.md` の HTTP transport section、`guide/integration/claude-code.md`（stdio default / HTTP optional の選び分け）、構成図などは本 release entry とは別の issue（Issue #12 候補）で反映予定。
 
-- **`send_text_as_file` ツール追加**: 長文 text を file（.txt / .md 等）として Tealus に投稿、chat 流れを切らず添付。`mime_type` 省略時は `.md` → `text/markdown`、それ以外 → `text/plain` auto detect
-- **`generate_and_send_image` ツール追加**: DALL-E 3 で画像生成 → 投稿の composite action。`size` は `1024x1024` / `1792x1024` / `1024x1792` から選択、`OPENAI_API_KEY` env 必須（subscription mode の Light v2 でも image gen は API 経由、別 cost）
-- 背景: Light v1 の custom tool（`share_text_as_file` / `generate_image`）を MCP 化、Light v2（codex SDK）からも同じ動作で使えるようにする
-- ツール 13 → **15**
+## v0.2.3 — Phase 4 maturation（2026年5月10日）
 
-## tealus-mcp v0.10.0 — list_tags discovery primitive（2026年5月5日）
+5/3-5/10 の **Phase 4 中盤** で累積した 79 commits / 41 issues を整理した release。**Light v2（codex SDK backed）の並列追加**、tealus-mcp v0.10.0/v0.11.x 連携、PC 2-pane layout、Deep cancel path、E2E verification harness + LLM-as-judge layer、`cc-aliases.json` による `@Claude` alias 化、複数の採用者保護 trap 解消などを含む。
 
-LLM が tag 名を「正解を当てるゲーム」せず discovery できる primitive を追加（[tealus #254](https://github.com/gamasenninn/tealus/issues/254)）。
+### Light v2 / agents
 
-- **`list_tags` ツール追加**: bot メンバー全 room の tag 一覧を usage 順で返す。response: `{ tags: [{ name, is_todo, total_usage }] }`、`limit?`（default 30、max 100）
-- **新 server endpoint**: `GET /api/bot/tags?limit=N`（bot JWT scope）
-- 背景: 5/5 セッションで LLM が「tealus関係」tag を 5 候補 guess して全 miss、user に教えてもらい解決した実例。LLM 向け MCP は CRUD だけでなく **list / discovery primitive** が必須という教訓
-- 既存の `search_messages` / `mark_tag_done` と組み合わせて「discover → search → mark done」の閉じた flow が完成
-- ツール 12 → 13
+- **Light v2（codex SDK backed）並列追加**（[#258](https://github.com/gamasenninn/tealus/issues/258)）: `/light2` prefix、`@openai/codex-sdk` v0.128.0 経由、resident service ではなく **ephemeral subprocess via SDK** モデル。Light v1（OpenAI Agents SDK）は無変更で並列共存
+- **`LIGHTV2_AUTH=subscription` 認証 path**（[#258](https://github.com/gamasenninn/tealus/issues/258) follow-up）: ChatGPT Plus / Pro 持ちの採用者は API cost 0 + Fast Mode access の選択肢。default は `api_key` で既存採用者を保護
+- **router の mention 後 prefix 検出 fix**（[#258](https://github.com/gamasenninn/tealus/issues/258) follow-up）: group room の `@bot /light2 ...` が v1 落ちしていた bug、`stripLeadingMentions` helper 追加
+- **agent_message multi-emit 修正**（[#260](https://github.com/gamasenninn/tealus/issues/260) follow-up）: codex SDK は 1 turn で `agent_message` を複数回 emit、最後の空文字列で前 text を上書きしていた bug。「最後の非空 agent_message を採用」に修正
+- **tealus-mcp child process への env 伝播 fix**（[#260](https://github.com/gamasenninn/tealus/issues/260) follow-up）: codex SDK の `mcp_servers` config は `...process.env` 不継承、明示 env 指定で `OPENAI_API_KEY` / `GOOGLE_API_KEY` 等を child に渡す。副次的に [#261](https://github.com/gamasenninn/tealus/issues/261) vision fallback skip も解決
 
-## tealus-mcp v0.8.0 / v0.9.0 — read_document foundation + Gemini Vision fallback（2026年5月4日）
+性能比較（実機 5/7 verify、gpt-4o-mini 単価）: 単純会話 v1/v2 2.07x cost / cross-room TODO 分類 v1/v2 3.78x cost、ただし cross-room 完結率は v2 が明確に勝る。推奨運用は **単純会話 / 単 room → v1、cross-room → v2、ChatGPT Plus 持ち → v2 (subscription path)**。
 
-採用者の **PDF / DOCX / XLSX 解析** を MCP 化、scan PDF にも自動対応する 2 段階リリース（[tealus #232](https://github.com/gamasenninn/tealus/issues/232) / [tealus #233](https://github.com/gamasenninn/tealus/issues/233)）。
+### MCP エコシステム拡張（ツール 11 → 15）
 
-- **v0.8.0**: `read_document` ツール追加。対応 format は PDF（pdf-parse）/ DOCX（mammoth）/ XLSX（exceljs）。size 上限 binary 10MB / text 1M chars、scan PDF / image-only PDF は heuristic 検出（text < 50 chars）で warning 付き返却
-- **v0.8.1**: scan PDF 検出 heuristic 強化（生 length → 空白除外 non-whitespace char 数で判定、改行のみ返ってくる scan PDF も catch）
-- **v0.9.0**: **Gemini Vision API fallback 統合**。`extractPdf` で text 取れない時のみ vision にエスカレーション、`GOOGLE_API_KEY` env 設定で自動有効化、`extraction_method` field で透過性確保。default model `gemini-2.5-flash-lite`、`DOCUMENT_VISION_MAX_PAGES=20` で cost protection
-- ツール 11 → 12（v0.8.0 で `read_document` 追加）
+- **tealus-mcp v0.10.0**（5/5、[#254](https://github.com/gamasenninn/tealus/issues/254)）: `list_tags` ツール追加（bot 全 room の tag 一覧を usage 順で返す discovery primitive）、新 server endpoint `GET /api/bot/tags`。LLM 向け MCP は CRUD だけでなく **list / discovery primitive** が必須という教訓
+- **tealus-mcp v0.11.0**（5/8、[#260](https://github.com/gamasenninn/tealus/issues/260)）: `send_text_as_file` + `generate_and_send_image` ツール追加（Light v2 機能 parity）。長文 text を file 添付 / DALL-E 3 経由の画像生成 + 投稿の composite action
+- **tealus-mcp v0.11.1**（5/8、[#262](https://github.com/gamasenninn/tealus/issues/262) Phase 2 で surface）: `read_document` の `pdf-parse` parseError も Gemini Vision fallback の trigger 条件に追加（image-only PDF / 構造異常 PDF への robustness 向上）、README に env 名 trap 警告 callout（[#267](https://github.com/gamasenninn/tealus/issues/267)）
+- v0.8.0 / v0.9.0 の `read_document` foundation（PDF / DOCX / XLSX 解析 + Gemini Vision fallback）も v0.2.3 期に統合
 
 !!! warning "Gemini Vision fallback の Privacy 注意"
     Gemini free tier は Google が製品改善に利用、human reviewer が input/output を処理する可能性あり。社内文書を扱う場合は **paid billing account に紐付けた key 推奨**、または `DOCUMENT_VISION_PROVIDER=none` で disable。
+
+### E2E verification harness + cc-aliases
+
+- **E2E harness Phase 1**（[#262](https://github.com/gamasenninn/tealus/issues/262)）: `agent-server/tools/e2e/` に 6 scenarios、**3 layer judgment**（決定論層 / 観察層 / 人 review 層）。test bot user + test room で本番 DB 隔離、実機 path を全通す
+- **LLM-as-judge layer（Phase 2.b）**（[#262](https://github.com/gamasenninn/tealus/issues/262)）: bot 応答を LLM（default `gpt-4o-mini`）に採点させる **観察層**（warn-only）。決定論層では捉えられない semantic correctness を可視化、score < min_score → warn (fail にはせず LLM 採点 variance 許容)
+- **`cc-aliases.json`**（[#263](https://github.com/gamasenninn/tealus/issues/263)）: `@Claude` 等の自然な mention 名を Claude Code session に routing する設定ファイル化、code 変更不要で alias 追加可能
+
+### 採用者保護（trap 連鎖解消）
+
+- **rtc-server bundle.js auto-build**（[#234](https://github.com/gamasenninn/tealus/issues/234)）: `postinstall` で esbuild、起動時 sanity check で不在時 loud warn
+- **test pollution 防止**（[#235](https://github.com/gamasenninn/tealus/issues/235)）: production code に `AGENT_CONFIG_DIR` / `AGENT_MCP_CONFIG_PATH` env override 追加、test 内で tmpDir に隔離。[#231](https://github.com/gamasenninn/tealus/issues/231) F1+F2 の表現を「admin UI 上書き耐性」→「test pollution 耐性」に訂正
+- **`/system` redirect bug fix**（[#247](https://github.com/gamasenninn/tealus/issues/247)）: `app.get('/system/*', ...)` wildcard が `/system` 単独に match せず SPA fallback していた長期残留 bug
+- **Router `max_completion_tokens`**（[#256](https://github.com/gamasenninn/tealus/issues/256)）: OpenAI 新 model で `max_tokens` が reject される問題
+- **Vite dev server proxy 拡張**（[#257](https://github.com/gamasenninn/tealus/issues/257)）: `/agent-api` `/rtc` 漏れで dev mode の TTS / cancel / RTC が動かない trap、4 番目の採用者第 1 号 dogfood で発見
+- **Portal iframe 通知 UX**（[#259](https://github.com/gamasenninn/tealus/issues/259)）: X-Frame-Options で iframe が空表示になる「ダンマリ」現象、常時表示の「↗ 新タブで開く」escape link + load timeout overlay
+- **tealus-mcp env naming trap 警告**（[#267](https://github.com/gamasenninn/tealus/issues/267)）: `API_URL`（prefix なし）vs `TEALUS_API_URL` の silent fail 予防、README に ❌/✅ 比較 callout 追加
+- **`setup-ai-agent.md` に Light v2 反映**（[#268](https://github.com/gamasenninn/tealus/issues/268)）: 採用者第 2 号 onboarding 直結、ステップ 9 で Light v2 / LIGHTV2_AUTH subscription path / 新 MCP tools 案内（本体 repo docs）
+- **STT model 比較検証 Phase 1**（[#269](https://github.com/gamasenninn/tealus/issues/269)）: トランシーバー用途で `gpt-4o-mini-transcribe` + 辞書 prompt が業務無線音声で有望と判明、`WHISPER_MODEL` 用途別 guidance を `.env.example` に反映（コード改修 Phase 2 は v0.2.3 後で別途）
+
+### UI / UX 完成度
+
+- **`share_text_as_file` tool**（[#244](https://github.com/gamasenninn/tealus/issues/244)）: OCR / 整形 text を DL 可能 file として届ける agent custom tool。後に tealus-mcp v0.11.0 で `send_text_as_file` として MCP 化
+- **hallucinated link 抑制**（[#245](https://github.com/gamasenninn/tealus/issues/245)）: gpt-5.4-mini が `sandbox:/mnt/data/...` を捏造する training bias、prompt-level で 2 layer 防御（tool description + `default_system_prompt.md` の禁止 URL section）
+- **file 添付の DL filename を原本名に**（[#246](https://github.com/gamasenninn/tealus/issues/246)）: 旧 `<a target="_blank">` で cryptic basename になっていた問題を `<a download={file_name}>` で UX 完結。「ダウンロードは第一版要素」（user 観点）
+- **文字起こし編集 modal の音声再生スライダー**（[#248](https://github.com/gamasenninn/tealus/issues/248)）: 原音を聴きながら文字起こしを修正できる、長尺の voice で効果的
+- **Deep agent cancel**（[#250](https://github.com/gamasenninn/tealus/issues/250)-[#252](https://github.com/gamasenninn/tealus/issues/252)）: ユーザーが応答途中で中断できる UI button + Windows での `taskkill /T /F` + PowerShell sweep（[#252](https://github.com/gamasenninn/tealus/issues/252) で発覚した orphan kill の critical bug fix）+ redundant timeout message 抑制
+- **mention picker に `cc-proj` 仮想 user**（[#253](https://github.com/gamasenninn/tealus/issues/253)）: `@cc-{project}` 形式を picker で選択可能に
+- **Reply 引用 tap → 元 message scroll**（[#255](https://github.com/gamasenninn/tealus/issues/255)）: リプライ吹き出し内の引用部分タップで元のメッセージへスクロール + ハイライト
 
 ## v0.2.2 — cc-tealus + transcription quality jump（2026年5月2日）
 
