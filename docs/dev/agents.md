@@ -215,9 +215,24 @@ v0.2.2 で agent-server が **採用者の手元 Claude Code session** にも di
 !!! info "採用者 UX の改善"
     `@Claude` のような自然な mention 名は、Tealus を **OSS として配布する際の onboarding 体験**を大きく改善します。`@cc-tealus` という技術的な mention を覚えなくても、AI として馴染みのある名前で呼べるためです。複数 project / 複数 alias の運用も、ファイル編集 + 再起動だけで完結します。
 
+### HTTP transport — cross-machine 構成（Phase 1 alpha、[#264](https://github.com/gamasenninn/tealus/issues/264)） {#http-transport}
+
+tealus-mcp は v0.12.0+ で **HTTP transport** を opt-in 提供しています。**Tealus 本体と Claude Code が別マシン** に居る cross-machine 構成（社内サーバ + 採用者ローカル PC 等）で、stdio が成立しない場合の構造解です。
+
+| 経路 | Phase 1 alpha での扱い |
+|---|---|
+| **tools 呼び出し**（Claude Code → Tealus、Outbound） | HTTP 単独で動作（JWT auth、`/mcp` proxy 経由） |
+| **mention 通知 wake-up**（Tealus → Claude Code、Inbound） | **stdio + file beacon 経路に依存**、HTTP では未サポート |
+
+cross-machine 構成では **HTTP + cc-tealus stdio bridge 併用** が当面の現実解です。Phase 2 で SSE event broker（server-push wake-up）が乗ると HTTP 単独で完結する予定です。
+
+- 詳細: [MCP Server > HTTP transport](mcp.md#http-transport)
+- 採用者向け概念紹介: [Claude Code 連携](../guide/integration/claude-code.md)
+
 ### Phase B 展望
 
-- **multi-session lock**（[#214](https://github.com/gamasenninn/tealus/issues/214)）: 別 PC で同 project を動かす場合の排他制御。現状は共有ストレージ（NAS / SMB）で `~/.tealus/cc-queue/` を mount する運用が想定されています
+- **multi-session lock**（[#214](https://github.com/gamasenninn/tealus/issues/214)）: 別 PC で同 project を動かす場合の排他制御。現状は共有ストレージ（NAS / SMB / Syncthing）で `~/.tealus/cc-queue/` を mount する運用が想定されています
+- **SSE event broker（HTTP transport Phase 2）**: server-push wake-up で HTTP 単独 cross-machine 構成を完結させる構造（[#264](https://github.com/gamasenninn/tealus/issues/264) Phase 2 候補）
 - 他 dispatch 先の追加候補は本体 roadmap で議論中
 
 ## システムプロンプトのフロー

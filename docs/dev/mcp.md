@@ -91,6 +91,57 @@ Claude Code や他の MCP クライアントの設定ファイル（`mcp_config.
 
     症状としては、認証が通らず接続エラーになる、または接続先がローカル開発環境にずれます。設定変更後は MCP クライアント（Claude Code 等）の **再起動** が必要です。
 
+## HTTP transport（cross-machine 構成、v0.12.0+） {#http-transport}
+
+tealus-mcp は **stdio**（default）と **HTTP**（opt-in）の 2 transport を提供します（[tealus #264](https://github.com/gamasenninn/tealus/issues/264) Phase 1 alpha）。stdio path は **既存採用者環境を無変更で動かす** ために default 維持、HTTP は **cross-machine 構成**（Tealus 本体と MCP クライアントが別マシン）で必要な選択肢です。
+
+### 構成図
+
+```
+[Claude Code (マシン A)]              [Tealus サーバ (マシン B)]
+  ~/.claude.json                          port 3000 (Tealus 本体)
+  mcpServers:                             ┌──────────────────┐
+    tealus:                               │ /mcp proxy       │
+      url: https://<host>/mcp             │   ↓              │
+      headers:                            │ port 3200        │
+        Authorization: Bearer <JWT> ────► │ tealus-mcp HTTP  │
+                                          └──────────────────┘
+```
+
+### v0.12.x の進化
+
+| version | 内容 |
+|---|---|
+| **v0.12.0**（5/8） | `StreamableHTTPServerTransport` 導入、初版 |
+| **v0.12.1**（5/10） | dotenv で `.env` 読み込み（host mode 友好度向上） |
+| **v0.12.2**（5/10） | `/mcp/health` endpoint 追加（proxy 経由 reachability check） |
+| **v0.12.3**（5/10） | **stateful session 管理**（proper MCP client = Claude Code 対応の構造 fix、`tools/list` failure を解消） |
+
+### 認証と JWT_SECRET 共有
+
+HTTP transport は **JWT auth** を必須とし、`JWT_SECRET` を **Tealus 本体 server / agent-server / tealus-mcp の 3 process で完全同値** にする運用です。proxy は pass-through、検証は tealus-mcp 側で fail-fast 401。
+
+長寿命 JWT（例: 30 日 expiry）を発行して `~/.claude.json` の `headers.Authorization` に設定します。
+
+### Phase 1 alpha の scope と限界
+
+| 項目 | 状態 |
+|---|---|
+| **HTTP tools 呼び出し**（Outbound） | ✅ Phase 1 alpha で動作（Claude Code から `tealus-http · ✔ connected · 15 tools` を verify 済） |
+| **mention 通知 wake-up**（Inbound） | stdio + file beacon 経路に依存。HTTP では **未サポート**（Phase 2 で SSE event broker を予定） |
+| **stdio との関係** | stdio は v0.12.0+ でも維持、既存採用者環境は無変更。HTTP は `--transport=http` flag + JWT_SECRET 設定で opt-in |
+
+cross-machine 構成で **HTTP + cc-tealus stdio bridge 併用** が当面の現実解です。
+
+### 採用者向け詳細手順
+
+step-by-step は本体 repo の **[`setup-cc-tealus-bridge.md`](https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-tealus-bridge.md) のステップ 5A** に集約しています（HTTP server 起動 / `/mcp` proxy 動作確認 / JWT 発行 / `~/.claude.json` url-based entry 追加 / 動作確認）。
+
+採用者向けの選び分け概念紹介は [Claude Code 連携](../guide/integration/claude-code.md) を参照してください。
+
+!!! warning "HTTPS / TLS 終端"
+    tealus host を public expose する場合は **HTTPS / reverse proxy（nginx 等）で TLS 終端必須**。`<JWT>` は適切な expiry で運用、漏洩時は `JWT_SECRET` rotate で全 token 失効。
+
 ## 活用例
 
 ### AIエージェントからチャット投稿

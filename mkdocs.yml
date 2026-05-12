@@ -92,6 +92,8 @@ nav:
       - プロフィール: guide/settings/profile.md
       - 表示設定: guide/settings/display.md
       - 通知設定: guide/settings/notification.md
+    - 統合:
+      - Claude Code 連携: guide/integration/claude-code.md
   - ユースケース: usecases.md
   - 管理者ガイド:
     - はじめに: admin/index.md
@@ -109,6 +111,7 @@ nav:
     - Socket.IO イベント: dev/socketio.md
     - Bot API / Webhook: dev/bot-api.md
     - MCP Server: dev/mcp.md
+    - E2E ハーネス: dev/e2e-harness.md
     - CLI ツール: dev/cli.md
     - テスト: dev/testing.md
     - コントリビューション: dev/contributing.md
