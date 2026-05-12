@@ -117,7 +117,7 @@ Agent Server (port 4000)
 
 #### Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）
 
-[Tealus MCP](mcp.md) を介して Light Agent も以下 15 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
+[Tealus MCP](mcp.md) を介して Light Agent も以下 16 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
 
 | ツール名 | 説明 |
 |---|---|
@@ -128,6 +128,7 @@ Agent Server (port 4000)
 | `get_messages` | メッセージ履歴取得 |
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先） |
 | `read_document` | 添付 PDF / DOCX / XLSX を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback） |
+| `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、`get_message_media` の 10MB 上限を回避） |
 | `search_messages` | キーワード/タグ/期間/発言者で全文検索 |
 | `list_tags` | bot 全 room の tag 一覧を usage 順で返す（v0.10.0） |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 |

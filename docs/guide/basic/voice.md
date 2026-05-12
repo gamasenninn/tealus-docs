@@ -19,14 +19,22 @@
 - **▶ ボタン** をタップして再生
 - 再生バーで再生位置を変更可能
 
-## 文字起こし（gpt-4o-transcribe + AI整形）
+## 文字起こし（gpt-4o-mini-transcribe + AI整形）
 
 音声メッセージ送信後、以下の処理が自動的に実行されます。
 
-1. **音声文字起こし**: OpenAI の音声認識 API による文字起こし（v0.2.2〜default は `gpt-4o-transcribe`、環境変数 `WHISPER_MODEL` で `whisper-1` / `gpt-4o-mini-transcribe` への切替可、「処理中...」と表示）
+1. **音声文字起こし**: OpenAI の音声認識 API による文字起こし（v0.2.4〜 default は **`gpt-4o-mini-transcribe`** + 業務辞書 inject、環境変数 `WHISPER_MODEL` で `gpt-4o-transcribe` / `whisper-1` への切替可、「処理中...」と表示）
 2. **AI整形**: 文字起こし結果を読みやすい文章に整形（「AIが文章を整えています...」と表示）
 
 整形された文字起こしテキストは、音声の吹き出しの下に表示されます。
+
+!!! tip "業務辞書 inject による業界用語認識（v0.2.4〜、[#269](https://github.com/gamasenninn/tealus/issues/269) Phase 2）"
+    v0.2.4 で default model が `gpt-4o-transcribe` → **`gpt-4o-mini-transcribe`** に切替、業務辞書（vocabulary）を Whisper prompt に inject する **model-aware vocabulary inject** が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。
+
+    辞書 (vocabulary) は `transcription_guideline.json` で管理、運用者が業務固有用語を追加できます。AI 整形段階で別途辞書を投入する pipeline は従来通り共存します。
+
+!!! info "動画/音声 文字起こしツール（v0.2.4〜、[#271](https://github.com/gamasenninn/tealus/issues/271)）"
+    Tealus に投稿した **動画メッセージ** も AI エージェントから文字起こしできるようになりました（`transcribe_media` MCP tool、tealus-mcp v0.13.0）。10MB を超える動画も server-side で ffmpeg `-vn` audio 抽出 → Whisper API のフローで処理、抽出した text はキャッシュされて再呼び出し時は即時返却されます。詳細は [MCP Server](../../dev/mcp.md) の `transcribe_media` を参照。
 
 ## 文字起こしの編集
 

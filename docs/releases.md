@@ -1,5 +1,42 @@
 # リリースノート
 
+## v0.2.4 — voice transcription completion + 動画文字起こし（2026年5月12日）
+
+v0.2.3 cut（5/10）から **2 日 interval** での高速 release。Phase 4 中盤の「採用者第 2 号 不参加見込みの状況で逆説的に release pedagogy を磨く」観察期にあたる release で、**voice transcription pipeline を `gpt-4o-mini-transcribe` + 業務辞書 inject へ完成 phase**、**動画/音声文字起こし機能** （`transcribe_media` MCP tool）が追加されました。
+
+### 新機能
+
+- **動画/音声文字起こし** （[#271](https://github.com/gamasenninn/tealus/issues/271)、tealus-mcp v0.13.0）: `transcribe_media` MCP tool 新設。`get_message_media` の 10MB 上限で動画が取得できない問題を構造解、server-side で ffmpeg `-vn` audio 抽出 → Whisper API → AI 整形 → text 返却。`POST /api/bot/messages/:id/transcribe` 新 endpoint + thin MCP wrapper の組み合わせ。**MCP ツール 15 → 16**
+- **PWA App Badge**（テスター要望、commit `6319cdd`）: ホーム画面アイコンに **未読数バッジ** を表示。Service Worker 経由で OS native badge API を叩き、Tealus を開かなくても未読件数が一目で分かる
+
+### voice transcription 劇的改善（[#269](https://github.com/gamasenninn/tealus/issues/269) Phase 2 完走）
+
+- **default model 切替**: `WHISPER_MODEL` default を `gpt-4o-transcribe` → **`gpt-4o-mini-transcribe`** に。採用者が `.env` 未設定でも最初から vocab inject 効果 + cost ~半分
+- **model-aware vocabulary inject**: `WHISPER_VOCAB_INJECT_MODELS` env で対象 model を制御。`gpt-4o-mini-transcribe` / `gpt-4o-transcribe` に業務辞書を `用語: ...` 形式で whisper_context に注入、`whisper-1` は legacy bias 観測 history のため除外
+- **prompt 上限拡張**: whisper-1 の 200 char (224 token 由来) から、新世代 transcribe の **2,000 char** (16,000 token の 1/8、安全側) に model-aware で切替
+- **切り捨て方向 fix**: `slice(-N)` 末尾保持 → **`slice(0, N)` 先頭保持** に変更。whisper_context が先頭で安定、vocab list が末尾切れに
+- **辞書 / aliases / guidelines 強化**: vocabulary 37 → 38 entries、aliases 35 → 46、業務固有 transcribe pattern 2 種追加 (`の→-` / `JA→D+日付-n`)
+- **dogfood 6/6 完璧**: グレンコンテナ / マニアスプレッダ / ハーベスタ / みこがい / ガマ / たけのこ 等の業界用語 + 短人名すべて正確認識、control 文も clean、副作用なし
+
+### Fixed — dormant bug 5 件
+
+- **voice transcription 3 段 cascade fix** ([#269](https://github.com/gamasenninn/tealus/issues/269) Phase 2 follow-up): Whisper API が無音/ノイズ/短すぎる音声に対し **prompt を echo** する hallucination 検出 (`isWhisperPromptHallucination`)、短文 ( < 10 chars) を「意味なし」と判断する AI 整形 overreach の skip、「空文字」「(空)」「無音」等の **Japanese meta literal** を返す bug の post-process 防御 (`isMetaEmptyLiteral`)
+- **light `agent_tool_end` heuristic 撤廃** (commit `3555cd3`): false positive で user に誤印象を与える「error」表示の判定 heuristic を撤廃
+- **Deep agent timeout 構造 fix** ([#252](https://github.com/gamasenninn/tealus/issues/252) follow-up): timeout path に `deepRegistry.sweepByWorkspacePath()` 適用 (#252 cancel path と同型)、`setTimeout(..., 10000)` safety net で room queue dead lock 解消
+- **ffmpeg Windows shell redirect**: 動画 audio 抽出時の Windows shell stderr 捕捉 + mp3 codec 統一 (`#271` follow-up)
+- **agent-server tealus-mcp pin update**: pin を v0.11.1 → v0.13.0 に (Light v1 / v2 / Deep 全 agent path、`transcribe_media` を registered tools 一覧に追加)
+
+### v0.2.3 後の累積 (5/10-5/11 完了済 work も含む)
+
+v0.2.3 release tag cut (5/10) 後に completed していた以下も v0.2.4 に含まれます:
+
+- **HTTP transport Phase 1 alpha** ([#264](https://github.com/gamasenninn/tealus/issues/264)、tealus-mcp v0.12.0-v0.12.3 の 4 release): cross-machine 構成への構造解 (下記 v0.12 group entry 参照、公開 docs 反映は [Issue #12](https://github.com/gamasenninn/tealus-docs/issues/12))
+- **Light v1/v2 parity for `light_prompt.md`** ([#258](https://github.com/gamasenninn/tealus/issues/258) follow-up): Light v2 (`lightV2.js`) でも room workspace の `light_prompt.md` を読み込むよう parity 化、per-room MCP + per-room prompt の組み合わせで Light v2 でも query 精度を 1 室単位で tune 可能に
+- **本体 docs 反映** ([#268](https://github.com/gamasenninn/tealus/issues/268)): `setup-ai-agent.md` に Light v2 + LIGHTV2_AUTH subscription path、`setup-cc-tealus-bridge.md` に cross-machine + Syncthing walkthrough + HTTP transport ステップ 5A、`03_アーキテクチャ設計.md` に Phase 4 narrative + HTTP transport 構成図 + Light v1/v2/Deep tier 表 を反映
+
+!!! info "release pedagogy 観察"
+    v0.2.3 (5/10) → v0.2.4 (5/12) の **2 日 interval** は Phase 4 中盤の高速 release pattern (1 日 5-9 commit の濃度) と整合します。採用者第 2 号 不参加見込みの状況で **release tag 自体が「voice transcribe が完成 phase に到達」という採用者向け narrative anchor** として機能している release です。
+
 ## tealus-mcp v0.12.0 - v0.12.3 — HTTP transport（cross-machine 構成）（2026年5月8-10日）
 
 cross-machine MCP 構成への構造解として、**StreamableHTTPServerTransport** を導入（[tealus #264](https://github.com/gamasenninn/tealus/issues/264) Phase 1 alpha）。stdio path は default 維持で既存採用者環境は無変更、HTTP transport は **opt-in の選択肢**。

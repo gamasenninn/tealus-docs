@@ -100,7 +100,7 @@ tealus-mcp は **2 つの transport** を提供します（v0.12.0+、[tealus #2
 
 ## 関連
 
-- [MCP Server](../../dev/mcp.md): 15 ツールの詳細仕様 + HTTP transport セクション
+- [MCP Server](../../dev/mcp.md): 16 ツールの詳細仕様 + HTTP transport セクション
 - [Agent ガイド](../../dev/agents.md): cc-tealus bridge / Light v1 v2 / Deep / cc-aliases.json
 - [リリースノート](../../releases.md): tealus-mcp v0.12.x group（HTTP transport 4 release）
 - [tealus #264](https://github.com/gamasenninn/tealus/issues/264) HTTP transport Phase 1 alpha
