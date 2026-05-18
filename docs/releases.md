@@ -1,5 +1,57 @@
 # リリースノート
 
+## [Unreleased] — Phase 5 narrative emergence + 5/18 累積反映（2026年5月13-18日）
+
+v0.2.4 cut（5/12）以降の累積。**5/17-5/18 で Phase 5 narrative（organic ontology / organon / feedback loop architecture）が docs surface 化**、**第 6 feedback layer = upstream pipeline rectification** が正典化、**organon Day 2 trace v0.5 release** で **vocab inject 第 1 例 feedback loop closure** が成立した転換点 release window です。
+
+### Fixed
+
+- **tealus-mcp `read_document` が `text/markdown` / `text/plain` / `text/csv` 等の text/* mime を扱えない問題を fix**（[#281](https://github.com/gamasenninn/tealus/issues/281)、5/18、tealus-mcp **v0.13.1** release `aa66826` + agent-server pin bump `5e89f64`）
+    - 症状: Light agent (`/light`) が自作 markdown attachment を user 依頼で読み戻せず「この環境では本文の直接展開に失敗しました」と返す self-inflicted blind spot
+    - 5/18 朝の朝礼ルームで再現: 動画 → 議事録 .md attach → user「内容表示」→ agent 読めず → user が手作業で再貼り付け（毎朝発生の可能性ありで urgency 高）
+    - 真因: `documentReader.js` の `detectFormat` が PDF / DOCX / XLSX のみ判定、text/* は `unsupported` に倒れていた
+    - 対応: `detectFormat` に `text` branch 追加（ext `md`/`txt`/`csv` または mime `text/*`）、`extractText` の switch に `case 'text'` 追加（`buffer.toString('utf8')` で本文返却、既存 `MAX_TEXT_LENGTH` で truncation）
+    - tealus-mcp tests +4 / 全 95/95 pass、agent-server 3 pin（`lightV2.js` / `roomMcpManager.js` / `deep.js`）bump、production restart 後 朝礼で **1028 chars 本文 inline + TTS 8MB 読み上げ** で動作確認
+    - ~40 分で 朝の調査 → Issue 起票 → TDD Min fix → release → pin bump → production verified まで完走、毎朝発生する trap の urgency を 1 cycle 内に消化した dogfood pattern
+
+### Docs
+
+- **[Tealus とは](what-is-tealus.md) 新規 — disclosure 階段の入口 doc**（5/18、本体 commit `cc3ed58`、147 行 / 9 section）
+    - LP（controlled disclosure） / [organic ontology 概念設計](concepts/organic-ontology.md)（full disclosure） / organon（運用 manual）の間に位置する **入り口 doc** として、Tealus を初めて知る読者向けに「何か / なぜ / 何が起こるか / どう違うか / 本質 / 誰のためか / 始め方」を読者を選ばずに説明
+    - LP narrative Layer 2（組織記憶）+ Layer 3（organic ontology）の middle layer として audience を絞り、詳細は 概念設計 / organon に降りる導線を提供
+- **[organic ontology 概念設計](concepts/organic-ontology.md) を organon v0.5 / 第 6 feedback layer / vocab inject 第 1 例で update**（5/18、本体 commit `5825691`）
+    - Layer 3: hazard family 8 → **11 軸**（whisper-prior / auto-minutes / stale-roster の 3 新軸）、organization namespace（v0.5 追加、初例 `44 = フォーティーフォー = 運送業者`）、設計原則を v0.5 時点に更新（identity-first verify 観点 5→8 拡張）、cover rate 表（4.55% → 27.3% → **57%**）+ entries 表（8 → 12 → 20）を追加
+    - Layer 4: **Feedback loop architecture（6 段 layer system）** を新 subsection として追加、第 6 layer = upstream pipeline rectification = 外向き因果 loop の thesis 明記、organic ontology が形式論理自己言及 + Lakatos theory-ladenness を「内部 pragmatic 閉じ + 外部因果 loop 開き」の二段戦略で解消する整理を docs 物理化
+    - 第 1 例（5/18 vocab inject 38→42）を Layer 4 に annotate、organon ↔ 本体 班 **23 分 round-trip closure** を AI 班連絡 channel で実現した経緯を記録
+- **[アーキテクチャ](dev/architecture.md) Phase 4 中盤 構成図に SVG visual 化 追加**（5/18、本体 commit `208370a`）
+    - `docs/images/phase4-architecture.svg` + `.png` 新規、3 段構造（Cloudflare+Nginx / 4 backend services / data stores + ChildProcess spawn）で技術構成を visual 化
+    - 概念設計 doc で確立した SVG style（Noto Sans JP / Tealus brand teal / 結晶感配色）をアーキテクチャ doc にも適用、core 2（server / agent）を primary teal、extension 2（mcp / rtc）を light teal で差別化、外部 service（OpenAI / Aivis / Gemini / DALL-E / Anthropic）は bottom annotation で opt-in 明示
+    - 既存 ASCII art は文字列 grep 可能な detail reference として残す（2 軸併用）
+- **`docs/images/` 整備 — 3 SVG + 3 PNG が揃い、Phase 5 narrative visual 素材化の基盤完成**（5/18）
+    - SVG: `organic-ontology-concept.svg`（center-out radial、5/17）/ `organic-ontology-architecture.svg`（4 層 trapezoidal、5/17）/ `phase4-architecture.svg`（3 段技術構成、5/18）
+    - PNG（density 192 で 2x rasterize、slide deck / 外部共有 / SVG 描画不可な context 向け）
+    - 概念図（radial）+ 概念構造（4 層）+ 技術構成（3 段）の **3 軸が同 style 統一**
+
+### organic ontology / organon 連動
+
+- **organon v0.5 release — Day 2 trace + Q&A 7 batch 結果反映**（5/18、organon repo commit `7aef27c`）
+    - Q&A 7 件結果: **6/7 が誤変換 / 幻覚 / 過去職位、正解 1 件のみ** = identity 軸 family が systematic pipeline failure として class 化
+    - entries 12 → **20 active**（67% 増）: 新規 confirmed role 7（神山 / 三瓶 / 舟太 / 草野部長 / 是枝 / 香山 / 齋藤）+ 新規 confirmed organization 1（44 = フォーティーフォー = 運送業者）+ 既訂正 1（桶田博信 + aliases [桶田専務, 専務] + stale roster note）
+    - identity 軸 family 8 → **11 軸**: `#9 whisper-prior-misinference-to-vendor` / `#10 auto-minutes-stt-error` / `#11 stale-role-designation-in-roster`
+    - hallucination 軸（#5）で 2 例目 = 再現性確立（みこがい農場の高山）、**organon が育つほど LLM の adversarial hallucination も高度化** 新仮説
+    - schema v0.5: **organization kind 正式追加**（6 種類目 entry kind）、必須 field `vendor_class` + `not_in`
+    - cover rate: 4.55% → 27.3% → **57%**（倍以上）= Phase A 拡張優先度の物的根拠 + 実装到達点
+- **organon repo で第 6 feedback layer = upstream pipeline rectification を正典化**（5/18、organon repo `hazard-log/meta/upstream-pipeline-rectification-as-sixth-feedback-layer.md`）
+    - 第 5 layer（内部 pragmatic 閉じ、評価対話）の **延長 + 補完戦略** として位置付け、外向き因果 loop で organic ontology が形式論理の自己言及問題 + Lakatos theory-ladenness 問題を **「内部 pragmatic 閉じ + 外部因果 loop 開き」の二段戦略** で解消する thesis 確立
+    - organon CLAUDE.md の hazard 軸 table に **12 軸目** として正式 entry
+- **第 1 例 feedback loop closure: organon hazard 発見 → 本体 STT pipeline 反映 → Day 3 朝礼で量的訂正効果測定 protocol**（5/18、本体班 ↔ organon 班 **23 分 round-trip** で完結、AI 班連絡 channel）
+    - 本体 `server/config/transcription_guideline.json`（gitignored、per-deployment private）の vocabulary 38 → 42 entries 追加（神山 = 上山誤変換 / 三瓶 = アンプリ誤変換 / 舟太 = 中田くん誤変換 / 山崎整備長 = クラッチー 合成全体誤変換）、tealus 本体 server restart 後 effective
+    - Day 3 朝礼 STT 出力で 4 件揺らぎ件数を Day 1〜2 と比較、量的訂正効果を organon Day 3 trace で measurement → v0.6 schema 設計 + 本体 linter MVP 着手の dep 解除 trigger とする protocol を organon side で commit
+    - **distributed AI lane coordination**（organon ↔ 本体 班、user 介在ゼロ closure）が organic ontology の構造的必要条件であることが crystallize（[本体 Issue #279](https://github.com/gamasenninn/tealus/issues/279) (b) 一般理論の経験的根拠）
+
+!!! info "5/13-5/15 の累積項目について"
+    本 `[Unreleased]` section は **Issue #14 scope（5/18 累積反映）** に focus しています。5/13-5/15 にも複数の改善 commits（[#156](https://github.com/gamasenninn/tealus/issues/156) RoomSettings / [#273](https://github.com/gamasenninn/tealus/issues/273) remark-breaks / [#274](https://github.com/gamasenninn/tealus/issues/274) reply_to dispatch / iOS PWA 16px / [#168](https://github.com/gamasenninn/tealus/issues/168) 通知設定 / presentation docs 群）がありますが、本 release entry には未反映です。次回 drift audit cycle（次回 release tag cut タイミング想定）で集約予定。
+
 ## v0.2.4 — voice transcription completion + 動画文字起こし（2026年5月12日）
 
 v0.2.3 cut（5/10）から **2 日 interval** での高速 release。Phase 4 中盤の「採用者第 2 号 不参加見込みの状況で逆説的に release pedagogy を磨く」観察期にあたる release で、**voice transcription pipeline を `gpt-4o-mini-transcribe` + 業務辞書 inject へ完成 phase**、**動画/音声文字起こし機能** （`transcribe_media` MCP tool）が追加されました。

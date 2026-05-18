@@ -1,6 +1,17 @@
 # アーキテクチャ
 
-## システム全体構成
+## システム全体構成 — Phase 4 中盤
+
+![Phase 4 中盤 アーキテクチャ](../images/phase4-architecture.svg)
+
+Phase 4 中盤 (2026-05) の構成図。Light v1 / Light v2 (codex SDK backed) / Deep agent の 3 tier、cc-tealus bridge、HTTP transport (cross-machine 構成、`/mcp` proxy) を含む完成 phase。詳細な component 説明は本 page 以降を参照。
+
+!!! info "RTC Server はオプショナル"
+    RTC Server は **通話機能** および **TTS の legacy 配信経路**（`TTS_BROADCAST_MEDIASOUP=true`）で利用されます。default の TTS 配信は Socket.IO blob 経由のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。
+
+### 詳細 ASCII reference
+
+SVG 図の構造を grep 可能な形で残した詳細 reference (基本 service 構成、port、proxy 関係):
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -27,7 +38,7 @@
 │  │     :5432             │  │   在席管理)      │ │
 │  └───────────────────────┘  └─────────────────┘ │
 └──────────┬──────────────────────┬────────────────┘
-           │ Webhook              │ Proxy（通話 / TTS legacy）
+           │ Webhook              │ Proxy（通話 / TTS legacy / /mcp HTTP transport）
            ▼                      ▼
 ┌──────────────────┐   ┌──────────────────────────┐
 │  Agent Server    │   │  RTC Server (オプショナル) │
@@ -35,9 +46,6 @@
 │  :4000           │   │  :3100                     │
 └──────────────────┘   └──────────────────────────┘
 ```
-
-!!! info "RTC Server はオプショナル"
-    RTC Server は **通話機能** および **TTS の legacy 配信経路**（`TTS_BROADCAST_MEDIASOUP=true`）で利用されます。default の TTS 配信は Socket.IO blob 経由のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。
 
 ## コンポーネント構成
 

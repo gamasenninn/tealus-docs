@@ -69,6 +69,7 @@ copyright: Copyright &copy; 2026 Tealus Project
 
 nav:
   - Home: index.md
+  - Tealus とは: what-is-tealus.md
   - ユーザーガイド:
     - はじめに: guide/index.md
     - インストールと初期設定: guide/setup.md
@@ -115,5 +116,7 @@ nav:
     - CLI ツール: dev/cli.md
     - テスト: dev/testing.md
     - コントリビューション: dev/contributing.md
+  - 概念設計:
+    - オーガニックオントロジー構造: concepts/organic-ontology.md
   - FAQ: faq.md
   - リリースノート: releases.md
