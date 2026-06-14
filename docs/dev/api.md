@@ -187,6 +187,7 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | POST | `/api/admin/webhooks/:id/test` | Webhookテスト送信 |
 | GET | `/api/admin/agent-stats` | エージェント統計 |
 | GET | `/api/admin/agent-logs` | エージェント応答ログ |
+| POST | `/api/admin/transcription/reload-vocab` | **voice transcription の業務語彙辞書 cache を reset**（v0.3.0〜、[#287](https://github.com/gamasenninn/tealus/issues/287)、`transcription_guideline.json` 編集後の即時反映用、server restart 不要） |
 
 ## Bot API
 
@@ -201,6 +202,8 @@ Bot用ユーザーとしてJWT認証が必要です。
 | POST | `/api/bot/status` | ステータス送信 |
 | GET | `/api/bot/messages` | メッセージ取得（ポーリング、v0.7.0〜 `include_transcription` / `include_raw` query parameter で文字起こし verbosity 制御） |
 | GET | `/api/bot/messages/:id/media` | メッセージのメディア取得（画像/音声、AI 直接視認用、v0.1.x） |
+| GET | `/api/bot/messages/:id/edit-history` | **メッセージ編集履歴の取得**（v0.3.0〜、text edits + voice / video transcription versions を統合返却、[#208](https://github.com/gamasenninn/tealus/issues/208) follow-up、organon daily cycle の edit history 観察用） |
+| POST | `/api/bot/messages/:id/transcribe` | 動画/音声メッセージの文字起こし（v0.2.4〜、[#271](https://github.com/gamasenninn/tealus/issues/271)、tealus-mcp `transcribe_media` の base endpoint） |
 | GET | `/api/bot/search` | メッセージ全文検索（v0.1.x） |
 | GET | `/api/bot/tags` | タグ一覧を usage 順で返す discovery primitive（`[Unreleased]`、[tealus #254](https://github.com/gamasenninn/tealus/issues/254)） |
 | GET | `/api/bot/unread` | 未読メッセージ取得 |

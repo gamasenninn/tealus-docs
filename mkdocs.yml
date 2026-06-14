@@ -95,6 +95,7 @@ nav:
       - 通知設定: guide/settings/notification.md
     - 統合:
       - Claude Code 連携: guide/integration/claude-code.md
+      - LINE Bridge 連携: guide/integration/line-bridge.md
   - ユースケース: usecases.md
   - 管理者ガイド:
     - はじめに: admin/index.md

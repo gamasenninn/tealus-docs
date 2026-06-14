@@ -5,25 +5,30 @@ Tealus の agent-server は「**メッセージ → 適切な処理者へ dispat
 ## アーキテクチャ概要
 
 ```
-ユーザーメッセージ
-    ↓
-  Router（gpt-5.4-mini）
-  ├── 日常タスク（/light）        → Light Agent v1（OpenAI Agents SDK）
-  ├── cross-room 探索（/light2）  → Light Agent v2（codex SDK、[Unreleased]）
-  ├── 複雑タスク（/deep）         → Deep Agent（Claude Code CLI）
+[外部 channel]                    [Tealus 本体]
+  LINE Official Account ──webhook──┐
+                                   ▼
+                          ユーザーメッセージ
+                                   ↓
+                          Router（gpt-5.4-mini）
+  ├── 日常タスク（/light）        → Light Agent（default v2、AGENT_LIGHT_BACKEND env で v1/v2 切替、v0.3.0〜）
+  ├── cross-room 探索（/light2）  → Light Agent v2（codex SDK、明示指定）
+  ├── 複雑タスク（/deep）         → Deep Agent（DEEP_AGENT_PROVIDER で Claude Code CLI / Codex CLI 切替、v0.3.0〜）
   ├── @cc-{project}              → Claude Code session（cc-tealus、v0.2.2〜）
-  └── @{alias}（cc-aliases.json）→ Claude Code session（[Unreleased]、[#263](https://github.com/gamasenninn/tealus/issues/263)）
-    ↓
-  Bot API → Tealus チャット
+  └── @{alias}（cc-aliases.json）→ Claude Code session
+                                   ↓
+                          Bot API → Tealus チャット
 ```
 
 | エージェント | 実装基盤 | 用途 |
 |---|---|---|
 | Router | gpt-5.4-mini | メッセージの意図分類・複雑度判定 |
-| Light Agent v1 | OpenAI Agents SDK（gpt-5.4-mini） | 日常Q&A・翻訳・簡単なタスク |
-| Light Agent v2（`[Unreleased]`） | codex SDK | cross-room 探索・多角的な tool orchestration（`/light2` prefix、`LIGHTV2_AUTH=subscription` でサブスク認証） |
-| Deep Agent | Claude Code CLI（MAXプラン） | コード生成・複雑な分析・長いワークフロー |
-| Claude Code session（cc-tealus） | 採用者の手元 Claude Code | `@cc-{project}` mention でリアルタイム連携（[#213](https://github.com/gamasenninn/tealus/issues/213)、詳細は [Agent ガイド](../dev/agents.md)） |
+| Light Agent v1 | OpenAI Agents SDK（gpt-5.4-mini） | 日常Q&A・翻訳・簡単なタスク（`AGENT_LIGHT_BACKEND=v1` で選択） |
+| Light Agent v2（**default**、v0.3.0〜） | codex SDK | cross-room 探索・多角的な tool orchestration（`/light2` prefix、`LIGHTV2_AUTH=subscription` でサブスク認証） |
+| Deep Agent — Claude Code CLI（default） | Claude Code CLI（MAX プラン or API key） | コード生成・複雑な分析・長いワークフロー（既存運用） |
+| Deep Agent — Codex CLI（v0.3.0〜） | Codex CLI（ChatGPT サブスクリプション or API key） | Anthropic 環境外でも Deep mode 同等運用（`DEEP_AGENT_PROVIDER=codex`、[#276](https://github.com/gamasenninn/tealus/issues/276)） |
+| Claude Code session（cc-tealus） | 採用者の手元 Claude Code | `@cc-{project}` / `@{alias}` mention でリアルタイム連携（[#213](https://github.com/gamasenninn/tealus/issues/213)、詳細は [Agent ガイド](../dev/agents.md)） |
+| **LINE Bridge** (Inbound、v0.3.0〜) | webhook `POST /api/line` | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は [LINE Bridge 連携](../guide/integration/line-bridge.md)） |
 
 ## Agent Server
 

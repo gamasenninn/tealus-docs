@@ -32,8 +32,8 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 
 | 比較軸 | Light Agent | Deep Agent |
 |---|---|---|
-| 実装基盤 | OpenAI Agents SDK（v1）/ codex SDK（v2、`/light2`） | Claude Code CLI |
-| モデル | gpt-5.4-mini | Claude（MAX プラン or API 課金） |
+| 実装基盤 | OpenAI Agents SDK（v1）/ codex SDK（v2、`/light2`） | Claude Code CLI（default）/ Codex CLI（`DEEP_AGENT_PROVIDER=codex`、v0.3.0〜） |
+| モデル | gpt-5.4-mini | Claude（MAX プラン or API 課金）/ Codex（ChatGPT サブスクリプション or API 課金） |
 | 起動形態 | プロセス常駐（v1）/ ephemeral subprocess via SDK（v2） | コマンド毎に CLI を spawn |
 | コンテキスト | 直近 20 件（`LIGHT_CONTEXT_MESSAGES`） | `--resume tealus-room-{roomId}` で継続セッション |
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
@@ -82,13 +82,32 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 
 | コマンド | 振り分け先 |
 |---|---|
-| `/light` | Light（default は **v2**、v0.3.0〜。`AGENT_LIGHT_BACKEND` env で `v1` / `v2` 切替可） |
-| `/light2` | Light v2（codex SDK、明示指定） |
-| `/deep` | Deep agent（default は Claude Code、`DEEP_AGENT_PROVIDER=codex` で Codex Deep） |
-| なし（自動判定） | Router が `light` / `deep` を判定（`light` 時は `AGENT_LIGHT_BACKEND` に従う） |
+| `/light` | Light（**default backend は v2**、v0.3.0 以降。`AGENT_LIGHT_BACKEND` env で `v1` / `v2` 切替可） |
+| `/light2` | Light v2（codex SDK、backend 設定を無視して明示指定） |
+| `/deep` | Deep agent（default は Claude Code、`DEEP_AGENT_PROVIDER=codex` で **Codex Deep** に切替可） |
+| なし（自動判定） | Router が `light` / `deep` を判定（`light` 時は `AGENT_LIGHT_BACKEND` の default に従う） |
 
-!!! info "Light backend default flip — v1 → v2（v0.3.0、2026-06-09、[#292](https://github.com/gamasenninn/tealus/issues/292)）"
-    v0.3.0 後の commit (6/9) で **Light の default backend が v1 → v2 に切替** されました。サブスクリプション保有 user の voice 起点。既存運用で v1 を維持したい場合は `AGENT_LIGHT_BACKEND=v1` env を設定。`AGENT_LIGHT_BACKEND` env と `cc-aliases.json` 同様の **設定ファイル化** mechanism は Issue #15 Phase 2 で詳細を反映予定。
+### `AGENT_LIGHT_BACKEND` env — Light backend 設定ファイル化（v0.3.0〜、[#292](https://github.com/gamasenninn/tealus/issues/292)）
+
+v0.3.0 cut 後（6/8-6/9）に **Light backend が config 化** され、`/light` の default backend を env で切り替えられるようになりました。同時に **default が v1 → v2 に flip**（サブスクリプション保有 user の voice 起点、6/9 commit `d0e9645`）。
+
+| 値 | 動作 |
+|---|---|
+| `v2`（**default**、v0.3.0〜） | `/light` は Light v2（codex SDK）で動作。`/light2` と同等 |
+| `v1` | `/light` は Light v1（OpenAI Agents SDK）で動作（v0.2.4 以前の挙動） |
+
+設定例:
+
+```bash
+# .env
+AGENT_LIGHT_BACKEND=v2   # v0.3.0〜 default
+# AGENT_LIGHT_BACKEND=v1 # 旧 default に戻す
+```
+
+`/light2` (明示指定 prefix) は **常に Light v2** で動作するため、v1/v2 を併用したい場合に有用です。
+
+!!! info "default flip の背景"
+    v0.3.0 後の dogfood で **「サブスクリプション保有なら v2 が当たり前」** という採用者 voice が surface。v2 の cross-room 探索完結率の優位性と組み合わせ、新規 onboarding は v2 default が自然と判断され flip しました。v1 は **cost 効率重視** や **既存 prompt 投資の継続活用** のための opt-in 選択肢として残存します。
 
 ### `LIGHTV2_AUTH` env
 
@@ -111,6 +130,53 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 
 !!! info "なぜ並列実装か"
     [#220](https://github.com/gamasenninn/tealus/issues/220) で議論された「task decomposition が浅い」等の Light v1 の構造的弱点に対し、prompt 改善には天井があるという観察から、**codex CLI 内蔵の reasoning + tool orchestration が structurally 強い** ことが verify で実証されました。prompt 投資（v1 改善）と SDK 入替（v2）の trade-off の上で、両者を並列保持し用途で選び分ける形に着地しています。
+
+### Cross-room delegation primitive（v0.3.0〜、[#292](https://github.com/gamasenninn/tealus/issues/292) follow-up） {#cross-room-delegation}
+
+Light v2 が他 room の context を参照しながら応答を組み立てる際の **in-flight tracking + safety net** primitive が v0.3.0 後 (6/13) に追加されました。Light v2 の cross-room 探索完結率を支える内部 mechanism です。
+
+- 自 room への `send_message` と最終 auto-post の重複防止（`fd52b3c`）
+- delegation in-flight tracking で **複数 room を跨ぐ tool call の状態管理**
+- safety net で in-flight 滞留時の応答保護
+
+採用者からは通常意識不要、cross-room タスクで「応答が重複した」「room A で頼んだのに room B でも post された」等の症状があれば本 primitive の効果を確認してください。
+
+## Deep agent — provider 切替（v0.3.0〜、[#276](https://github.com/gamasenninn/tealus/issues/276)） {#deep-provider}
+
+v0.3.0 (2026-06-01) で Deep agent の **provider 切替** が導入されました。既存の Claude Code CLI に加え、**Codex CLI** で Deep agent を起動できるようになっています。
+
+### 起動方式
+
+| `DEEP_AGENT_PROVIDER` env | 実装 | 認証 |
+|---|---|---|
+| `claude`（**default**、v0.2.x まで唯一の選択肢） | `claude -p` spawn（既存 Deep agent、`agents/deep.js`） | Claude MAX プラン / API key |
+| `codex`（v0.3.0〜、新規） | `codex exec` spawn（新規 `agents/deepCodex.js`、Light v2 `#258` で確立した Codex SDK / subscription auth pattern を CLI mode で再現） | **ChatGPT サブスクリプション**（`~/.codex/auth.json`）/ API key |
+
+### Codex Deep の認証 path — `DEEP_CODEX_AUTH` env
+
+| 値 | 認証 path | 備考 |
+|---|---|---|
+| `subscription`（**default**） | `~/.codex/auth.json` 経由 ChatGPT subscription | **API cost 0**（Deep mode の 12-50k tokens × call 課金爆発 risk 回避） |
+| `api-key` | `OPENAI_API_KEY` 経由で API 課金 | サブスクリプション無しの環境向け |
+
+### Workspace + AGENTS.md
+
+Codex Deep agent は workspace 配下に `.codex_home/` を動的生成し、`auth.json` copy + `config.toml` を room-specific に組み立てます。Codex CLI は project root の `AGENTS.md`（上限 32 KB）を自動 read するため、`CLAUDE.md` の literal copy として `AGENTS.md` を repo root に配置しています。
+
+### 推奨運用
+
+| 用途 | provider |
+|---|---|
+| Anthropic 環境 / Claude MAX プラン保有 | **claude**（既存運用維持、コード生成 task で安定） |
+| OpenAI 環境 / ChatGPT サブスクリプション保有 | **codex**（API cost 0、subscription path の最大活用） |
+| dogfood 比較 | 両 provider 並列、room ごとに切り替え |
+
+!!! info "5/16 4 round → 0 round transition (Phase 4 organon paradigm operational realization)"
+    Codex Deep agent + organon polyseme inject pipeline ([後述](#system-prompt))の組み合わせで、5/16 dogfood の「4 round LLM 訂正 → 1 round 正解」transition が **両 agent path で再現**（N=2 evidence、5/31 dogfood）。Deep agent の **provider 選択肢拡大が organon-driven query precision を Anthropic 環境外にも拡げる** structural change です。
+
+### Codex 認証エラー検出 helper（v0.3.0 後、6/8 pre-α）
+
+Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)** を helper が検出し、明示的なエラーメッセージで採用者を guide します（detection only、自動 recovery はしません）。`.env` 設定誤りや `codex login` 期限切れ時の troubleshoot を高速化する design。
 
 ## Tealus MCP 統合（Light/Deep 共通）
 
@@ -240,7 +306,7 @@ cross-machine 構成では **HTTP + cc-tealus stdio bridge 併用** が当面の
 - **SSE event broker（HTTP transport Phase 2）**: server-push wake-up で HTTP 単独 cross-machine 構成を完結させる構造（[#264](https://github.com/gamasenninn/tealus/issues/264) Phase 2 候補）
 - 他 dispatch 先の追加候補は本体 roadmap で議論中
 
-## システムプロンプトのフロー
+## システムプロンプトのフロー {#system-prompt}
 
 両 Agent は共通のシステムプロンプト合成フローを使います。優先度の高い層が低い層を上書きします。
 
@@ -264,6 +330,22 @@ system_prompt.md                 (.gitignored、user カスタム枠)
 
 !!! info "Light v1 / Light v2 で `light_prompt.md` parity（v0.2.4〜、[#258](https://github.com/gamasenninn/tealus/issues/258) follow-up）"
     `{workspace}/light_prompt.md` は **Light v1 / Light v2 の両方で呼び出し毎に読み込まれ**ます（Light v1 と v2 の parity）。v0.2.4 以前の Light v2 は読み込んでおらず `/light2` 経由で system prompt が thin になる非対称がありましたが、v0.2.4 で fix されました。per-room MCP + per-room prompt の組み合わせで Light v2 でも query 精度を 1 室単位で tune 可能です。
+
+### organon polyseme.sql_mapping auto inject pipeline（v0.3.0〜、[#276](https://github.com/gamasenninn/tealus/issues/276) follow-up） {#organon-polyseme-inject}
+
+v0.3.0 (2026-05-31) で、**[organon](../concepts/organic-ontology.md) の `polyseme` data 層** から `sql_mapping` を持つ entries を抽出し、**全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に自動 inject** する pipeline が追加されました。
+
+| 仕組み | 詳細 |
+|---|---|
+| 共通 utility | `agent-server/src/lib/organonContext.js` 新規追加。polyseme entries → `sql_mapping` フィールド抽出 → prompt block 整形 |
+| 注入 timing | **per-request `fs.readFileSync`**（cache なし）。organon 更新 → 次 request で即反映、**agent-server restart 不要** |
+| inject 対象 | Light v1 / Light v2 / Deep / Codex Deep の **4 agent path 全て** |
+| env | `INJECT_ORGANON_POLYSEME=true`（default）で有効、`ORGANON_REPO_PATH` で organon repo path override |
+| graceful degrade | organon repo 不在環境では silent skip（`isAvailable` check） |
+
+この pipeline により、**organon-side が polyseme.sql_mapping を蓄積するだけで、全 AI agent が同時に「組織記憶辞書を読みながら」推論できる** architecture が成立しました。5/16 dogfood の **4 round LLM 訂正 → 1 round 正解** transition が両 agent path で N=2 evidence として再現されています。
+
+詳細な architecture と 組織記憶辞書 = 動作する道具 narrative は [organic ontology 概念設計](../concepts/organic-ontology.md) を参照してください。
 
 ## 関連
 
