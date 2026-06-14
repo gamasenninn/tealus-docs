@@ -39,7 +39,7 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
 | 得意領域 | 日常会話、軽量 Q&A、定型タスク、自然言語検索、**cross-room 探索（v2 が強い）** | コード生成・分析、長いワークフロー、リファクタリング |
 | ローカルツール | `write_memory` / `read_memory` / `get_current_time` / `list_workspace_files` / `generate_image` / `code_interpreter` | Claude Code 標準ツール（ファイル編集・bash 実行など） |
-| Tealus MCP | 共通 16 ツール（v0.2.0〜、[#199](https://github.com/gamasenninn/tealus/issues/199)） | 共通 16 ツール |
+| Tealus MCP | 共通 17 ツール（v0.2.0〜、[#199](https://github.com/gamasenninn/tealus/issues/199)） | 共通 17 ツール |
 | タイムアウト | 短め（リアルタイム前提） | 5 分（`DEEP_TIMEOUT`） |
 
 ## 選択基準
@@ -82,10 +82,13 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 
 | コマンド | 振り分け先 |
 |---|---|
-| `/light` | Light v1（OpenAI Agents SDK） |
-| `/light2` | Light v2（codex SDK） |
-| `/deep` | Deep agent |
-| なし（自動判定） | Router が `light` / `deep` を判定（v1 優先） |
+| `/light` | Light（default は **v2**、v0.3.0〜。`AGENT_LIGHT_BACKEND` env で `v1` / `v2` 切替可） |
+| `/light2` | Light v2（codex SDK、明示指定） |
+| `/deep` | Deep agent（default は Claude Code、`DEEP_AGENT_PROVIDER=codex` で Codex Deep） |
+| なし（自動判定） | Router が `light` / `deep` を判定（`light` 時は `AGENT_LIGHT_BACKEND` に従う） |
+
+!!! info "Light backend default flip — v1 → v2（v0.3.0、2026-06-09、[#292](https://github.com/gamasenninn/tealus/issues/292)）"
+    v0.3.0 後の commit (6/9) で **Light の default backend が v1 → v2 に切替** されました。サブスクリプション保有 user の voice 起点。既存運用で v1 を維持したい場合は `AGENT_LIGHT_BACKEND=v1` env を設定。`AGENT_LIGHT_BACKEND` env と `cc-aliases.json` 同様の **設定ファイル化** mechanism は Issue #15 Phase 2 で詳細を反映予定。
 
 ### `LIGHTV2_AUTH` env
 
@@ -113,7 +116,7 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 
 両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.js` の `getOrCreateSharedGlobal()` で programmatic に注入され、環境変数 `TEALUS_USER_ID` / `TEALUS_PASSWORD` の有無で自動切替されます。
 
-利用可能な 16 ツール（[MCP Server](mcp.md) と同一）:
+利用可能な 17 ツール（[MCP Server](mcp.md) と同一）:
 
 | ツール名 | 用途 |
 |---|---|
@@ -122,8 +125,9 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 | `send_text_as_file` | 長文 text を file として投稿（v0.11.0） |
 | `generate_and_send_image` | DALL-E 3 で画像生成 → 投稿（v0.11.0） |
 | `get_messages` | メッセージ履歴取得 |
-| `get_message_media` | メディア取得（画像視認 / 音声文字起こし） |
-| `read_document` | 添付 PDF / DOCX / XLSX を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback） |
+| `get_message_media` | メディア取得（画像視認 / 音声文字起こし、v0.14.1 で image 判定を mime_type ベースに緩和） |
+| `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice/video transcription versions、v0.14.0） |
+| `read_document` | 添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.13.1 で text/* mime 対応） |
 | `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、`get_message_media` の 10MB 上限を回避） |
 | `search_messages` | キーワード/タグ/期間/発言者で全文検索 |
 | `list_tags` | bot 全 room の tag 一覧を usage 順で返す（v0.10.0） |
@@ -264,6 +268,6 @@ system_prompt.md                 (.gitignored、user カスタム枠)
 ## 関連
 
 - [AI アーキテクチャ](ai-architecture.md): 全体構造、Router の判定ロジック、Webhook Dispatcher、コスト設計
-- [MCP Server](mcp.md): 16 ツールの詳細仕様と外部クライアントからの利用方法
+- [MCP Server](mcp.md): 17 ツールの詳細仕様と外部クライアントからの利用方法
 - [AIエージェント設定](../admin/agent.md): 運用者向けの設定手順
 - 関連 issue: [#185](https://github.com/gamasenninn/tealus/issues/185) MCP umbrella、[#194](https://github.com/gamasenninn/tealus/issues/194) search_messages、[#197](https://github.com/gamasenninn/tealus/issues/197) mark_tag_done、[#199](https://github.com/gamasenninn/tealus/issues/199) Light agent MCP 統合、[#200](https://github.com/gamasenninn/tealus/issues/200) create_room、[#207](https://github.com/gamasenninn/tealus/issues/207) delete_room、[#213](https://github.com/gamasenninn/tealus/issues/213) cc-tealus Phase A、[#214](https://github.com/gamasenninn/tealus/issues/214) multi-session lock（Phase B）、[#220](https://github.com/gamasenninn/tealus/issues/220) tealus-agent improvement harness（議論先行）、[#258](https://github.com/gamasenninn/tealus/issues/258) Light v2（codex SDK）、[#260](https://github.com/gamasenninn/tealus/issues/260) Light v2 機能 parity（send_text_as_file / generate_and_send_image）、[#263](https://github.com/gamasenninn/tealus/issues/263) cc-aliases.json

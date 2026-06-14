@@ -4,13 +4,13 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 
 ## 概要
 
-- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（v0.13.0）
+- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（v0.14.1）
 - 配布: npm publish ではなく **GitHub から直接 install**（`npx -y github:gamasenninn/tealus-mcp`）
 - 通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)
 - 技術スタック: `@modelcontextprotocol/sdk`、`zod`、`node-fetch`、`form-data`
 - Tealus 本体（`gamasenninn/tealus`）には移転 stub のみ残存
 
-## 利用可能なツール（16個）
+## 利用可能なツール（17個）
 
 | ツール名 | 説明 | 主な入力パラメータ |
 |---|---|---|
@@ -19,8 +19,9 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 | `send_text_as_file` | 長文 text を file（.txt / .md 等）として投稿（v0.11.0、Light v2 機能 parity） | `room_id` / `content` / `filename` / `mime_type?` / `caption?` |
 | `generate_and_send_image` | DALL-E 3 で画像生成 → ルームに投稿（v0.11.0、`OPENAI_API_KEY` env 必須） | `room_id` / `prompt` / `size?`（`1024x1024` / `1792x1024` / `1024x1792`） / `caption?` |
 | `get_messages` | メッセージ履歴取得 | `room_id` / `limit?`（最大100） / `include_transcription?`（v0.7.0、default true） / `include_raw?`（v0.7.0、default false） |
-| `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先） | `message_id` |
-| `read_document` | 添付 PDF / DOCX / XLSX を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness） | `message_id` |
+| `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和） | `message_id` |
+| `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice / video transcription versions を統合返却、v0.14.0、organon daily cycle の edit history 観察用、[#281](https://github.com/gamasenninn/tealus/issues/281) follow-up） | `message_id` |
+| `read_document` | 添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/* mime 対応） | `message_id` |
 | `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、server-side で ffmpeg audio 抽出 → Whisper → AI 整形。`get_message_media` の 10MB 上限を回避） | `message_id` / `force_retranscribe?` |
 | `search_messages` | キーワード/タグ/期間/発言者で全文検索（snippetハイライト付） | `q?` / `room_id?` / `sender_id?` / `type?` / `tag_names?` / `is_done?` / `since?` / `until?` / `limit?`（1-50）/ `offset?` |
 | `list_tags` | bot メンバー全 room の tag 一覧を usage 順で返す discovery primitive（v0.10.0） | `limit?`（default 30、max 100） |
@@ -191,3 +192,6 @@ Tealus の AI エージェント（Light/Deep の 2 層）はいずれもこの�
 - [#260 send_text_as_file / generate_and_send_image（Light v2 機能 parity、v0.11.0）](https://github.com/gamasenninn/tealus/issues/260)
 - [#262 E2E harness で v0.11.1 parseError → vision fallback 発覚](https://github.com/gamasenninn/tealus/issues/262)
 - [#271 transcribe_media MCP tool（動画/音声 文字起こし、v0.13.0）](https://github.com/gamasenninn/tealus/issues/271)
+- [#281 read_document text/* mime 対応（v0.13.1）](https://github.com/gamasenninn/tealus/issues/281)
+- [#208 get_message_edit_history MCP tool（v0.14.0、5/24 Day 8 user 提案、organon daily cycle で edit history 観察用）](https://github.com/gamasenninn/tealus/issues/208)
+- [#292 get_message_media image 判定を mime_type ベースに緩和（v0.14.1）](https://github.com/gamasenninn/tealus/issues/292)
