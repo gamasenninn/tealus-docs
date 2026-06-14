@@ -6,6 +6,18 @@
 
 Phase 4 中盤 (2026-05) の構成図。Light v1 / Light v2 (codex SDK backed) / Deep agent の 3 tier、cc-tealus bridge、HTTP transport (cross-machine 構成、`/mcp` proxy) を含む完成 phase。詳細な component 説明は本 page 以降を参照。
 
+## Tealus ↔ organon 接続層（v0.3.0〜）
+
+![Tealus と organon の接続層](../images/tealus-organon-architecture.svg)
+
+v0.3.0 (2026-06-01) で **organon polyseme.sql_mapping auto inject pipeline** が追加され、Tealus 本体と [tealus-organon](https://github.com/gamasenninn/tealus-organon) repo（Layer 3 data 担体、private）の **間接接続** が標準化されました（[#276](https://github.com/gamasenninn/tealus/issues/276) follow-up、本体 commit `8f28279`）。
+
+- 接続方式: `agent-server/src/lib/organonContext.js` が **per-request `fs.readFileSync`** で organon repo の polyseme entries を読み込み、system prompt に inject
+- 双方向同期: 必要なし。organon-side が entries を蓄積するだけで全 agent が自動反映（agent-server restart 不要）
+- env: `INJECT_ORGANON_POLYSEME=true`（default）/ `ORGANON_REPO_PATH` で path override / 不在時 silent skip
+
+詳細な architecture は [organic ontology 概念設計](../concepts/organic-ontology.md) を参照。Codex Deep agent + Light v1/v2 すべての agent path で **5/16 4 round → 0 round transition** が N=2 evidence として再現された **「組織記憶辞書が動作する道具に転化した」** v0.3.0 release narrative の core 技術構成です。
+
 !!! info "RTC Server はオプショナル"
     RTC Server は **通話機能** および **TTS の legacy 配信経路**（`TTS_BROADCAST_MEDIASOUP=true`）で利用されます。default の TTS 配信は Socket.IO blob 経由のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。
 

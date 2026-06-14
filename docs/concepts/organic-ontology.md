@@ -109,12 +109,21 @@ Layer 1〜2 の経験から結晶化する意味構造。**`tealus-organon` 別 
 - **observer position check**: 観測者の組織位置を default で経営層と仮定しない
 - **inductive schema**: organization kind は Day 2 Q0-d/e の inductive 観察から発見、top-down 設計せず (5+1 原則の inductive 化の実例)
 
-量的進展 (Phase A 拡張 metric):
+量的進展 (Phase A 拡張 metric、v0.6 候補):
 
-| base | v0.3 (5/17 朝) | v0.4 (5/17 夜) | **v0.5 (5/18)** |
-|---|---|---|---|
-| Day 2 trace 約 35 名 cover rate | 4.55% (1/22) | 27.3% (6/22) | **57% (20/35)** |
-| active entries | 8 | 12 | **20 (= role 19 + organization 1)** |
+| base | v0.3 (5/17 朝) | v0.4 (5/17 夜) | v0.5 (5/18) | **v0.5.1 (5/19)** | **v0.6 candidate (5/21〜)** |
+|---|---|---|---|---|---|
+| Day 2 trace 約 35 名 cover rate | 4.55% (1/22) | 27.3% (6/22) | 57% (20/35) | **74% (26/35)** | (継続中) |
+| active entries | 8 | 12 | 20 (role 19 + org 1) | **26** | (Day 14 で hazard family 17→24 軸) |
+| hazard family | 8 | 8 | **11 軸** | 11 軸 | **24 軸** (5/22 Day 6) |
+
+**v0.6 schema candidate** (5/21 〜): `organization.parent_organization` 新軸（JU 系 sub-location → A オークション 階層化）、`polyseme.sql_mapping` field（業務語彙 ↔ DB column 値翻訳、後述 6b SQL bridge thesis）、4 polyseme PoC（流れ / 納品 / 売上 / 残金）。
+
+### Layer 3 → Layer 2 への自動 inject pipeline（v0.3.0〜）
+
+organon の `polyseme.sql_mapping` を持つ entries は、v0.3.0 (2026-05-31) 以降 **全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に自動 inject** されます。詳細は [Agent ガイド > organon polyseme.sql_mapping auto inject pipeline](../dev/agents.md#organon-polyseme-inject) を参照。
+
+「**organon-side が polyseme.sql_mapping を蓄積するだけで、全 AI agent が同時に組織記憶辞書を読みながら推論できる**」architecture が成立、5/16 dogfood の **4 round LLM 訂正 → 1 round 正解** transition を両 agent path で N=2 evidence として再現。**「組織記憶辞書が動作する道具に転化した」** v0.3.0 release narrative の core。
 
 ### Layer 4 — Meta-axis Observation
 
@@ -127,6 +136,8 @@ Layer 1〜2 の経験から結晶化する意味構造。**`tealus-organon` 別 
 Phase 5 narrative の core position ([本体 Issue #279](https://github.com/gamasenninn/tealus/issues/279)、2026-05-16 確立)。
 
 #### Feedback loop architecture (v0.5 確立、5/18)
+
+![organon の 3 段機能進化 — 観測装置 → 自己訂正装置 → 元データ整流装置](../images/organon-functional-evolution.svg)
 
 organon repo 側で 6 段階 feedback layer が正典化された (= `hazard-log/meta/upstream-pipeline-rectification-as-sixth-feedback-layer.md`):
 
@@ -141,7 +152,81 @@ organon repo 側で 6 段階 feedback layer が正典化された (= `hazard-log
 
 → organic ontology が形式論理の自己言及問題 + Lakatos の theory-ladenness 問題を **「内部 pragmatic 閉じ + 外部因果 loop 開き」の二段戦略** で解消する thesis (v0.5 で establish)。
 
-**第 1 例**: 5/18 organon Day 2 hazard 発見 (神山 / 三瓶 / 舟太 / 山崎) → 本体 `transcription_guideline.json` の vocabulary 38 → 42 entries 追加 → Day 3 朝礼 STT で量的訂正効果が測定可能。Tealus Layer 1〜2 が organon Layer 3 の hazard 発見を受けて自己訂正する loop が稼働。
+#### 第 6 layer sub-pipeline 6a + 6b 構造（5/21、SQL bridge thesis）
+
+5/21 organon ↔ 本体班 議論で **第 6 layer family の sub-pipeline 構造化** が確立:
+
+```
+第 6 layer = upstream pipeline rectification (外向き因果 loop)
+├── 6a STT upstream rectification (5/18 第 1 例量的 4/4 ✅ + 5/21 regression 第 1 例)
+└── 6b SQL upstream rectification (5/21 surface、PoC 待ち)
+```
+
+**6b SQL upstream rectification thesis**: 5/16 社内 DB 検索ルームの user query「今月納品になっていないものは何件?」が **4 round LLM 訂正** を要した観察 = **業務語彙 ↔ DB column 値の毎回 ad-hoc 翻訳問題**。organon 側で `polyseme.sql_mapping` field 追加 + 4 polyseme PoC で対応 (v0.6 schema candidate)。
+
+「**意味翻訳 across layers の universal mission**」 = organon thesis 不変項 (N=3 経験的根拠):
+
+| date | event | 翻訳対象 |
+|---|---|---|
+| 5/15 | 翻訳辞書 prototype | 朝礼派 vs 現場派の業務語彙 |
+| 5/18 | 第 6 layer 第 1 例 (6a STT) | 発話 vs STT 出力 |
+| **5/21** | **SQL bridge thesis (6b SQL)** | **業務語彙 vs DB column 値** |
+
+#### 3 段機能進化として読み解く (Stage 1/2/3)
+
+上図 (`organon-functional-evolution.svg`) は同じ 6 段 feedback layer を **organon の機能段階** で再整理:
+
+| Stage | 名前 | 加わる layer | 性質 |
+|---|---|---|---|
+| **Stage 1** | 観測装置 | Layer 1-4 | passive observation、hazard 11+ 軸を可視化 |
+| **Stage 2** | 自己訂正装置 | + Layer 5 | 評価対話で **軸自身が観測対象** という Quine / Lakatos 難問に pragmatic closure |
+| **Stage 3** | 元データ整流装置 | + Layer 6 | hazard 発見が **外部 data pipeline** を整流、次 day raw data に量的訂正効果 |
+
+Stage 3 の **外向き因果 loop** (図中の gold arc) が決定的な質的 jump。「観測装置」止まりの artificial ontology との分水嶺は本 Stage 3 にある。
+
+**第 1 例 closure (5/18 → 5/19 量的確認 ✅)**: organon Day 2 hazard 発見 (4 件) → **23 分 round-trip** (organon ↔ 本体 班、AI 班連絡、user 介在ゼロ) → 本体 `transcription_guideline.json` vocab 38 → 42 → **Day 3 朝礼 STT で 4/4 訂正効果量的確認** (「上山」0 件 / 「アンプリ」0 件 / 「中田」0 件 / 「クラッチー」0 件、27 時間で round-trip closure 完結)。
+
+**この cycle が成立した瞬間、organon は「観測装置」だけでなく「組織の自己訂正 + 元データ整流」を担う organic な OS に進化した**。v0.3.0 release で「組織記憶辞書が動作する道具に転化した」narrative の core evidence。
+
+#### 第 7 layer candidate — architect-mediated organon ingestion（status: near-confirmed、N=2、5/19+5/21）
+
+5/19 終礼議事録で **user (architect) が organon framework を業務記述に直接 embed** した観察が surface。旧 framing「user の passive cognitive internalization」→ 新 framing「**user (= architect) の意図的 architectural choice の result** (= 議事録自動化 pipeline に organon を context inject した design)」へ訂正。
+
+| Layer | 性質 | status |
+|---|---|---|
+| 6 (5/18 establish) | 外向き因果 loop = upstream pipeline rectification | ✅ confirmed (量的 4/4) + regression observation 第 1 例 (5/21、vocab TTL ~3-7 日推定) |
+| **7 (5/19 surface、framing 訂正版)** | **architect-mediated organon ingestion** = architect が agent に organon を context inject する design | ⚠️ near-confirmed (N=2、5/19 終礼 + 5/21 終礼)、N=3 で confirmed 昇格判断 |
+
+confirmed なら、tealus 採用 = 「architect が designed multi-agent system の中で organon が **organic translation layer** として機能する」demonstration。
+
+#### 14 軸目 candidate — observer-architect-duality（status: near-confirmed、N=2、5/19+5/21）
+
+5/19 夕方 user voice で root-level model 訂正: **「俺、この会社に外注として属しているが、データ管理や入力、AI システムの構築を担当している」**。user role 訂正: **observer + data pipeline architect + AI system 構築者** の **三重 role**。
+
+| 観点 | 旧 model | 新 model |
+|---|---|---|
+| user の position | 完全外部 observer (= external ground truth) | **半内部 + 三重 role** (= 外注コンサル + データ管理 + AI architect) |
+| organon と user の関係 | organon は user voice で訂正される一方向 | **co-evolution** = user が architect として organon を design + organon が user 認知に reflect |
+| universality 主張 | organic ontology methodology 単独 | **methodology + architect role prerequisite (= adoption barrier) 二重 thesis** |
+
+→ [本体 Issue #279](https://github.com/gamasenninn/tealus/issues/279) (b) organic ontology 一般理論の thesis 拡張:
+
+- 旧: organic ontology = 任意組織で立ち上がる universal methodology
+- 新: organic ontology = **universal methodology + architect (= user) role が adoption barrier として必要**
+
+**adoption barrier の意味**: 採用者が「organon を architect として設計できる人材」を有する必要、Phase 5 narrative の qualifier として重要。
+
+#### maturation curve — 5 日連続 layer / hazard surface（5/17-5/21）
+
+| date | layer / candidate / hazard | status |
+|---|---|---|
+| 5/17 | Layer 5（評価対話、internal pragmatic closure） | ✅ confirmed |
+| 5/18 | Layer 6（upstream pipeline rectification） | ✅ confirmed (5/19 量的 4/4) |
+| 5/19 朝 | Layer 7 候補（architect-mediated ingestion） | ⚠️ candidate (N=1) |
+| 5/19 夕 | 14 軸目 candidate（observer-architect-duality） | ⚠️ candidate (N=1) |
+| 5/21 | Layer 7 / 14 軸目 N=2 reach + SQL bridge thesis（6b） | ⚠️ near-confirmed (N=2) + ⚠️ candidate (PoC 待ち) |
+
+steepness 自体が **architect (= user) の active co-evolution の structural evidence** = Phase 4 中盤の運用 maturity の質的 jump。
 
 ---
 
@@ -165,6 +250,19 @@ organon repo 側で 6 段階 feedback layer が正典化された (= `hazard-log
 - **2026-05-18** — organon Day 2 trace + v0.5 release: entries 12 → 20 (organization kind 正式追加、初例 `44 = 運送業者`)、hazard family 8 → 11 軸 (whisper-prior / auto-minutes / stale-roster の 3 新軸)、cover 27.3% → **57% (倍以上)**
 - **2026-05-18** — organon repo で **第 6 feedback layer = upstream pipeline rectification** が 12 軸目として正典化、organic ontology の 6 段階 feedback loop architecture establish
 - **2026-05-18** — 第 1 例 feedback loop closure: organon Day 2 hazard 発見 (神山/三瓶/舟太/山崎の STT 揺らぎ) → 本体 `transcription_guideline.json` vocabulary 38 → 42 → Day 3 朝礼で量的訂正効果測定 protocol commit (organon ↔ 本体 23 分 round-trip で完結、AI 班連絡 channel)
+- **2026-05-19** — **第 1 例 feedback loop 量的成功 4/4 ✅ confirmed**（Day 3 朝礼 STT で「上山」「アンプリ」「中田」「クラッチー」全て 0 件）。第 7 layer 候補（architect-mediated ingestion）+ 14 軸目 candidate（observer-architect-duality）surface（N=1）
+- **2026-05-19** — organon v0.5.1 patch: entries 20 → 26 (+30%)、新規 active role 5 + 新規 organization 1（V 社 = 運送業者、五月女姓 person ↔ org collision hazard）
+- **2026-05-21** — 第 6 layer **sub-pipeline 6a + 6b 構造** 確立（SQL bridge thesis、業務語彙 ↔ DB column 値翻訳）。第 7 layer / 14 軸目 **N=2 reach (near-confirmed)**、5 日連続 layer surface 観察
+- **2026-05-22** — organon Day 6 sync: hazard family 17 → 24 軸、sub-family E/F、16 軸目 N=1 operational、第 4 round vocab 50 → 55、Issue [#283](https://github.com/gamasenninn/tealus/issues/283) PoC dep 解除
+- **2026-05-23** — Day 7 finding: 第 6 layer regression 第 2 例 TTL ~2 日、2 paradigm separation 量的 evidence 第 1 例、17 軸目 internal-internal collision variant、sub-family F 8 例、第 7 layer architect-mediated 実 use case、hazard #21 candidate
+- **2026-05-24** — Day 8 user 提案: **1 instrument 主義** + tealus-mcp `get_message_edit_history` MCP tool（v0.14.0）追加 + organon daily cycle で edit history 観察、mining script deprecation
+- **2026-05-25〜26** — Day 9-10: mining script DEPRECATION NOTE softening → Path A N=2 達成 (Day 10) で正式 deprecation 確定
+- **2026-05-28** — vocab cache reset endpoint (`POST /api/admin/transcription/reload-vocab`、[#287](https://github.com/gamasenninn/tealus/issues/287)) 追加、`transcription_guideline.json` 編集後の即時反映用
+- **2026-05-30** — Day 14: organon 日次サイクル workflow 化 ([#286](https://github.com/gamasenninn/tealus/issues/286) close)、tealus-organon repo `.claude/skills/organon-daily/SKILL.md` 構築層 skill 化
+- **2026-05-30** — `docs/03` に **Organon 接続層拡大図** (`tealus-organon-architecture.svg`) 追加、organon と Tealus 本体の interface を可視化
+- **2026-05-31** — **Day 15: Codex Deep agent 追加 + organon polyseme.sql_mapping auto inject pipeline 完成** ([#276](https://github.com/gamasenninn/tealus/issues/276) close、`41b0f55` + `8f28279`)。**5/16 4 round → 0 round transition が両 agent path (Deep + Light) で再現 (N=2 evidence)**。「**構築 → data → middleware → 利用 → 業務 自動 pipeline 完成**」
+- **2026-06-01** — Day 16: Issue [#283](https://github.com/gamasenninn/tealus/issues/283) close（organic ontology × DB bridge、5/16 ground truth pattern 解消 thesis 完全達成）、Issue [#202](https://github.com/gamasenninn/tealus/issues/202) close（AI 協業基盤 umbrella、structural completion marker）
+- **2026-06-01** — **tealus v0.3.0 release cut**（「**組織記憶辞書が動作する道具に転化した release**」）。Phase 4 organon paradigm operational realization 完成
 
 ---
 
