@@ -1,56 +1,112 @@
 # リリースノート
 
-## [Unreleased] — Phase 5 narrative emergence + 5/18 累積反映（2026年5月13-18日）
+## [Unreleased] — LINE Bridge + Light v2 default + Codex auth detection（2026年6月2-14日）
 
-v0.2.4 cut（5/12）以降の累積。**5/17-5/18 で Phase 5 narrative（organic ontology / organon / feedback loop architecture）が docs surface 化**、**第 6 feedback layer = upstream pipeline rectification** が正典化、**organon Day 2 trace v0.5 release** で **vocab inject 第 1 例 feedback loop closure** が成立した転換点 release window です。
+v0.3.0 cut（6/1）以降の累積。**LINE Bridge** が Phase 4 後半で実装 → 完成 + 凍結（外部 channel 拡張第 1 例）、**Light backend が config 化 + default が v2 に flip**（サブスクリプション保有 user voice 反映）、Codex 認証エラー検出 helper（pre-α）、tealus-mcp v0.14.1（image mime 判定緩和）、UI 改善複数を含みます。
 
-### Fixed
+### LINE Bridge — 外部 channel 拡張第 1 例（Inbound、完成 + 凍結）
 
-- **tealus-mcp `read_document` が `text/markdown` / `text/plain` / `text/csv` 等の text/* mime を扱えない問題を fix**（[#281](https://github.com/gamasenninn/tealus/issues/281)、5/18、tealus-mcp **v0.13.1** release `aa66826` + agent-server pin bump `5e89f64`）
-    - 症状: Light agent (`/light`) が自作 markdown attachment を user 依頼で読み戻せず「この環境では本文の直接展開に失敗しました」と返す self-inflicted blind spot
-    - 5/18 朝の朝礼ルームで再現: 動画 → 議事録 .md attach → user「内容表示」→ agent 読めず → user が手作業で再貼り付け（毎朝発生の可能性ありで urgency 高）
-    - 真因: `documentReader.js` の `detectFormat` が PDF / DOCX / XLSX のみ判定、text/* は `unsupported` に倒れていた
-    - 対応: `detectFormat` に `text` branch 追加（ext `md`/`txt`/`csv` または mime `text/*`）、`extractText` の switch に `case 'text'` 追加（`buffer.toString('utf8')` で本文返却、既存 `MAX_TEXT_LENGTH` で truncation）
-    - tealus-mcp tests +4 / 全 95/95 pass、agent-server 3 pin（`lightV2.js` / `roomMcpManager.js` / `deep.js`）bump、production restart 後 朝礼で **1028 chars 本文 inline + TTS 8MB 読み上げ** で動作確認
-    - ~40 分で 朝の調査 → Issue 起票 → TDD Min fix → release → pin bump → production verified まで完走、毎朝発生する trap の urgency を 1 cycle 内に消化した dogfood pattern
+- **[LINE Bridge 連携](guide/integration/line-bridge.md) 新規 page**（Phase 1: [#288](https://github.com/gamasenninn/tealus/issues/288) / Phase 2.1: [#289](https://github.com/gamasenninn/tealus/issues/289) / Phase 2.2: [#290](https://github.com/gamasenninn/tealus/issues/290) / Phase 2.3: [#291](https://github.com/gamasenninn/tealus/issues/291)、6/2-6/6 5 日間で実装、6/6 Day 21 凍結宣言）
+    - LINE Official Account からの投稿を Tealus ルームに取り込む **Inbound 専用 bridge**。webhook `POST /api/line` で受信、既存の messages / voice / media pipeline に投影
+    - **7 type 完全対応**: text / image / audio（自動文字起こし + organon polyseme inject）/ video / file（原名 + 原拡張子保持）/ sticker（LINE 公式 sticker CDN 経由）/ location（緯度経度 + Google Maps link）
+    - **2 file 案 mapping**（Phase 2.3）: `server/config/line-groups.json`（自動 catalog）+ `server/config/line-group-mappings.json`（手動編集）、両ファイル next webhook で即反映（server restart 不要）
+    - **LINE 公式 spec 準拠**: secret path mismatch / signature verify failed でも **200 silent return** で LINE 側 webhook auto-suspend trigger を構造的にゼロに
+    - **Tealus PWA 内蔵 TextFilePreview**: MD / JSON / CSV / TXT inline preview、UTF-8 decode、256 KB truncate、react-markdown + remarkGfm + remarkBreaks 統一
+    - **scope 凍結**: Phase 2.4 outbound（Tealus → LINE post）/ Phase 2.3 UI（mapping CRUD 画面）/ Phase 1.5 既存 LINE 業務グループ受信 / Phase 3 enhancement 候補は user voice surface 待ち
 
-### Docs
+### Light backend config 化 + default v1 → v2 flip（[#292](https://github.com/gamasenninn/tealus/issues/292)）
 
-- **[Tealus とは](what-is-tealus.md) 新規 — disclosure 階段の入口 doc**（5/18、本体 commit `cc3ed58`、147 行 / 9 section）
-    - LP（controlled disclosure） / [organic ontology 概念設計](concepts/organic-ontology.md)（full disclosure） / organon（運用 manual）の間に位置する **入り口 doc** として、Tealus を初めて知る読者向けに「何か / なぜ / 何が起こるか / どう違うか / 本質 / 誰のためか / 始め方」を読者を選ばずに説明
-    - LP narrative Layer 2（組織記憶）+ Layer 3（organic ontology）の middle layer として audience を絞り、詳細は 概念設計 / organon に降りる導線を提供
-- **[organic ontology 概念設計](concepts/organic-ontology.md) を organon v0.5 / 第 6 feedback layer / vocab inject 第 1 例で update**（5/18、本体 commit `5825691`）
-    - Layer 3: hazard family 8 → **11 軸**（whisper-prior / auto-minutes / stale-roster の 3 新軸）、organization namespace（v0.5 追加、初例 `44 = フォーティーフォー = 運送業者`）、設計原則を v0.5 時点に更新（identity-first verify 観点 5→8 拡張）、cover rate 表（4.55% → 27.3% → **57%**）+ entries 表（8 → 12 → 20）を追加
-    - Layer 4: **Feedback loop architecture（6 段 layer system）** を新 subsection として追加、第 6 layer = upstream pipeline rectification = 外向き因果 loop の thesis 明記、organic ontology が形式論理自己言及 + Lakatos theory-ladenness を「内部 pragmatic 閉じ + 外部因果 loop 開き」の二段戦略で解消する整理を docs 物理化
-    - 第 1 例（5/18 vocab inject 38→42）を Layer 4 に annotate、organon ↔ 本体 班 **23 分 round-trip closure** を AI 班連絡 channel で実現した経緯を記録
-- **[アーキテクチャ](dev/architecture.md) Phase 4 中盤 構成図に SVG visual 化 追加**（5/18、本体 commit `208370a`）
-    - `docs/images/phase4-architecture.svg` + `.png` 新規、3 段構造（Cloudflare+Nginx / 4 backend services / data stores + ChildProcess spawn）で技術構成を visual 化
-    - 概念設計 doc で確立した SVG style（Noto Sans JP / Tealus brand teal / 結晶感配色）をアーキテクチャ doc にも適用、core 2（server / agent）を primary teal、extension 2（mcp / rtc）を light teal で差別化、外部 service（OpenAI / Aivis / Gemini / DALL-E / Anthropic）は bottom annotation で opt-in 明示
-    - 既存 ASCII art は文字列 grep 可能な detail reference として残す（2 軸併用）
-- **`docs/images/` 整備 — 3 SVG + 3 PNG が揃い、Phase 5 narrative visual 素材化の基盤完成**（5/18）
-    - SVG: `organic-ontology-concept.svg`（center-out radial、5/17）/ `organic-ontology-architecture.svg`（4 層 trapezoidal、5/17）/ `phase4-architecture.svg`（3 段技術構成、5/18）
-    - PNG（density 192 で 2x rasterize、slide deck / 外部共有 / SVG 描画不可な context 向け）
-    - 概念図（radial）+ 概念構造（4 層）+ 技術構成（3 段）の **3 軸が同 style 統一**
+- **`AGENT_LIGHT_BACKEND` env 導入**（6/8、commit `91e2356` + `0e04189` + `e006b93`）: `/light` の default backend を v1 / v2 で切替可能に、config 化 mechanism。詳細は [Agent ガイド > AGENT_LIGHT_BACKEND env](dev/agents.md#light-v1-v2) を参照
+- **default flip: v1 → v2**（6/9、commit `d0e9645`）: サブスクリプション保有 user voice 起点。新規 onboarding は v2 default。既存運用で v1 を維持したい場合は `AGENT_LIGHT_BACKEND=v1` を設定
+- **image / video / file 転送機能**（6/7、commit `5763ab9`、tealus-mcp v0.14.1 連動）: Light v2 で添付済みの image / video / file をリンク方式で他 room に転送、binary 重複なし
+- **cross-room delegation primitive**（6/13、commit `28c4a67` + `fd52b3c`）: Light v2 の cross-room タスクで **in-flight tracking + safety net** primitive を追加、自 room への send_message + 最終 auto-post 重複防止。詳細は [Agent ガイド > Cross-room delegation primitive](dev/agents.md#cross-room-delegation)
+- **WORKSPACE_ROOT path normalize**（6/8、commit `25c855b`）: 採用者環境（藤井さん）の Deep Codex bug fix、`path.resolve` で env path を normalize
+- **tealus-mcp v0.14.1 — `get_message_media` image 判定を mime_type ベースに緩和**（[#292](https://github.com/gamasenninn/tealus/issues/292)、6/7、commit `5763ab9`）: image attachment の判定ロジックを extension ベースから mime_type ベースに緩和、Light v2 の cross-room 画像転送で extension 不明な path にも対応
 
-### organic ontology / organon 連動
+### Codex 認証エラー検出 helper（pre-α、6/8）
 
-- **organon v0.5 release — Day 2 trace + Q&A 7 batch 結果反映**（5/18、organon repo commit `7aef27c`）
-    - Q&A 7 件結果: **6/7 が誤変換 / 幻覚 / 過去職位、正解 1 件のみ** = identity 軸 family が systematic pipeline failure として class 化
-    - entries 12 → **20 active**（67% 増）: 新規 confirmed role 7（神山 / 三瓶 / 舟太 / 草野部長 / 是枝 / 香山 / 齋藤）+ 新規 confirmed organization 1（44 = フォーティーフォー = 運送業者）+ 既訂正 1（桶田博信 + aliases [桶田専務, 専務] + stale roster note）
-    - identity 軸 family 8 → **11 軸**: `#9 whisper-prior-misinference-to-vendor` / `#10 auto-minutes-stt-error` / `#11 stale-role-designation-in-roster`
-    - hallucination 軸（#5）で 2 例目 = 再現性確立（みこがい農場の高山）、**organon が育つほど LLM の adversarial hallucination も高度化** 新仮説
-    - schema v0.5: **organization kind 正式追加**（6 種類目 entry kind）、必須 field `vendor_class` + `not_in`
-    - cover rate: 4.55% → 27.3% → **57%**（倍以上）= Phase A 拡張優先度の物的根拠 + 実装到達点
-- **organon repo で第 6 feedback layer = upstream pipeline rectification を正典化**（5/18、organon repo `hazard-log/meta/upstream-pipeline-rectification-as-sixth-feedback-layer.md`）
-    - 第 5 layer（内部 pragmatic 閉じ、評価対話）の **延長 + 補完戦略** として位置付け、外向き因果 loop で organic ontology が形式論理の自己言及問題 + Lakatos theory-ladenness 問題を **「内部 pragmatic 閉じ + 外部因果 loop 開き」の二段戦略** で解消する thesis 確立
-    - organon CLAUDE.md の hazard 軸 table に **12 軸目** として正式 entry
-- **第 1 例 feedback loop closure: organon hazard 発見 → 本体 STT pipeline 反映 → Day 3 朝礼で量的訂正効果測定 protocol**（5/18、本体班 ↔ organon 班 **23 分 round-trip** で完結、AI 班連絡 channel）
-    - 本体 `server/config/transcription_guideline.json`（gitignored、per-deployment private）の vocabulary 38 → 42 entries 追加（神山 = 上山誤変換 / 三瓶 = アンプリ誤変換 / 舟太 = 中田くん誤変換 / 山崎整備長 = クラッチー 合成全体誤変換）、tealus 本体 server restart 後 effective
-    - Day 3 朝礼 STT 出力で 4 件揺らぎ件数を Day 1〜2 と比較、量的訂正効果を organon Day 3 trace で measurement → v0.6 schema 設計 + 本体 linter MVP 着手の dep 解除 trigger とする protocol を organon side で commit
-    - **distributed AI lane coordination**（organon ↔ 本体 班、user 介在ゼロ closure）が organic ontology の構造的必要条件であることが crystallize（[本体 Issue #279](https://github.com/gamasenninn/tealus/issues/279) (b) 一般理論の経験的根拠）
+- **Codex 認証エラー検出 helper** 新設（detection only）（commits `72fe07c` + `892d888` + `c2184d1` + `878cb08`）: Codex Deep / Light v2 の **認証エラー** （`~/.codex/auth.json` 期限切れ / 不正）を helper で検出し、明示的なエラーメッセージで採用者を guide
+    - **4 commit chain**: 純関数 helper + test 14 件（`72fe07c`） → lightV2 `ThreadError` / 外側 catch / post-turn warn に detection（`892d888`） → deepCodex stderr / spawn error に detection（`c2184d1`） → 認証切れ対処 docs + `.env` memo（`878cb08`）
+    - **detection only** （自動 recovery はしない）: `.env` 設定誤りや `codex login` 期限切れ時の troubleshoot を高速化
 
-!!! info "5/13-5/15 の累積項目について"
-    本 `[Unreleased]` section は **Issue #14 scope（5/18 累積反映）** に focus しています。5/13-5/15 にも複数の改善 commits（[#156](https://github.com/gamasenninn/tealus/issues/156) RoomSettings / [#273](https://github.com/gamasenninn/tealus/issues/273) remark-breaks / [#274](https://github.com/gamasenninn/tealus/issues/274) reply_to dispatch / iOS PWA 16px / [#168](https://github.com/gamasenninn/tealus/issues/168) 通知設定 / presentation docs 群）がありますが、本 release entry には未反映です。次回 drift audit cycle（次回 release tag cut タイミング想定）で集約予定。
+### UI 改善 + 採用者保護 fixes
+
+- **TTS bubble button 経由の個人 TTS は全文読上げ**（truncate skip、6/13、commit `758fa58`）: チャット吹き出しの TTS button から発火した個人 TTS では 500 文字 truncate を skip。詳細は [TTS 読み上げ](guide/advanced/tts.md)
+- **iPhone 12 等狭画面で chat-header title 縦折返し回避**（6/13、commit `8aba69b`）
+- **Deep agent instruction 強化**（6/10、commit `8caf5b4`）: 末尾 section 必須化 + 推測 alias body 記載 + 確信度 3 段階明示
+- **Deep `/deep` モード議事録生成で organon 参照 + format spec instruction 追加**（6/9、commit `706354c`）
+- **server: socket `room:join` DoS crash 対処 + global unhandledRejection safety net**（6/9、commit `c2fdf1b`）
+- **RoomList に「すべて / 1:1 ルーム / グループ」tab 切り替え追加**（6/7、commit `afa14aa`）
+- **TextFilePreview body 背景 + media-file 背景の不透明白系統一**（6/7、commits `fdc0f79` + `af72796`）
+- **LINE Bridge sender info を context object pattern に refactor**（6/6、commits `08c1efd` + `ba46379`、Option D、bubble icon + name 抜け bug fix）
+
+## v0.3.0 — 「組織記憶辞書が動作する道具に転化した release」（2026年6月1日）
+
+Phase 4 **organon paradigm operational realization** 完成。Day 14-15-16（5/30-6/1）で **Codex Deep agent + organon polyseme inject pipeline + 5/16 ground truth pattern 解消 + 4 Issue cluster 連続 close** を達成、organon が業務 DB を upstream rectification する thesis が **structural に完成** した転換点 release。
+
+5/12 v0.2.4 → 5/19 organon Day 3 量的成功 → 5/30 Day 14 organon 日次サイクル workflow 化 → 5/31 Day 15 Codex Deep + polyseme inject pipeline 完成 → 6/1 Day 16 release cut の **20 日間の進化** を集約。
+
+### Codex Deep agent + Light backend config 化 + cross-room delegation
+
+- **Codex Deep agent (`deepCodex.js`) 追加 + `DEEP_AGENT_PROVIDER` で切替**（[#276](https://github.com/gamasenninn/tealus/issues/276)、5/31 Day 15、commit `41b0f55`）: 既存 Deep agent（`claude -p` spawn）と並列で `codex exec` spawn 経路を追加。Light v2 で確立した Codex SDK / subscription auth pattern を CLI mode で再現
+    - env `DEEP_AGENT_PROVIDER=claude|codex`（default=claude、既存維持）で switch
+    - env `DEEP_CODEX_AUTH=subscription|api-key`（default=subscription）で `~/.codex/auth.json` 経由 ChatGPT subscription 認証 = **API cost 0**（Deep mode の 12-50k tokens × call 課金爆発 risk 回避 default）
+    - `CODEX_HOME` 動的切替（workspace 配下 `.codex_home/`）、`AGENTS.md`（= `CLAUDE.md` literal copy、Codex CLI 自動 read project context、上限 32 KB）
+    - TDD test 34 件追加、全 305 → 317 Green、5/31 dogfood 第 1 例 success（subscription auth confirmed）
+    - **Claude MAX 契約必須を超えた選択肢拡大、Anthropic / OpenAI 両 provider Deep mode 同等運用可能化**。詳細は [Agent ガイド > Deep agent — provider 切替](dev/agents.md#deep-provider)
+- **AGENTS.md (project root) 新規** = `CLAUDE.md` literal copy（[#276](https://github.com/gamasenninn/tealus/issues/276)、5/31 commit `41b0f55`）
+
+### organon polyseme.sql_mapping auto inject pipeline
+
+- **agent-server: organon polyseme.sql_mapping を全 agent system prompt に自動 inject pipeline**（[#276 follow-up](https://github.com/gamasenninn/tealus/issues/276)、5/31 Day 15、commit `8f28279`）
+    - 共通 utility `agent-server/src/lib/organonContext.js` 新規追加、polyseme entries から `sql_mapping` 持つ entries 抽出 + prompt block 整形、**per-request `fs.readFileSync`**（cache なし）で organon 更新即時反映
+    - 全 4 agent（Light v1 / v2 / Deep / Deep Codex）の system prompt build に `loadOrganonPolysemeForPrompt()` を 1 行 inject
+    - env `INJECT_ORGANON_POLYSEME=true`（default）で inject 有効、`ORGANON_REPO_PATH` で organon repo path override、organon repo 不在環境 silent skip
+    - **agent-server restart 不要**（organon entries 更新 → 次 request で即反映）、organon-side cycle 1 度回せば 全 agent operational value 即享受
+    - 5/31 dogfood 第 2 例 success: Deep Codex 5818 chars / Light system prompt 31756 chars、**両 agent で 5/16 4 round → 0 round 正解 transition N=2 evidence**、user 訂正 0 round
+    - 詳細は [Agent ガイド > organon polyseme.sql_mapping auto inject pipeline](dev/agents.md#organon-polyseme-inject)
+    - **構築 → data → middleware → 利用 → 業務 自動 pipeline 完成、organon-side が polyseme.sql_mapping を蓄積するだけで全 AI agent が同時に賢くなる architecture realized**
+
+### 採用者保護 + ゲストユーザ Phase 1 MVP
+
+- **tealus-mcp `read_document` が `text/markdown` / `text/plain` / `text/csv` 等の text/* mime を扱えない問題を fix**（[#281](https://github.com/gamasenninn/tealus/issues/281)、5/18、tealus-mcp **v0.13.1** release `aa66826`）: Light agent が自作 markdown attachment を読み戻せない self-inflicted blind spot を fix（5/18 朝の朝礼ルームで再現 → ~40 分で release + production verified）
+- **ゲストユーザ role 拡張 Phase 1 MVP**（[#282](https://github.com/gamasenninn/tealus/issues/282)、5/19、3 commits: `b986bad` + `956fc9e` + `a7a102a`）: Issue 起票 → TDD 実装 → production deploy までを **1 day で完走**
+    - **Phase A**: migration 022 で `users.role` CHECK constraint 拡張（`('admin', 'user')` → `('admin', 'user', 'guest')`）、既存 user data 影響なし
+    - **Phase B**: `server/src/utils/permissions.js` 新規、`isAdmin/isUser/isGuest` role-class check + `canCreateRoom/canInviteToRoom/canSearchUsers` ability check、既存 admin チェック 5 箇所を helper 関数経由に統一
+    - **Phase C**: route-level access control（POST /api/rooms / GET /api/users 等に guest guard、guest → 403）
+    - 累計 **+33 test cases / 全 38 suite / 414 tests pass、regression ゼロ**
+    - 3 層構造の正典化（Layer 1 schema / Layer 2 logic / Layer 3 route guard）、[#124](https://github.com/gamasenninn/tealus/issues/124) ゲストルーム構想からの pivot、採用者 #2 voice trigger 解除 candidate
+- **migration 016 announcement 誤公開 bug 修正**（5/21、commit `b535dca`）: `npm run migrate` 再実行のたびに `is_published=true` 書き戻しが走る bug を fix、`recovery-2026-05-21-announcement-republish-fix.sql` を提供
+- **#287 vocab cache reset endpoint**（`POST /api/admin/transcription/reload-vocab`、5/28、commit `12d67cf`）: `transcription_guideline.json` 編集後の即時反映用、server restart 不要
+
+### docs surface 化 — Phase 5 narrative の docs 化
+
+- **[Tealus とは](what-is-tealus.md) 新規 — disclosure 階段の入口 doc**（5/18、本体 commit `cc3ed58`、147 行 / 9 section）: LP（controlled disclosure）/ [organic ontology 概念設計](concepts/organic-ontology.md)（full disclosure）/ organon（運用 manual）の middle layer
+- **[organic ontology 概念設計](concepts/organic-ontology.md) 大幅 update**: organon v0.5 → v0.5.1 → v0.6 schema candidate（cover rate 4.55% → 27.3% → 57% → 74%、entries 8 → 12 → 20 → 26、hazard family 8 → 11 → 24 軸）、Layer 4 で **第 6 layer sub-pipeline 6a + 6b 構造**（SQL bridge thesis、5/21）+ **第 7 layer candidate**（architect-mediated organon ingestion、5/19 + 5/21 で N=2 near-confirmed）+ **14 軸目 candidate**（observer-architect-duality、N=2、5/19 + 5/21）+ maturation curve（5 日連続 layer surface、5/17-5/21）+ **3 段機能進化**（観測装置 → 自己訂正装置 → 元データ整流装置）の Stage 3 外向き因果 loop が artificial ontology との分水嶺
+- **第 1 例 feedback loop 量的成功 4/4 ✅ confirmed**（5/19 Day 3 朝礼 STT）: 「上山」「アンプリ」「中田」「クラッチー」全て 0 件、27 時間で round-trip closure 完結（organon Day 2 hazard 発見 → 23 分 round-trip で本体 vocab 38→42 → Day 3 量的確認）
+- **[アーキテクチャ](dev/architecture.md) に Phase 4 中盤 SVG + Tealus ↔ organon 接続層 SVG 追加**（5/18 + 5/30、本体 commits `208370a` + `97a9976`）
+- **`docs/images/` 整備**: organic-ontology-concept.svg / organic-ontology-architecture.svg / phase4-architecture.svg / organon-functional-evolution.svg / tealus-organon-architecture.svg（5 SVG）+ 同名 PNG（2x rasterize）、Noto Sans JP / Tealus brand teal / 結晶感配色の 統一 style
+- **organon repo daily cycle workflow 化**（Day 14、5/30、[#286](https://github.com/gamasenninn/tealus/issues/286) close）: `.claude/skills/organon-daily/SKILL.md` 構築層 skill 化境界設計
+- **4 Issue cluster 連続 close**（5/30-6/1）: [#286](https://github.com/gamasenninn/tealus/issues/286)（organon 日次サイクル）/ [#276](https://github.com/gamasenninn/tealus/issues/276)（Codex Deep + spike）/ [#283](https://github.com/gamasenninn/tealus/issues/283)（organic ontology × DB bridge = 6b SQL upstream rectification）/ [#202](https://github.com/gamasenninn/tealus/issues/202)（AI 協業基盤 / 班間情報非対称 umbrella、structural completion marker）
+
+### UI + presentation docs（5/13-5/15 累積も統合）
+
+- **`#284` STT default → `gpt-4o-mini-transcribe`**（5/25、commit `58daf43`）: 無音/ノイズ幻覚を既存 filter で空化、組織記憶辞書 + 業務無線 use case で安定
+- **`#156` Phase 1: チャット画面 RoomSettings に「エージェント設定」section + TTS 音声モデル選択**（5/15 + 5/25、commits `6ac122f` + `a0b0e24`）: ルームメニュー → 設定 から応答モード（auto / all / mention / off）と Light Agent / Deep Agent prompt + TTS 音声モデルを変更可能。`#156` follow-up（5/15、commit `b3f4ec9`）で RoomSettings section 順序を「個人 → ルーム（admin）→ システム（sysAdmin）→ エージェント」に変更
+- **`#273` メッセージ表示で段落内改行 `\n` を `<br>` として render**（5/14、commit `bdf3ccc`、`remark-breaks` plugin 追加）: CommonMark soft wrap で消えていた user 入力改行を保持、コードブロック / MD 強調 / table / list は完全 unchanged
+- **`#274` agent prompt に `reply_to` / `reply_to_message` を伝達する構造修正**（5/14、commits `28698bb` + `c8f044b`）: L1 server webhook payload + L2 agent-server dispatcher（`buildReplyToHint` helper）+ L3 room config の 3 層、議事録 9 section 100% 反映を dogfood verify
+- **`#208` follow-up: tealus-mcp v0.14.0 `get_message_edit_history` MCP tool**（5/24、commits `c8afcb4` + `1c85073` 等）: text edits + voice/video transcription versions 統合返却、organon daily cycle の edit history 観察用。**MCP ツール 16 → 17**。5/24 Day 8 user **1 instrument 主義**提案起源、mining script の正式 deprecation 候補（Day 10 で確定）
+- **iOS PWA input focus 時の auto-zoom 防止**（5/13、commit `4d00839`）: iOS Safari の auto-zoom 挙動（font-size < 16px の input にフォーカスすると画面拡大）を採用検討者 iPhone dogfood で観察 → 翌日 fix
+- **MemberList のメンバー操作 button をメンバー一覧直下に移動**（5/15、commit `1f849f4`）: Gestalt 近接の原則準拠、`#156` で UX 全体が見えて気付いた連鎖改善
+- **`#168` Phase 1 sub-task: 通知設定 doc + トラブルシューティング新規作成**（commit `497b5fb`）: 5 section 構成（PWA install / 通知許可 / バッテリー最適化 / 二経路 defense in depth / 既知制限）
+- **`#209` sub-1.1: `philosophy.md` v2 — organic ontology section 新設**（commit `4c81236`）: 5/11 user 言語化（organic ontology）を 4 柱の手前に layer として配置、5/11-5/14 dogfood の cycle 検証 4 例
+- **`#209` sub-1.2: `elevator-pitches.md` v2 — 推奨案 E に 3 軸追記**（commit `a3490bc`）: 業務 DB / cross-modality dividend / 採用者 voice → 機能進化 cycle
+- **`#209` sub-2: README opening narrative refresh + ロードマップ v0.2.x 反映**（commit `a9a3444`）: tagline「AI が組織の記憶を声で運ぶ」、Phase 4 物語化 section 新設
+- **`#209` sub-5: `walkthrough-script-v1.md` 追加**（commit `cb105bd`）: 5/7-5/14 dogfood log を物語化した 6-7 分 walkthrough script v1 draft、5 act 構成
+- **`#270` agent-server: `enqueueForRoom` にルームキュー外側タイムアウト**（5/25、commit `a0a941f`）: room queue dead lock 防止 layer 追加
+
+!!! info "Phase 4 → Phase 5 narrative の質的 jump"
+    v0.3.0 は **「組織記憶辞書が動作する道具に転化した release」** として、Phase 4 中盤の `organon paradigm operational realization` を完成 phase に押し上げた釘です。5/16 dogfood の **4 round LLM 訂正 → 1 round 正解** transition が両 agent path（Light + Deep）で N=2 evidence として再現、**「construction → data → middleware → 利用 → 業務」自動 pipeline** が成立しました。詳細な narrative は [organic ontology 概念設計](concepts/organic-ontology.md) を参照。
 
 ## v0.2.4 — voice transcription completion + 動画文字起こし（2026年5月12日）
 
