@@ -1,8 +1,24 @@
 # リリースノート
 
-## [Unreleased] — LINE Bridge + Light v2 default + Codex auth detection（2026年6月2-14日）
+## [Unreleased] — Multi-room AI 委譲 + LINE Bridge + Light v2 default + ゲスト Phase D/E（2026年6月2-18日）
 
-v0.3.0 cut（6/1）以降の累積。**LINE Bridge** が Phase 4 後半で実装 → 完成 + 凍結（外部 channel 拡張第 1 例）、**Light backend が config 化 + default が v2 に flip**（サブスクリプション保有 user voice 反映）、Codex 認証エラー検出 helper（pre-α）、tealus-mcp v0.14.1（image mime 判定緩和）、UI 改善複数を含みます。
+v0.3.0 cut（6/1）以降の累積。**`%委譲%` syntax + 専用デリゲーター層**（[#295](https://github.com/gamasenninn/tealus/issues/295)、Phase 5 narrative core）、**LINE Bridge** Phase 1〜2.3 完成 + 凍結、**Light backend config 化 + default v2 flip**、**ゲスト Phase D/E 運用可能化**、Codex 認証エラー検出 helper、tealus-mcp v0.14.1、UI 改善複数を含みます。
+
+### `%委譲%` multi-room AI 委譲 primitive — Phase 5 narrative core（[#295](https://github.com/gamasenninn/tealus/issues/295)、6/14-6/15）
+
+room 間 AI 委譲を **指示文の語感に依存せず明示構文で安定検出** する基盤。10+ commits の TDD chain で実装（`b666c4a` → `a0ec976` → `112b65b` → `19c824b` → `8a0ac3d` → `8f2bf62` → `25c240a` → `3a66ddc` → `592491f` → `7ffe51a`）。
+
+- **`%委譲%社内DB検索 ...` 明示構文**: dispatcher が LLM に渡す前に正規表現で確定パース、100% 確実 / LLM 非依存。**複数 room fan-out**（`%委譲%A %委譲%B ...`）も並列実行 + 結果統合
+- **2 層分離**: 「考える人」（agent）と「他室へ送る人」（デリゲーター）を分離、デリゲーターが専用送信者 ID から送信 → **自己ループの種が構造的に消滅**、[#292](https://github.com/gamasenninn/tealus/issues/292) の in-flight tracking / throttle は primary 防御から backstop に格下げ
+- **correlation id + TTL ガード**: 依頼 ID 照合で機械的な戻り先 routing（LLM 善意非依存）、hop 数 + 訪問済み room 集合で 1789 件暴走（#292 観測）の原因クラス封じ込め
+- **DeepCodex 対応**（`8f2bf62`）: `route()` ベース backend 選択、Light v2 / Deep Codex 両 path 統一
+- **権限 gate**（[#282](https://github.com/gamasenninn/tealus/issues/282) 連動）: bot membership 確認 endpoint で委譲先メンバーシップ検証
+- **「問い合わせ中」状態表示**（`25c240a`）
+- 詳細は [Agent ガイド > `%委譲%` syntax](dev/agents.md#delegation-syntax) を参照
+
+設計の核は「**room = capability の境界、デリゲーター = スコープされた agent を仲介するブローカー**」。データ主権 / 権限分離を意図的に保持しつつ、社内 DB アクセスを DB 室の Deep Codex (`dbhub-mysql` 所持) にスコープする運用が可能に。multi-agent dock 構想（[#275](https://github.com/gamasenninn/tealus/issues/275)）の構造的基盤。
+
+### LINE Bridge — 外部 channel 拡張第 1 例（Inbound、完成 + 凍結）
 
 ### LINE Bridge — 外部 channel 拡張第 1 例（Inbound、完成 + 凍結）
 
@@ -29,9 +45,15 @@ v0.3.0 cut（6/1）以降の累積。**LINE Bridge** が Phase 4 後半で実装
     - **4 commit chain**: 純関数 helper + test 14 件（`72fe07c`） → lightV2 `ThreadError` / 外側 catch / post-turn warn に detection（`892d888`） → deepCodex stderr / spawn error に detection（`c2184d1`） → 認証切れ対処 docs + `.env` memo（`878cb08`）
     - **detection only** （自動 recovery はしない）: `.env` 設定誤りや `codex login` 期限切れ時の troubleshoot を高速化
 
-### UI 改善 + 採用者保護 fixes
+### 採用者保護 + ゲスト Phase D/E + transcription mtime auto-reload
 
-- **TTS bubble button 経由の個人 TTS は全文読上げ**（truncate skip、6/13、commit `758fa58`）: チャット吹き出しの TTS button から発火した個人 TTS では 500 文字 truncate を skip。詳細は [TTS 読み上げ](guide/advanced/tts.md)
+- **ゲストユーザ Phase D/E 運用可能化**（[#282](https://github.com/gamasenninn/tealus/issues/282)、6/16、commits `4c54dfe` + `ad41620`）: ゲストにホーム surface（お知らせ / ポータル）を見せない fail-closed 修正、招待ガードの穴を fail-closed で塞ぐ、Phase 1 (v0.3.0) の 3 層構造を運用可能 phase に押し上げ。詳細は [AIエージェント設定 > ゲストユーザ role](admin/agent.md#ゲストユーザ-role-phase-1-de-運用可能化v030)
+- **transcription vocab mtime 自動リロード**（[#296](https://github.com/gamasenninn/tealus/issues/296)、6/15、commit `0edbda7`）: `transcription_guideline.json` の **mtime 自動 detect** で cache reload、[#287](https://github.com/gamasenninn/tealus/issues/287) admin POST endpoint の手動運用摩擦を解消。endpoint は手動 reset の fallback として残存
+- **Aivis 3000 文字 hard cap**（[#300](https://github.com/gamasenninn/tealus/issues/300)、6/15、commit `a9e7ddb`）: 終礼議事録のような長文の TTS 読み上げ失敗を防ぐ hard cap。詳細は [TTS 読み上げ > Aivis 3000 文字 hard cap](guide/advanced/tts.md)
+- **アクセスログ MVP**（[#301](https://github.com/gamasenninn/tealus/issues/301)、6/16、commit `d3996f2`）: 管理ダッシュボードに最終投稿 / 最終閲覧の集計ビュー追加。詳細は [ダッシュボード > アクセスログ MVP](admin/dashboard.md)
+- **文字起こし連続編集**（[#302](https://github.com/gamasenninn/tealus/issues/302)、6/18、commit `6b2773a`）: 編集 modal に「前/次」ボタンで隣の voice メッセージへ送って続けて編集。朝礼ルーム等で効率向上。詳細は [音声メッセージ > 文字起こしの編集](guide/basic/voice.md)
+- **`bot membership` endpoint 新設**（[#282](https://github.com/gamasenninn/tealus/issues/282) 連動、6/15、commit `7ffe51a`）: `%委譲%` 委譲権限 gate で bot のルームメンバーシップ確認に使用
+- **TTS bubble button 経由の個人 TTS は全文読上げ**（truncate skip、6/13、commit `758fa58`）: チャット吹き出しの TTS button から発火した個人 TTS では 500 文字 truncate を skip。詳細は [TTS 読み上げ > TTS bubble button](guide/advanced/tts.md)
 - **iPhone 12 等狭画面で chat-header title 縦折返し回避**（6/13、commit `8aba69b`）
 - **Deep agent instruction 強化**（6/10、commit `8caf5b4`）: 末尾 section 必須化 + 推測 alias body 記載 + 確信度 3 段階明示
 - **Deep `/deep` モード議事録生成で organon 参照 + format spec instruction 追加**（6/9、commit `706354c`）
@@ -39,6 +61,16 @@ v0.3.0 cut（6/1）以降の累積。**LINE Bridge** が Phase 4 後半で実装
 - **RoomList に「すべて / 1:1 ルーム / グループ」tab 切り替え追加**（6/7、commit `afa14aa`）
 - **TextFilePreview body 背景 + media-file 背景の不透明白系統一**（6/7、commits `fdc0f79` + `af72796`）
 - **LINE Bridge sender info を context object pattern に refactor**（6/6、commits `08c1efd` + `ba46379`、Option D、bubble icon + name 抜け bug fix）
+
+### Fixed — W5 累積（6/14-6/18）
+
+- **dispatcher: `@アシスタント` mention を先頭限定に**（6/15、commit `bd9e58e`）: 文中 / 例示の誤発火防止
+- **client: 「考え中」インジケータが残り続ける / 他ルームに残る bug**（[#298](https://github.com/gamasenninn/tealus/issues/298)、6/15、commit `7e428d5`）
+- **client: 入力中インジケータが他ルームに漏れる bug**（[#297](https://github.com/gamasenninn/tealus/issues/297)、6/15、commit `7c988fc`）
+- **client: 管理ユーザー追加フォームでブラウザが ID/パスワードを自動入力する bug**（[#299](https://github.com/gamasenninn/tealus/issues/299)、6/15、commit `4106aff`）
+- **client: メッセージ単位の error boundary**（[#306](https://github.com/gamasenninn/tealus/issues/306)、6/18、commit `e0ffa58`）: 1 件の描画例外でチャット全体が白紙化しないように
+- **botApi.request HTTP ステータス握り潰し修正**（[#303](https://github.com/gamasenninn/tealus/issues/303)、6/18、commit `4bb4471`）: 偽 sent 停止 + 401 自動回復 + 診断ログ
+- **deepCodex: `~/.codex/auth.json` rotation 書き戻し**（[#307](https://github.com/gamasenninn/tealus/issues/307)、6/18、commit `50db607`）: codex が rotation した auth.json を ~/.codex に書き戻し recurring refresh_token_reused を解消
 
 ## v0.3.0 — 「組織記憶辞書が動作する道具に転化した release」（2026年6月1日）
 

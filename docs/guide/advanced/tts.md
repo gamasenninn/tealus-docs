@@ -17,6 +17,20 @@ AIが回答テキストを生成
 !!! info "配信経路の切替"
     上記は default の経路です。環境変数 `TTS_BROADCAST_MEDIASOUP=true` を設定すると、旧来の **mediasoup PlainTransport 経由**の legacy 経路に切り替わります。詳細は [アーキテクチャ](../../dev/architecture.md) の「TTS 音声合成パイプライン」セクションを参照してください。
 
+!!! warning "Aivis 3000 文字 hard cap（v0.3.0 後、[#300](https://github.com/gamasenninn/tealus/issues/300)）"
+    Aivis Cloud API は 1 回の合成リクエストで **3000 文字上限** があります。終礼議事録のような長文を AI agent が読み上げようとして上限超過で失敗するケースが採用者環境で発生していたため、v0.3.0 後で **3000 文字 hard cap** を server 側で実装しました。
+
+    | 状況 | 動作 |
+    |---|---|
+    | 3000 文字以下 | 全文読み上げ |
+    | 3000 文字超過 | 先頭 3000 文字までを読み上げ、以降は **truncation**（chat 上のテキスト表示は完全） |
+
+    AI 回答の TTS 読み上げ用途では実害は稀ですが、長文 voice メッセージの「全文読み上げ」ボタンや bubble button 経由の個人 TTS では truncate skip（[#758fa58](https://github.com/gamasenninn/tealus/commit/758fa58)）が併用される設計です。
+
+### TTS bubble button — 全文読み上げ（v0.3.0 後、`758fa58`）
+
+メッセージ吹き出しの **TTS button** を直接タップして再生する **個人 TTS** では、500 文字 truncate を **skip** して全文を読み上げます。AI 回答の自動読み上げ（500 文字 truncate あり）と区別され、user 側で能動的に読ませたい長文に対応します。
+
 ## 使い方
 
 ### 1. 読み上げを有効にする

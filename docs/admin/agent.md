@@ -30,6 +30,28 @@ Tealus の agent-server は「**メッセージ → 適切な処理者へ dispat
 | Claude Code session（cc-tealus） | 採用者の手元 Claude Code | `@cc-{project}` / `@{alias}` mention でリアルタイム連携（[#213](https://github.com/gamasenninn/tealus/issues/213)、詳細は [Agent ガイド](../dev/agents.md)） |
 | **LINE Bridge** (Inbound、v0.3.0〜) | webhook `POST /api/line` | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は [LINE Bridge 連携](../guide/integration/line-bridge.md)） |
 
+## ゲストユーザ role — Phase 1 〜 D/E 運用可能化（v0.3.0〜）
+
+v0.3.0 で **ゲストユーザ role** が追加 ([#282](https://github.com/gamasenninn/tealus/issues/282) Phase 1 MVP)、v0.3.0 後 (2026-06-16) で **Phase D/E 運用可能化** + 招待ガード fail-closed 修正が反映されました。`users.role` は `admin / user / guest` の 3 種類。
+
+### Phase 1 (v0.3.0) — 3 層構造の基礎
+
+| Layer | 実装 |
+|---|---|
+| Layer 1 schema | migration 022 で `users.role` CHECK constraint 拡張 |
+| Layer 2 logic | `server/src/utils/permissions.js` の `isAdmin/isUser/isGuest` + `canCreateRoom/canInviteToRoom/canSearchUsers` ability check |
+| Layer 3 route guard | POST /api/rooms / GET /api/users 等に guest guard、guest → 403 |
+
+### Phase D/E（v0.3.0 後、2026-06-16）— 運用可能化
+
+| 改善 | 詳細 |
+|---|---|
+| **ゲストにホーム surface を見せない fail-closed**（`ad41620`） | お知らせ / ポータルをゲストには表示しない、`is_published` 等の意図せぬ露出を構造的に防止 |
+| **招待ガードの穴を fail-closed 修正**（`4c54dfe`） | ゲスト招待時の権限チェック gap を fail-closed で塞ぐ |
+| **`%委譲%` 構文 + 委譲権限 gate**（[#295](https://github.com/gamasenninn/tealus/issues/295) 連動、`592491f`） | bot membership 確認 endpoint で **委譲先メンバーシップを bot 単位で検証**、未参加 room への委譲は拒否（cross-room delegation の権限境界） |
+
+ゲストユーザは **AI = 同僚** 思想の外部 user 拡張、multi-agent dock 構想（[#275](https://github.com/gamasenninn/tealus/issues/275)）の構造基盤。詳細は [Agent ガイド > `%委譲%` syntax](../dev/agents.md#delegation-syntax) も参照。
+
 ## Agent Server
 
 Agent Server は Port 4000 で独立したExpressプロセスとして動作します。Tealus Server（Port 3000）からWebhookでメッセージを受信します。

@@ -141,6 +141,52 @@ Light v2 が他 room の context を参照しながら応答を組み立てる�
 
 採用者からは通常意識不要、cross-room タスクで「応答が重複した」「room A で頼んだのに room B でも post された」等の症状があれば本 primitive の効果を確認してください。
 
+### `%委譲%` syntax — multi-room delegation primitive（v0.3.0 後、[#295](https://github.com/gamasenninn/tealus/issues/295)） {#delegation-syntax}
+
+v0.3.0 後 (2026-06-14〜) で、room 間 AI 委譲を **指示文の語感に依存せず明示構文で安定検出** する `%委譲%` syntax と、専用デリゲーター層が追加されました（[#295](https://github.com/gamasenninn/tealus/issues/295)、Phase 5 narrative core）。
+
+#### 設計の核 — 2 層分離
+
+**第 1 層: 意図の宣言**
+
+| 方法 | 例 | 検出 |
+|---|---|---|
+| **`%委譲%` 明示構文** | `%委譲%社内DB検索 今月納品になっていないものは何件?` | dispatcher が LLM に渡す前に正規表現で確定パース、**100% 確実 / LLM 非依存** |
+| **複数 room fan-out**（`3a66ddc`） | `%委譲%社内DB検索 %委譲%朝礼 ...` | 複数 room へ並列 fan-out → 結果を統合 |
+| NL フォールバック | 「社内DB 検索ルームに依頼」等の自然文 | `delegate_to_room(room, task)` tool 経由（明示構文の slow path） |
+
+**第 2 層: 実行（専用デリゲーター）**
+
+cross-room 送信を **すべてデリゲーター経由** にして「考える人」と「他室へ送る人」を分離：
+
+- アシスタント agent は cross-room 投稿を一切しない
+- デリゲーターが専用送信者 ID（side channel）から送信 → agent は webhook を誘発する投稿を作らない → **自己ループの種が構造的に消滅**
+- [#292](https://github.com/gamasenninn/tealus/issues/292) の in-flight tracking / throttle / 自室送信 skip flag は primary 防御から backstop に格下げ
+
+#### 機能
+
+| 機能 | 説明 |
+|---|---|
+| **correlation id** | 依頼 ID を封筒に付与、応答 ID を照合して機械的に origin 室へ届ける（LLM の善意に依存しない戻り先 routing） |
+| **TTL / サイクルガード** | 封筒に hop 数 + 訪問済み room 集合、深さ超過 / 再訪なら委譲拒否（[#292](https://github.com/gamasenninn/tealus/issues/292) で観測された 1789 件暴走の原因クラス封じ込め） |
+| **非同期 + pending 状態** | 「問い合わせ中」ステータス表示（`25c240a`）、対象室 timeout 対応 |
+| **DeepCodex 対応** | `route()` ベース backend 選択で Light v2 / Deep Codex 両 path 統一（`8f2bf62`） |
+| **権限チェック gate**（[#282](https://github.com/gamasenninn/tealus/issues/282) 連動） | 委譲先メンバーシップを bot membership endpoint で確認、未参加 room への委譲は拒否 |
+
+#### 採用者観点 — room = capability の境界
+
+「全 agent に全 MCP を持たせれば委譲不要」ではない設計判断:
+
+- 社内 DB アクセスは DB 室の Deep Codex (`dbhub-mysql` 所持) にスコープ → **データ主権 / 権限分離** を意図的に保持
+- **room = capability の境界、デリゲーター = スコープされた agent を仲介するブローカー**
+- 委譲は「権限分離された agent を合成する正しい手段」
+- `%委譲%` は「能力境界を越える明示的な依頼」のマーカー
+
+[#282](https://github.com/gamasenninn/tealus/issues/282)（role / permission Phase D/E）と直結、Phase 5 multi-agent dock 構想（[#275](https://github.com/gamasenninn/tealus/issues/275)）の構造的基盤としても機能します。
+
+!!! tip "dogfood 例"
+    テスト室で `%委譲%社内DB検索 今月納品になっていないものは何件?` を投稿 → デリゲーターが社内DB検索室の Deep Codex に依頼を送信 → DB Deep Codex が SQL 実行 + 結果生成 → correlation id 経由でテスト室に応答が機械的に戻る、という **「テスト室 →(依頼)→ 社内DB検索室 →(回答)→ テスト室」の往復** が成立。`%委譲%` の前は「で」「に」「依頼」等の語感で判定が割れていた挙動が、構文レベルで安定化されました。
+
 ## Deep agent — provider 切替（v0.3.0〜、[#276](https://github.com/gamasenninn/tealus/issues/276)） {#deep-provider}
 
 v0.3.0 (2026-06-01) で Deep agent の **provider 切替** が導入されました。既存の Claude Code CLI に加え、**Codex CLI** で Deep agent を起動できるようになっています。
