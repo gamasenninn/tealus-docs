@@ -1,0 +1,56 @@
+name: Deploy docs
+
+# main に入った内容を公開サイト (docs.tealus.dev) へ反映する。
+#
+# ★ この workflow を置いた理由:
+#   以前は `mkdocs gh-deploy` を手で叩く運用だったため、main には入っているのに
+#   公開されていない状態が 3 か月続いた (2026-05-03 のデプロイ以降、17 コミット分が
+#   未公開。「Node.js 20 以上必須」という誤りが公開サイトに出続けていた)。
+#   push した = 公開された、と思い込める構造そのものが原因なので自動化する。
+
+on:
+  push:
+    branches: [main]
+    # サイトの中身に関係しないファイルでは動かさない
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'requirements.txt'
+      - '.github/workflows/deploy.yml'
+  # 手動実行も残す (過去分の再デプロイ・切り戻し用)
+  workflow_dispatch:
+
+permissions:
+  contents: write   # gh-pages ブランチへの push に必要
+
+# 連続 push でデプロイが競合しないように直列化する
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # gh-deploy が gh-pages ブランチの履歴を必要とする
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: 依存をインストール
+        run: pip install -r requirements.txt
+
+      - name: ビルド検証 (--strict)
+        # 壊れたリンクや不正な nav をここで落とす。
+        # gh-deploy は内部でビルドし直すが、先に落として公開を止める方が安全。
+        run: mkdocs build --strict
+
+      - name: 公開 (gh-pages へ)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdocs gh-deploy --force --strict
