@@ -12,9 +12,10 @@ Phase 4 中盤 (2026-05) の構成図。Light v1 / Light v2 (codex SDK backed) /
 
 v0.3.0 (2026-06-01) で **organon polyseme.sql_mapping auto inject pipeline** が追加され、Tealus 本体と [tealus-organon](https://github.com/gamasenninn/tealus-organon) repo（Layer 3 data 担体、private）の **間接接続** が標準化されました（[#276](https://github.com/gamasenninn/tealus/issues/276) follow-up、本体 commit `8f28279`）。
 
-- 接続方式: `agent-server/src/lib/organonContext.js` が **per-request `fs.readFileSync`** で organon repo の polyseme entries を読み込み、system prompt に inject
+- 接続方式: `agent-server/src/lib/organonContext.mts` が **per-request `fs.readFileSync`** で organon repo の polyseme entries を読み込み、system prompt に inject（v0.7.0 [#349](https://github.com/gamasenninn/tealus/issues/349) から `sql_mapping` ブロックのみに限定）
 - 双方向同期: 必要なし。organon-side が entries を蓄積するだけで全 agent が自動反映（agent-server restart 不要）
-- env: `INJECT_ORGANON_POLYSEME=true`（default）/ `ORGANON_REPO_PATH` で path override / 不在時 silent skip
+- env: ★ **`ORGANON_INJECT=true`（default OFF の opt-in、[#304](https://github.com/gamasenninn/tealus/issues/304)）** / `ORGANON_REPO_PATH` で path override / 不在時は稼働継続 + 起動ログに WARN（[#347](https://github.com/gamasenninn/tealus/issues/347)）
+    - 旧 `INJECT_ORGANON_POLYSEME`（default ON）は**廃止・fallback 無し**。詳細は [Agent ガイド](agents.md#organon-polyseme-inject) を参照
 
 詳細な architecture は [organic ontology 概念設計](../concepts/organic-ontology.md) を参照。Codex Deep agent + Light v1/v2 すべての agent path で **5/16 4 round → 0 round transition** が N=2 evidence として再現された **「組織記憶辞書が動作する道具に転化した」** v0.3.0 release narrative の core 技術構成です。
 

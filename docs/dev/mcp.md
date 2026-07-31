@@ -4,26 +4,32 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 
 ## 概要
 
-- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（v0.14.1）
+- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（v0.14.8）
 - 配布: npm publish ではなく **GitHub から直接 install**（`npx -y github:gamasenninn/tealus-mcp`）
 - 通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)
 - 技術スタック: `@modelcontextprotocol/sdk`、`zod`、`node-fetch`、`form-data`
 - Tealus 本体（`gamasenninn/tealus`）には移転 stub のみ残存
 
-## 利用可能なツール（17個）
+## 利用可能なツール（v0.14.8 以降で 18個）
+
+!!! warning "見えるツール数は pin しているバージョンで変わります"
+    `.mcp.json` で **タグ pin**（`github:gamasenninn/tealus-mcp#v0.14.6` のような形）にしている場合、そのタグ時点のツールセットしか見えません。`send_form` は **v0.14.8 以降**です。
+
+    また、pin を上げたあと **Claude Code をフル再起動**（プロセスごと）しないと反映されません。in-app reload や `/mcp` 再接続では **stdio 子プロセスが生き残り、`npx` が再解決されない**ためです。ref 無し（`github:gamasenninn/tealus-mcp` = HEAD 追従）の場合はフル再起動だけで反映されます。
 
 | ツール名 | 説明 | 主な入力パラメータ |
 |---|---|---|
 | `send_message` | テキストメッセージ送信 | `room_id` / `content` |
 | `send_image` | 画像送信（base64） | `room_id` / `image_base64` / `filename` / `caption?` |
 | `send_text_as_file` | 長文 text を file（.txt / .md 等）として投稿（v0.11.0、Light v2 機能 parity） | `room_id` / `content` / `filename` / `mime_type?` / `caption?` |
-| `generate_and_send_image` | DALL-E 3 で画像生成 → ルームに投稿（v0.11.0、`OPENAI_API_KEY` env 必須） | `room_id` / `prompt` / `size?`（`1024x1024` / `1792x1024` / `1024x1792`） / `caption?` |
+| `generate_and_send_image` | `gpt-image-1` で画像生成 → ルームに投稿（v0.11.0、`OPENAI_API_KEY` env 必須。v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で DALL-E 3 から移行、env `OPENAI_IMAGE_MODEL` で上書き可） | `room_id` / `prompt` / `size?`（`1024x1024` / `1536x1024` / `1024x1536` / `auto`） / `caption?` |
+| `send_form` | **回答フォームを投稿**（v0.14.8、本体 v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)）。radio（単一選択・補足 text 可）/ text（自由記述）を出し、回答者は 1 ボタンで返信。`reply_mention` を付けると回答が `@cc-<project>` を起動する | `room_id` / `title` / `fields[]`（`id` / `type`（`radio` \| `text`） / `label` / `options?` / `required?` / `multiline?`） / `intro?` / `reply_mention?` / `submit_label?` |
 | `get_messages` | メッセージ履歴取得 | `room_id` / `limit?`（最大100） / `include_transcription?`（v0.7.0、default true） / `include_raw?`（v0.7.0、default false） |
-| `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和） | `message_id` |
+| `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和）。**複数添付は `index` で 1 枚ずつ取得**（v0.14.5、[#316](https://github.com/gamasenninn/tealus/issues/316)。返り値の `media_count` を見て `index=0,1,…` で全枚取得） | `message_id` / `index?`（0始まり） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice / video transcription versions を統合返却、v0.14.0、organon daily cycle の edit history 観察用、[#281](https://github.com/gamasenninn/tealus/issues/281) follow-up） | `message_id` |
-| `read_document` | 添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/* mime 対応） | `message_id` |
+| `read_document` | 添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/* mime 対応）。**複数添付は `index` で 1 件ずつ取得**（v0.14.6、[#317](https://github.com/gamasenninn/tealus/issues/317)） | `message_id` / `index?`（0始まり） |
 | `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、server-side で ffmpeg audio 抽出 → Whisper → AI 整形。`get_message_media` の 10MB 上限を回避） | `message_id` / `force_retranscribe?` |
-| `search_messages` | キーワード/タグ/期間/発言者で全文検索（snippetハイライト付） | `q?` / `room_id?` / `sender_id?` / `type?` / `tag_names?` / `is_done?` / `since?` / `until?` / `limit?`（1-50）/ `offset?` |
+| `search_messages` | キーワード/タグ/期間/発言者で全文検索（snippetハイライト付）。**`has_reaction` でリアクション有無を SQL 側で絞れる**（v0.14.7、[#325](https://github.com/gamasenninn/tealus/issues/325)。「✅ が付いていないもの一覧」等） | `q?` / `room_id?` / `sender_id?` / `type?` / `tag_names?` / `is_done?` / `has_reaction?` / `since?` / `until?` / `limit?`（1-50）/ `offset?` |
 | `list_tags` | bot メンバー全 room の tag 一覧を usage 順で返す discovery primitive（v0.10.0） | `limit?`（default 30、max 100） |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 | `message_id` / `tag_name` / `is_done` |
 | `create_room` | グループルームを作成（v0.2.0、bot は admin として自動追加） | `name` / `member_ids?` / `type?`（現状 `'group'` のみ） |

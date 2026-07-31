@@ -94,6 +94,7 @@ Phase 4 **organon paradigm operational realization** 完成。Day 14-15-16（5/3
     - 共通 utility `agent-server/src/lib/organonContext.js` 新規追加、polyseme entries から `sql_mapping` 持つ entries 抽出 + prompt block 整形、**per-request `fs.readFileSync`**（cache なし）で organon 更新即時反映
     - 全 4 agent（Light v1 / v2 / Deep / Deep Codex）の system prompt build に `loadOrganonPolysemeForPrompt()` を 1 行 inject
     - env `INJECT_ORGANON_POLYSEME=true`（default）で inject 有効、`ORGANON_REPO_PATH` で organon repo path override、organon repo 不在環境 silent skip
+        - ★ **現在は無効な記述です（当時の仕様）**: v0.4.0（[#304](https://github.com/gamasenninn/tealus/issues/304)）で **`ORGANON_INJECT`（default OFF の opt-in）** にリネームされ、旧名は廃止（fallback 無し）。現行仕様は [Agent ガイド](dev/agents.md#organon-polyseme-inject) を参照
     - **agent-server restart 不要**（organon entries 更新 → 次 request で即反映）、organon-side cycle 1 度回せば 全 agent operational value 即享受
     - 5/31 dogfood 第 2 例 success: Deep Codex 5818 chars / Light system prompt 31756 chars、**両 agent で 5/16 4 round → 0 round 正解 transition N=2 evidence**、user 訂正 0 round
     - 詳細は [Agent ガイド > organon polyseme.sql_mapping auto inject pipeline](dev/agents.md#organon-polyseme-inject)
@@ -210,7 +211,7 @@ tealus 本体側で `/mcp` proxy 追加（[tealus commit `b3fb3f7`](https://gith
 ### MCP エコシステム拡張（ツール 11 → 15）
 
 - **tealus-mcp v0.10.0**（5/5、[#254](https://github.com/gamasenninn/tealus/issues/254)）: `list_tags` ツール追加（bot 全 room の tag 一覧を usage 順で返す discovery primitive）、新 server endpoint `GET /api/bot/tags`。LLM 向け MCP は CRUD だけでなく **list / discovery primitive** が必須という教訓
-- **tealus-mcp v0.11.0**（5/8、[#260](https://github.com/gamasenninn/tealus/issues/260)）: `send_text_as_file` + `generate_and_send_image` ツール追加（Light v2 機能 parity）。長文 text を file 添付 / DALL-E 3 経由の画像生成 + 投稿の composite action
+- **tealus-mcp v0.11.0**（5/8、[#260](https://github.com/gamasenninn/tealus/issues/260)）: `send_text_as_file` + `generate_and_send_image` ツール追加（Light v2 機能 parity）。長文 text を file 添付 / DALL-E 3 経由の画像生成 + 投稿の composite action（★ 画像モデルは v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で `gpt-image-1` に移行済み）
 - **tealus-mcp v0.11.1**（5/8、[#262](https://github.com/gamasenninn/tealus/issues/262) Phase 2 で surface）: `read_document` の `pdf-parse` parseError も Gemini Vision fallback の trigger 条件に追加（image-only PDF / 構造異常 PDF への robustness 向上）、README に env 名 trap 警告 callout（[#267](https://github.com/gamasenninn/tealus/issues/267)）
 - v0.8.0 / v0.9.0 の `read_document` foundation（PDF / DOCX / XLSX 解析 + Gemini Vision fallback）も v0.2.3 期に統合
 
@@ -268,6 +269,8 @@ v0.2.0 公開直後の他マシン install テストで発見された 2 件の�
 
 !!! warning "Node.js 20+ 必須化（破壊的変更）"
     全 6 package.json に `engines.node: ">=20.0.0"`、ルート `.npmrc` に `engine-strict=true` を導入。**Node 18 環境では `npm install` が `EBADENGINE` で hard fail** します。原因は Node 18 に `File` global が未追加で `undici` v6+ が crash するためです。
+
+    ★ **これは当時の要件です。** v0.5.0 の TypeScript 化（[#330](https://github.com/gamasenninn/tealus/issues/330)）以降、**現在の要件は Node 24** です（[サーバー構築 > 前提条件](admin/server-setup.md) 参照）。
 
 - **Node.js 20+ 必須化**（[#210](https://github.com/gamasenninn/tealus/issues/210)）: cryptic crash → install 時点 hard fail に
 - **初回ユーザー auto-promote**（[#211](https://github.com/gamasenninn/tealus/issues/211)）: 最初の非 Bot ユーザー（`is_bot=false` の COUNT が 0）が登録時に自動 admin role に。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターン

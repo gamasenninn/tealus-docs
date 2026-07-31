@@ -39,8 +39,8 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
 | 得意領域 | 日常会話、軽量 Q&A、定型タスク、自然言語検索、**cross-room 探索（v2 が強い）** | コード生成・分析、長いワークフロー、リファクタリング |
 | ローカルツール | `write_memory` / `read_memory` / `get_current_time` / `list_workspace_files` / `generate_image` / `code_interpreter` | Claude Code 標準ツール（ファイル編集・bash 実行など） |
-| Tealus MCP | 共通 17 ツール（v0.2.0〜、[#199](https://github.com/gamasenninn/tealus/issues/199)） | 共通 17 ツール |
-| タイムアウト | 短め（リアルタイム前提） | 5 分（`DEEP_TIMEOUT`） |
+| Tealus MCP | 共通 18 ツール（v0.2.0〜、tealus-mcp v0.14.8 以降で 18、[#199](https://github.com/gamasenninn/tealus/issues/199)） | 共通 18 ツール |
+| タイムアウト | 短め（リアルタイム前提） | **8 分**（`DEEP_TIMEOUT`、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で延長） |
 
 ## 選択基準
 
@@ -228,14 +228,15 @@ Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)*
 
 両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.js` の `getOrCreateSharedGlobal()` で programmatic に注入され、環境変数 `TEALUS_USER_ID` / `TEALUS_PASSWORD` の有無で自動切替されます。
 
-利用可能な 17 ツール（[MCP Server](mcp.md) と同一）:
+利用可能な 18 ツール（[MCP Server](mcp.md) と同一、v0.14.8 以降）:
 
 | ツール名 | 用途 |
 |---|---|
 | `send_message` | テキスト送信 |
 | `send_image` | 画像送信（base64） |
 | `send_text_as_file` | 長文 text を file として投稿（v0.11.0） |
-| `generate_and_send_image` | DALL-E 3 で画像生成 → 投稿（v0.11.0） |
+| `generate_and_send_image` | `gpt-image-1` で画像生成 → 投稿（v0.11.0、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で DALL-E 3 から移行） |
+| `send_form` | 回答フォームを投稿（tealus-mcp v0.14.8、本体 v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)） |
 | `get_messages` | メッセージ履歴取得 |
 | `get_message_media` | メディア取得（画像視認 / 音声文字起こし、v0.14.1 で image 判定を mime_type ベースに緩和） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice/video transcription versions、v0.14.0） |
@@ -383,11 +384,21 @@ v0.3.0 (2026-05-31) で、**[organon](../concepts/organic-ontology.md) の `poly
 
 | 仕組み | 詳細 |
 |---|---|
-| 共通 utility | `agent-server/src/lib/organonContext.js` 新規追加。polyseme entries → `sql_mapping` フィールド抽出 → prompt block 整形 |
+| 共通 utility | `agent-server/src/lib/organonContext.mts`。polyseme entries → `sql_mapping` フィールド抽出 → prompt block 整形 |
 | 注入 timing | **per-request `fs.readFileSync`**（cache なし）。organon 更新 → 次 request で即反映、**agent-server restart 不要** |
 | inject 対象 | Light v1 / Light v2 / Deep / Codex Deep の **4 agent path 全て** |
-| env | `INJECT_ORGANON_POLYSEME=true`（default）で有効、`ORGANON_REPO_PATH` で organon repo path override |
-| graceful degrade | organon repo 不在環境では silent skip（`isAvailable` check） |
+| env | ★ **`ORGANON_INJECT=true` で有効（default OFF の opt-in）**、`ORGANON_REPO_PATH` で organon repo path override |
+| graceful degrade | organon repo 不在環境では skip（稼働は継続）。ただし下記の warn あり |
+
+!!! warning "env 名と既定値が変わりました（v0.4.0、[#304](https://github.com/gamasenninn/tealus/issues/304)）"
+    **旧 `INJECT_ORGANON_POLYSEME`（default ON の opt-out）は廃止され、`ORGANON_INJECT`（default OFF の opt-in）になりました。互換 fallback はありません。**
+
+    旧名のまま設定していると **何も注入されないまま静かに動作します**。organon を使う deployment では `ORGANON_INJECT=true` を明示してください。
+
+    また v0.7.0（[#347](https://github.com/gamasenninn/tealus/issues/347)）から、`ORGANON_INJECT=true` なのに organon が見つからない / `sql_mapping` を持つ entries が 0 件の場合は、`[migration-check]` と同型の **loud WARN** が起動ログに出ます（「ON と宣言したのに何も注入されない」silent degrade の可視化。organon は任意サブシステムなので稼働は止めません）。
+
+!!! info "inject 範囲の縮小（v0.7.0、[#349](https://github.com/gamasenninn/tealus/issues/349)）"
+    以前は polyseme yaml を丸ごと注入していました（7 entry で 879 行）。DB 検索 grounding に必要な事実（table / field / 式 / filter / 混同注意）は `sql_mapping` ブロックに揃っており、その外の散文は grounding に marginal と**実機 A/B で検証**されたため、**`sql_mapping` ブロックのみに限定**されました（879 → 260 行、70% 減。grounding の結果は不変）。
 
 この pipeline により、**organon-side が polyseme.sql_mapping を蓄積するだけで、全 AI agent が同時に「組織記憶辞書を読みながら」推論できる** architecture が成立しました。5/16 dogfood の **4 round LLM 訂正 → 1 round 正解** transition が両 agent path で N=2 evidence として再現されています。
 
@@ -396,6 +407,6 @@ v0.3.0 (2026-05-31) で、**[organon](../concepts/organic-ontology.md) の `poly
 ## 関連
 
 - [AI アーキテクチャ](ai-architecture.md): 全体構造、Router の判定ロジック、Webhook Dispatcher、コスト設計
-- [MCP Server](mcp.md): 17 ツールの詳細仕様と外部クライアントからの利用方法
+- [MCP Server](mcp.md): 18 ツールの詳細仕様と外部クライアントからの利用方法
 - [AIエージェント設定](../admin/agent.md): 運用者向けの設定手順
 - 関連 issue: [#185](https://github.com/gamasenninn/tealus/issues/185) MCP umbrella、[#194](https://github.com/gamasenninn/tealus/issues/194) search_messages、[#197](https://github.com/gamasenninn/tealus/issues/197) mark_tag_done、[#199](https://github.com/gamasenninn/tealus/issues/199) Light agent MCP 統合、[#200](https://github.com/gamasenninn/tealus/issues/200) create_room、[#207](https://github.com/gamasenninn/tealus/issues/207) delete_room、[#213](https://github.com/gamasenninn/tealus/issues/213) cc-tealus Phase A、[#214](https://github.com/gamasenninn/tealus/issues/214) multi-session lock（Phase B）、[#220](https://github.com/gamasenninn/tealus/issues/220) tealus-agent improvement harness（議論先行）、[#258](https://github.com/gamasenninn/tealus/issues/258) Light v2（codex SDK）、[#260](https://github.com/gamasenninn/tealus/issues/260) Light v2 機能 parity（send_text_as_file / generate_and_send_image）、[#263](https://github.com/gamasenninn/tealus/issues/263) cc-aliases.json

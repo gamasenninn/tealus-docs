@@ -2,12 +2,18 @@
 
 ## 前提条件
 
-- **Node.js 20 以上必須**（v0.2.1〜、`engine-strict=true` でハードフェイル）
+- **Node.js 24 必須**（v0.5.0〜）
 - Docker / Docker Compose
 - Git
 
-!!! warning "Node 18 では install 失敗"
-    v0.2.1（[#210](https://github.com/gamasenninn/tealus/issues/210)）から全 6 package.json に `engines.node: ">=20.0.0"` + ルート `.npmrc` に `engine-strict=true` が設定されています。**Node 18 環境では `npm install` 自体が `EBADENGINE` で hard fail** します（原因: Node 18 に `File` global が未実装で `undici` v6+ が crash）。Node 20 系のインストールには nvm（推奨）または NodeSource パッケージを利用してください。
+!!! warning "Node 24 未満では `npm install` が hard fail します"
+    v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）でコードベースが全レイヤー TypeScript 化され、サーバー系（server / agent-server / rtc-server）は **`.mts` をビルドせず直接実行**します（`node src/app.mts`、トランスパイル工程なし）。これは Node の native type stripping に依存する構成で、**型注釈をそのまま解釈できない版では起動しません**。
+
+    **検証されているのは Node 24 だけです。** Dockerfile はすべて `node:24` ベース、CI も全ジョブが Node 24 で走っています。
+
+    全 package.json の `engines.node` が `>=24.0.0`、ルート `.npmrc` に `engine-strict=true` が設定されているため、**24 未満では `npm install` 自体が `EBADENGINE` で hard fail** します。これは意図的な設計です — **install が通って起動時に落ちる（＝「入ったのに動かない」で原因に辿り着けない）よりも、入口で止める**方針です（[#210](https://github.com/gamasenninn/tealus/issues/210) 以来の踏襲）。
+
+    Node 24 のインストールには nvm（推奨）または NodeSource パッケージを利用してください。
 
 ## 1. リポジトリのクローン
 
@@ -49,9 +55,12 @@ v0.1.x（[#188](https://github.com/gamasenninn/tealus/issues/188)）から、ser
 
 | サービス | ベースイメージ | 構成 | 主な特徴 |
 |---|---|---|---|
-| server | `node:20-alpine` | 3 段階 multi-stage（client build → dashboard build → runtime） | client/dist と dashboard/dist を同梱、最終 ~312MB |
-| agent-server | `node:20-alpine` | 単段ビルド | webhook + AI agent のみで軽量、最終 ~261MB |
-| rtc-server | `node:20-bookworm-slim` | 2 段階 multi-stage（builder bookworm-slim → runtime bookworm-slim） | mediasoup の native worker が glibc 必須のため bookworm（Debian）ベース、最終 ~307MB |
+| server | `node:24-alpine` | 3 段階 multi-stage（client build → dashboard build → runtime） | client/dist と dashboard/dist を同梱 |
+| agent-server | `node:24-alpine` | 単段ビルド | webhook + AI agent のみで軽量 |
+| rtc-server | `node:24-bookworm-slim` | 2 段階 multi-stage（builder bookworm-slim → runtime bookworm-slim） | mediasoup の native worker が glibc 必須のため bookworm（Debian）ベース |
+
+!!! note "イメージサイズの記載について"
+    以前ここに記載していた最終イメージサイズ（~312MB / ~261MB / ~307MB）は **v0.1.x 当時・Node 20 ベースでの計測値**です。v0.5.0 のベースイメージ更新後は再計測していないため、記載を取り下げています。
 
 ### MEDIA_ROOT の bind mount
 
@@ -126,6 +135,8 @@ npx web-push generate-vapid-keys
 | `LOG_LEVEL` | debug（開発） / info（本番） | ログレベル |
 | `NODE_ENV` | — | `production` 設定時にCORSを制限 |
 | `VITE_ALLOWED_HOSTS` | — | 外部ホスト経由で vite dev server に access する場合に許可ホストを指定（v0.2.0〜の注意点） |
+| `TRANSCRIPTION_MODE` | — | `organon` を指定すると、自ホスト STT（Qwen3-ASR）の生出力を organon 知識で文脈補正する 2 段構成に切替（v0.5.0、[#326](https://github.com/gamasenninn/tealus/issues/326)） |
+| `LINE_IMAGESET_FLUSH_MS` | 15000 | LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。total 到達で即 flush、この時間で部分 flush（v0.7.0、[#353](https://github.com/gamasenninn/tealus/issues/353)） |
 
 ### DBマイグレーション
 
@@ -133,7 +144,10 @@ npx web-push generate-vapid-keys
 npm run migrate
 ```
 
-マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（001〜021）が順に実行されます。`021` で全文検索高速化用の `pg_trgm` 拡張と GIN index が追加されます（v0.1.x、[#194](https://github.com/gamasenninn/tealus/issues/194)）。
+マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（001〜026）が順に実行されます。`021` で全文検索高速化用の `pg_trgm` 拡張と GIN index が追加されます（v0.1.x、[#194](https://github.com/gamasenninn/tealus/issues/194)）。以降 `022` ゲスト role、`023`〜`025` 辞書テーブル（v0.5.0 [#327](https://github.com/gamasenninn/tealus/issues/327)）、`026` 汎用フォーム（v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)）が追加されています。
+
+!!! warning "migrate 忘れは「クラッシュしないが静かに壊れる」"
+    未適用の migration がある状態でも**サーバーは起動してしまい**、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成タブが 500、自己成長辞書が効かない）。v0.6.0（[#334](https://github.com/gamasenninn/tealus/issues/334)）から起動時に loud warn が出るようになったので、**起動ログの `[migration-check]` / `[build-check]`** を確認してください。既存環境の更新手順は本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) にまとまっています。
 
 !!! warning "managed PostgreSQL 環境での注意"
     migration 021 は `pg_trgm` extension を要求します。`CREATE EXTENSION` 権限がない managed PostgreSQL 環境（一部のクラウド DB）では migration が失敗するため、運用前に extension 作成権限を確認してください。
@@ -212,6 +226,13 @@ npm run dev
 | `TTS_ENABLED` | TTS 読み上げの有効/無効（`"false"` で無効化、デフォルト: 有効） |
 | `TTS_MAX_LENGTH` | 読み上げ最大文字数（デフォルト: 500） |
 | `WHISPER_MODEL` | 音声文字起こしモデル（v0.2.2〜、default `gpt-4o-transcribe`、旧モデルに戻すなら `whisper-1`、半額の選択肢として `gpt-4o-mini-transcribe`） |
+| `ORGANON_INJECT` | organon の `sql_mapping` を agent prompt に注入（**default OFF の opt-in**、v0.4.0 [#304](https://github.com/gamasenninn/tealus/issues/304)。旧 `INJECT_ORGANON_POLYSEME` は廃止・fallback 無し） |
+| `ORGANON_REPO_PATH` | organon repo の path override |
+| `VOCAB_INJECT` | 業務語彙辞書（別名→正規名）を Light / Deep の prompt にも注入し、画像 OCR・帳票読み取りの表記揺れを正規化（**default OFF の opt-in**、v0.5.0 [#315](https://github.com/gamasenninn/tealus/issues/315)） |
+| `DEEP_TIMEOUT` | Deep agent のタイムアウト（**default 480000 = 8 分**、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で 5 分から延長） |
+| `QUEUE_TASK_TIMEOUT` | キュー投入タスクのタイムアウト（**default 540000 = 9 分**、同 [#314](https://github.com/gamasenninn/tealus/issues/314)） |
+| `CC_ACK_TTL_MS` | `@cc-<project>` 投入時に出る受付エコーの表示時間（default 5000 = 5 秒、v0.6.0 [#335](https://github.com/gamasenninn/tealus/issues/335)） |
+| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)） |
 
 !!! note "旧環境変数名との互換"
     旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` も内部で fallback されますが、新規セットアップでは `TEALUS_USER_ID` / `TEALUS_PASSWORD` の使用を推奨します（v0.1.x、Tealus MCP との表記統一）。

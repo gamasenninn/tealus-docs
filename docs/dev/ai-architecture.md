@@ -112,19 +112,20 @@ Agent Server (port 4000)
 | `read_memory` | 保存済みメモリの読み取り |
 | `get_current_time` | 現在時刻の取得 |
 | `list_workspace_files` | ワークスペース内のファイル一覧 |
-| `generate_image` | DALL-E による画像生成（設定でON/OFF可） |
+| `generate_image` | OpenAI Images API による画像生成（設定でON/OFF可） |
 | `code_interpreter` | Python コード実行（設定でON/OFF可） |
 
 #### Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）
 
-[Tealus MCP](mcp.md) を介して Light Agent も以下 17 ツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
+[Tealus MCP](mcp.md) を介して Light Agent も以下 18 ツール（tealus-mcp v0.14.8 以降）を利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。
 
 | ツール名 | 説明 |
 |---|---|
 | `send_message` | テキストメッセージ送信 |
 | `send_image` | 画像送信（base64） |
 | `send_text_as_file` | 長文 text を file として投稿（v0.11.0） |
-| `generate_and_send_image` | DALL-E 3 で画像生成 → 投稿（v0.11.0、`OPENAI_API_KEY` 必須） |
+| `generate_and_send_image` | `gpt-image-1` で画像生成 → 投稿（v0.11.0、`OPENAI_API_KEY` 必須。v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で DALL-E 3 から移行、env `OPENAI_IMAGE_MODEL` で上書き可） |
+| `send_form` | 回答フォームを投稿（tealus-mcp v0.14.8、本体 v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)。`reply_mention` で回答が `@cc-<project>` を起動） |
 | `get_messages` | メッセージ履歴取得 |
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice/video transcription versions、v0.14.0） |
@@ -189,7 +190,7 @@ claude -p - \
 
 | 項目 | 値 |
 |---|---|
-| タイムアウト | 5分（`DEEP_TIMEOUT`） |
+| タイムアウト | **8分**（`DEEP_TIMEOUT` = 480000、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で 5 分から延長。キュー側は `QUEUE_TASK_TIMEOUT` = 540000） |
 | 出力分割 | 4000字単位でチャットに送信 |
 | プロセス終了 | SIGTERM（Windows: `taskkill /T /F`） |
 
