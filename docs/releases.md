@@ -365,7 +365,7 @@ v0.1.0 OSS 公開後、Docker 化・TTS 配信刷新・MCP エコシステム拡
 ### TTS 音量補正（[#198](https://github.com/gamasenninn/tealus/issues/198)）
 
 - ユーザー単位の `voiceVolume`（Profile スライダー、`localStorage` 管理、0-100%）
-- クライアントの組み込み倍率 `TTS_VOLUME_BOOST`（`client/src/constants/ui.js`、現在 3.0）
+- クライアントの組み込み倍率 `TTS_VOLUME_BOOST`（`client/src/constants/ui.ts`、現在 3.0）
 - Web Audio API GainNode で `<audio>.volume` の上限 1.0 を超える音量に対応
 
 ### MCP エコシステム拡張

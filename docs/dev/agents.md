@@ -195,8 +195,8 @@ v0.3.0 (2026-06-01) で Deep agent の **provider 切替** が導入されまし
 
 | `DEEP_AGENT_PROVIDER` env | 実装 | 認証 |
 |---|---|---|
-| `claude`（**default**、v0.2.x まで唯一の選択肢） | `claude -p` spawn（既存 Deep agent、`agents/deep.js`） | Claude MAX プラン / API key |
-| `codex`（v0.3.0〜、新規） | `codex exec` spawn（新規 `agents/deepCodex.js`、Light v2 `#258` で確立した Codex SDK / subscription auth pattern を CLI mode で再現） | **ChatGPT サブスクリプション**（`~/.codex/auth.json`）/ API key |
+| `claude`（**default**、v0.2.x まで唯一の選択肢） | `claude -p` spawn（既存 Deep agent、`agents/deep.mts`） | Claude MAX プラン / API key |
+| `codex`（v0.3.0〜、新規） | `codex exec` spawn（新規 `agents/deepCodex.mts`、Light v2 `#258` で確立した Codex SDK / subscription auth pattern を CLI mode で再現） | **ChatGPT サブスクリプション**（`~/.codex/auth.json`）/ API key |
 
 ### Codex Deep の認証 path — `DEEP_CODEX_AUTH` env
 
@@ -226,7 +226,7 @@ Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)*
 
 ## Tealus MCP 統合（Light/Deep 共通）
 
-両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.js` の `getOrCreateSharedGlobal()` で programmatic に注入され、環境変数 `TEALUS_USER_ID` / `TEALUS_PASSWORD` の有無で自動切替されます。
+両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.mts` の `getOrCreateSharedGlobal()` で programmatic に注入され、環境変数 `TEALUS_USER_ID` / `TEALUS_PASSWORD` の有無で自動切替されます。
 
 利用可能な 18 ツール（[MCP Server](mcp.md) と同一、v0.14.8 以降）:
 

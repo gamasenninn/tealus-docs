@@ -8,7 +8,7 @@
 npx github:gamasenninn/tealus
 ```
 
-または、リポジトリ内の `scripts/tealus-cli.js` を直接実行します。
+または、リポジトリ内の `scripts/tealus-cli.ts` を直接実行します（v0.5.0 の TypeScript 化で `.js` → `.ts` になりました。ビルドは不要で、Node 24 がそのまま実行します）。
 
 ## 設定
 
@@ -28,19 +28,19 @@ TEALUS_BOT_PASS=<your_bot_password>
 ### テキスト送信
 
 ```bash
-node tealus-cli.js send "グループ名" --text "Hello!"
+node scripts/tealus-cli.ts send "グループ名" --text "Hello!"
 ```
 
 ### 画像送信
 
 ```bash
-node tealus-cli.js send "グループ名" --image /path/to/image.jpg
+node scripts/tealus-cli.ts send "グループ名" --image /path/to/image.jpg
 ```
 
 ### 音声送信
 
 ```bash
-node tealus-cli.js send "グループ名" --voice /path/to/audio.wav
+node scripts/tealus-cli.ts send "グループ名" --voice /path/to/audio.wav
 ```
 
 ### ダイレクトメッセージ
@@ -48,7 +48,7 @@ node tealus-cli.js send "グループ名" --voice /path/to/audio.wav
 `@ユーザー名` を宛先に指定するとDMルームが自動作成されます。
 
 ```bash
-node tealus-cli.js send "@山田太郎" --text "こんにちは"
+node scripts/tealus-cli.ts send "@山田太郎" --text "こんにちは"
 ```
 
 ## watchモード（ディレクトリ監視）
@@ -56,7 +56,7 @@ node tealus-cli.js send "@山田太郎" --text "こんにちは"
 ディレクトリを監視し、新しい音声ファイルが追加されると自動でTealusに送信します。
 
 ```bash
-node tealus-cli.js send "グループ名" --watch /path/to/directory
+node scripts/tealus-cli.ts send "グループ名" --watch /path/to/directory
 ```
 
 ### オプション
@@ -78,5 +78,5 @@ node tealus-cli.js send "グループ名" --watch /path/to/directory
 
 ```bash
 # トランシーバー音声をTealusに自動投稿
-node tealus-cli.js send "現場連絡" --watch /path/to/vox-output --ext .wav
+node scripts/tealus-cli.ts send "現場連絡" --watch /path/to/vox-output --ext .wav
 ```

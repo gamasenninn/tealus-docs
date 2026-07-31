@@ -60,6 +60,24 @@ SVG 図の構造を grep 可能な形で残した詳細 reference (基本 servic
 └──────────────────┘   └──────────────────────────┘
 ```
 
+## 実行モデル — TypeScript のまま実行する（v0.5.0〜）
+
+v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイヤーが TypeScript 化されました。**サーバー系にビルド工程はありません。**
+
+| レイヤー | 拡張子 | 実行 / 配信 |
+|---|---|---|
+| server / agent-server / rtc-server | `.mts` | **ビルドせず直接実行**（`node src/app.mts`）。Node の native type stripping が型注釈を落としながら実行します |
+| client / dashboard | `.ts` / `.tsx` | `vite build` で `dist/` を生成し、server が静的配信 |
+| CLI（`scripts/`） | `.ts` | `node scripts/tealus-cli.ts` で直接実行 |
+
+この構成には 2 つの帰結があります。
+
+- **Node 24 が必須**です。型注釈をそのまま解釈できない版では起動しません（[サーバー構築 > 前提条件](../admin/server-setup.md)）
+- **型検査は実行時に行われません。** `tsc --noEmit` を別工程（`npm run typecheck`、CI の各ジョブ）で回します。型エラーがあってもサーバー自体は起動しうる、という点に注意してください
+
+!!! info "更新時の注意"
+    サーバー系はビルド不要ですが、**client / dashboard は `npm run build` が必要**です。再ビルドを忘れると古い画面が配信され続けます（v0.7.0 では、これが原因で更新検知そのものが入らない、という事故が起きます）。起動時の `[build-check]` ログで成果物の有無を確認できます。
+
 ## コンポーネント構成
 
 ### フロントエンド（client/）
@@ -89,7 +107,7 @@ SVG 図の構造を grep 可能な形で残した詳細 reference (基本 servic
 | `socket/handlers/` | Socket.IOイベントハンドラ（message・read・typing・call） |
 | `middleware/` | JWT認証・ファイルアップロード |
 | `services/` | プッシュ通知・サムネイル生成等のビジネスロジック |
-| `db/` | DB接続・マイグレーション（001〜018） |
+| `db/` | DB接続・マイグレーション（001〜026） |
 | `utils/` | ユーティリティ |
 
 ### AIエージェント（agent-server/）

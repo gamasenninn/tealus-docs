@@ -144,7 +144,7 @@ Agent Server (port 4000)
 
 ### Tealus MCP 統合（Light/Deep 共通）
 
-v0.1.x までは MCP は Deep Agent 専用でしたが、`agent-server/src/mcp/roomMcpManager.js` の `getOrCreateSharedGlobal()` により Light Agent にも programmatic に MCP を注入する仕組みが追加されました。
+v0.1.x までは MCP は Deep Agent 専用でしたが、`agent-server/src/mcp/roomMcpManager.mts` の `getOrCreateSharedGlobal()` により Light Agent にも programmatic に MCP を注入する仕組みが追加されました。
 
 ```
 agent-server 起動時

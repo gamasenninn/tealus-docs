@@ -39,7 +39,7 @@ v0.3.0 で **ゲストユーザ role** が追加 ([#282](https://github.com/gama
 | Layer | 実装 |
 |---|---|
 | Layer 1 schema | migration 022 で `users.role` CHECK constraint 拡張 |
-| Layer 2 logic | `server/src/utils/permissions.js` の `isAdmin/isUser/isGuest` + `canCreateRoom/canInviteToRoom/canSearchUsers` ability check |
+| Layer 2 logic | `server/src/utils/permissions.mts` の `isAdmin/isUser/isGuest` + `canCreateRoom/canInviteToRoom/canSearchUsers` ability check |
 | Layer 3 route guard | POST /api/rooms / GET /api/users 等に guest guard、guest → 403 |
 
 ### Phase D/E（v0.3.0 後、2026-06-16）— 運用可能化

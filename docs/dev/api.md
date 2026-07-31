@@ -216,7 +216,7 @@ Bot用ユーザーとしてJWT認証が必要です。
 
 ## Bot API 拡張（v0.1.x）
 
-v0.1.x で追加された 3 つの Bot API endpoint の詳細です。**いずれも `server/src/routes/bot.js` に実装された通常の HTTP API** で、Bot 認証（JWT）で直接呼び出せます。[tealus-mcp](https://github.com/gamasenninn/tealus-mcp) の `search_messages` / `get_message_media` / `mark_tag_done` ツールは、これら HTTP API のラッパーとして AI エージェント向けに提供されているものです。
+v0.1.x で追加された 3 つの Bot API endpoint の詳細です。**いずれも `server/src/routes/bot.mts` に実装された通常の HTTP API** で、Bot 認証（JWT）で直接呼び出せます。[tealus-mcp](https://github.com/gamasenninn/tealus-mcp) の `search_messages` / `get_message_media` / `mark_tag_done` ツールは、これら HTTP API のラッパーとして AI エージェント向けに提供されているものです。
 
 ### `GET /api/bot/search` — メッセージ全文検索
 
@@ -369,7 +369,7 @@ curl "http://localhost:3000/api/bot/messages/$MSG_ID/media" \
 | `include_raw=true` | `{id, status, version, formatted_text, raw_text}` |
 
 !!! note "後方互換と improvement"
-    旧形式 `{raw_text, formatted_text, status}` から default 振る舞いが変わります（`raw_text` 省略 + `id` / `version` 追加）。本体側 consumer（`agent-server/src/media/messageAdapter.js` 等）は `formatted_text || raw_text` fallback chain で機能するため実害なし、むしろ整形空 voice で raw garbage を LLM に渡さなくなる improvement として動きます。
+    旧形式 `{raw_text, formatted_text, status}` から default 振る舞いが変わります（`raw_text` 省略 + `id` / `version` 追加）。本体側 consumer（`agent-server/src/media/messageAdapter.mts` 等）は `formatted_text || raw_text` fallback chain で機能するため実害なし、むしろ整形空 voice で raw garbage を LLM に渡さなくなる improvement として動きます。
 
 ## ヘルスチェック
 

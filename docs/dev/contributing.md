@@ -13,16 +13,29 @@
 
 ## コーディング規約
 
+### TypeScript（v0.5.0〜）
+
+v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイヤー（server / client / agent-server / rtc-server / dashboard / scripts）が TypeScript 化されました。
+
+- **拡張子**: サーバー系は `.mts`、クライアント系・CLI は `.ts` / `.tsx`
+- **ビルド工程はありません**（サーバー系）。`node src/app.mts` のように **`.mts` を直接実行**します（Node の native type stripping）。トランスパイル済みの成果物をコミットする運用ではありません
+- **型検査はテストと別工程**です。PR を出す前に、変更したプロジェクトで `npm run typecheck`（= `tsc --noEmit`）を通してください。**テストを実行しても型検査は行われません**
+- **Node 24 が必要**です（[サーバー構築 > 前提条件](../admin/server-setup.md)）
+
+!!! tip "テストは `.js` のままでも構いません"
+    既存の JS テストは一括変換されておらず、`.test.js` と `.test.mts` が同じ Jest で動く構成になっています。詳細は [テスト](testing.md) を参照してください。
+
 ### CLAUDE.md
 
-リポジトリルートの `CLAUDE.md` にAI開発ガイドラインが記載されています。AIツール（Claude Code等）での開発時はこのファイルが自動的に参照されます。
+リポジトリルートの `CLAUDE.md` にAI開発ガイドラインが記載されています。AIツール（Claude Code等）での開発時はこのファイルが自動的に参照されます。Codex CLI 向けには同内容の `AGENTS.md` が置かれています。
 
 ### コード品質
 
 - Phase 1 完了時にリファクタリングを実施済み（#51〜#64）
-- エラーメッセージは `constants/errors.js` に集約
+- エラーメッセージは `server/src/constants/errors.mts` に集約
 - メンバーシップチェックは共通ミドルウェアを使用
-- Socket.IOハンドラは `handlers/` ディレクトリに機能別分割
+- Socket.IOハンドラは `server/src/socket/handlers/` に機能別分割
+- 依存に **GPL / AGPL 系ライセンスを混入させない**（CI の `license-fail-on-gpl` で検査されます）
 
 ## セキュリティに関する注意
 
