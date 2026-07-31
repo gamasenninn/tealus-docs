@@ -11,7 +11,7 @@ Tealus の agent-server は「**メッセージ → 適切な処理者へ dispat
                           ユーザーメッセージ
                                    ↓
                           Router（gpt-5.4-mini）
-  ├── 日常タスク（/light）        → Light Agent（default v2、AGENT_LIGHT_BACKEND env で v1/v2 切替、v0.3.0〜）
+  ├── 日常タスク（/light）        → Light Agent（default v2、AGENT_LIGHT_BACKEND env で v1/v2 切替、v0.4.0〜）
   ├── cross-room 探索（/light2）  → Light Agent v2（codex SDK、明示指定）
   ├── 複雑タスク（/deep）         → Deep Agent（DEEP_AGENT_PROVIDER で Claude Code CLI / Codex CLI 切替、v0.3.0〜）
   ├── @cc-{project}              → Claude Code session（cc-tealus、v0.2.2〜）

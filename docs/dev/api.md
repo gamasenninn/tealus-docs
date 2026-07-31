@@ -187,7 +187,7 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | POST | `/api/admin/webhooks/:id/test` | Webhookテスト送信 |
 | GET | `/api/admin/agent-stats` | エージェント統計 |
 | GET | `/api/admin/agent-logs` | エージェント応答ログ |
-| POST | `/api/admin/transcription/reload-vocab` | **voice transcription の業務語彙辞書 cache を手動 reset**（v0.3.0〜、[#287](https://github.com/gamasenninn/tealus/issues/287)、`transcription_guideline.json` 編集後の即時反映用、server restart 不要）。v0.3.0 後（[#296](https://github.com/gamasenninn/tealus/issues/296)）で **mtime 自動リロード** が default 動作になり、本 endpoint は手動 reset の fallback として残存 |
+| POST | `/api/admin/transcription/reload-vocab` | **voice transcription の業務語彙辞書 cache を手動 reset**（v0.3.0〜、[#287](https://github.com/gamasenninn/tealus/issues/287)、`transcription_guideline.json` 編集後の即時反映用、server restart 不要）。v0.4.0（[#296](https://github.com/gamasenninn/tealus/issues/296)）で **mtime 自動リロード** が default 動作になり、本 endpoint は手動 reset の fallback として残存 |
 
 ## Bot API
 
@@ -206,13 +206,13 @@ Bot用ユーザーとしてJWT認証が必要です。
 | POST | `/api/bot/messages/:id/transcribe` | 動画/音声メッセージの文字起こし（v0.2.4〜、[#271](https://github.com/gamasenninn/tealus/issues/271)、tealus-mcp `transcribe_media` の base endpoint） |
 | GET | `/api/bot/rooms/:id/membership` | **bot がルームメンバーか確認**（v0.3.0 後、[#282](https://github.com/gamasenninn/tealus/issues/282)、`%委譲%` 委譲権限 gate 用、未参加 room への委譲拒否で使用） |
 | GET | `/api/bot/search` | メッセージ全文検索（v0.1.x） |
-| GET | `/api/bot/tags` | タグ一覧を usage 順で返す discovery primitive（`[Unreleased]`、[tealus #254](https://github.com/gamasenninn/tealus/issues/254)） |
+| GET | `/api/bot/tags` | タグ一覧を usage 順で返す discovery primitive（v0.2.3〜、[tealus #254](https://github.com/gamasenninn/tealus/issues/254)） |
 | GET | `/api/bot/unread` | 未読メッセージ取得 |
 | POST | `/api/bot/mark-read` | 既読マーク |
 | PATCH | `/api/bot/messages/:id/tags/:tag_name/done` | タグの完了状態（is_done）を更新（v0.1.x） |
 | GET | `/api/bot/rooms` | ルーム一覧 |
 | POST | `/api/bot/rooms` | ルーム作成 |
-| POST | `/api/bot/push-file` | text 内容を file（.txt / .md 等）として投稿（`[Unreleased]`、tealus-mcp v0.11.0 の `send_text_as_file` の wrapper） |
+| POST | `/api/bot/push-file` | text 内容を file（.txt / .md 等）として投稿（v0.2.3〜、tealus-mcp v0.11.0 の `send_text_as_file` の wrapper） |
 
 ## Bot API 拡張（v0.1.x）
 
@@ -296,7 +296,7 @@ curl -X PATCH "http://localhost:3000/api/bot/messages/$MSG_ID/tags/TODO/done" \
   -d '{"is_done": true}'
 ```
 
-### `GET /api/bot/tags` — タグ一覧 discovery（`[Unreleased]`、[#254](https://github.com/gamasenninn/tealus/issues/254)）
+### `GET /api/bot/tags` — タグ一覧 discovery（v0.2.3〜、[#254](https://github.com/gamasenninn/tealus/issues/254)）
 
 bot がメンバーである全 room の tag 一覧を usage 順（利用回数 desc）で返します。LLM が `search_messages` で `tag_names` filter を組み立てる時、tag 名を知らないと「正解の名前を当てるゲーム」を強いられる構造的問題への対応として、**list / discovery primitive** を提供する endpoint です。
 

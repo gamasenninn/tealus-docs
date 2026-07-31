@@ -1,76 +1,106 @@
 # リリースノート
 
-## [Unreleased] — Multi-room AI 委譲 + LINE Bridge + Light v2 default + ゲスト Phase D/E（2026年6月2-18日）
+このページは **「使う人」向けの要約**です。各リリースで何が変わったか、そして**更新するときに何をしないと壊れるか**を短く載せます。
 
-v0.3.0 cut（6/1）以降の累積。**`%委譲%` syntax + 専用デリゲーター層**（[#295](https://github.com/gamasenninn/tealus/issues/295)、Phase 5 narrative core）、**LINE Bridge** Phase 1〜2.3 完成 + 凍結、**Light backend config 化 + default v2 flip**、**ゲスト Phase D/E 運用可能化**、Codex 認証エラー検出 helper、tealus-mcp v0.14.1、UI 改善複数を含みます。
+- **実装の詳細と設計判断の理由** → 本体リポジトリの [CHANGELOG](https://github.com/gamasenninn/tealus/blob/main/CHANGELOG.md)
+- **自己ホスト環境の具体的な更新手順** → 本体リポジトリの [アップグレードガイド](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md)
 
-### `%委譲%` multi-room AI 委譲 primitive — Phase 5 narrative core（[#295](https://github.com/gamasenninn/tealus/issues/295)、6/14-6/15）
+!!! note "このページの形式について"
+    以前は本体 CHANGELOG とほぼ同じ内容を二重に持っていましたが、**二重管理は必ず片方が腐り、腐ったときに読者がどちらを信じてよいか判断できません**。そのため詳細は CHANGELOG に一元化し、このページは要約とリンクに絞る方針へ切り替えました。
 
-room 間 AI 委譲を **指示文の語感に依存せず明示構文で安定検出** する基盤。10+ commits の TDD chain で実装（`b666c4a` → `a0ec976` → `112b65b` → `19c824b` → `8a0ac3d` → `8f2bf62` → `25c240a` → `3a66ddc` → `592491f` → `7ffe51a`）。
+    **v0.4.0 以降**がこの新しい形式です。**v0.3.0 以前**は当時の詳細な記述をそのまま残しています。また、新しい機能はガイドページの整備が追いついていないものがあります（[tealus-docs#17](https://github.com/gamasenninn/tealus-docs/issues/17) で対応中）。
 
-- **`%委譲%社内DB検索 ...` 明示構文**: dispatcher が LLM に渡す前に正規表現で確定パース、100% 確実 / LLM 非依存。**複数 room fan-out**（`%委譲%A %委譲%B ...`）も並列実行 + 結果統合
-- **2 層分離**: 「考える人」（agent）と「他室へ送る人」（デリゲーター）を分離、デリゲーターが専用送信者 ID から送信 → **自己ループの種が構造的に消滅**、[#292](https://github.com/gamasenninn/tealus/issues/292) の in-flight tracking / throttle は primary 防御から backstop に格下げ
-- **correlation id + TTL ガード**: 依頼 ID 照合で機械的な戻り先 routing（LLM 善意非依存）、hop 数 + 訪問済み room 集合で 1789 件暴走（#292 観測）の原因クラス封じ込め
-- **DeepCodex 対応**（`8f2bf62`）: `route()` ベース backend 選択、Light v2 / Deep Codex 両 path 統一
-- **権限 gate**（[#282](https://github.com/gamasenninn/tealus/issues/282) 連動）: bot membership 確認 endpoint で委譲先メンバーシップ検証
-- **「問い合わせ中」状態表示**（`25c240a`）
-- 詳細は [Agent ガイド > `%委譲%` syntax](dev/agents.md#delegation-syntax) を参照
+## v0.7.0 — 出したものが端末に届き、使うほど指示が短くなる（2026年7月31日）
 
-設計の核は「**room = capability の境界、デリゲーター = スコープされた agent を仲介するブローカー**」。データ主権 / 権限分離を意図的に保持しつつ、社内 DB アクセスを DB 室の Deep Codex (`dbhub-mysql` 所持) にスコープする運用が可能に。multi-agent dock 構想（[#275](https://github.com/gamasenninn/tealus/issues/275)）の構造的基盤。
+iOS の PWA に更新が届かない構造的な問題を根治し、あわせてエージェントへの指示を「登録」させず過去の自分の投稿から再利用できるようにしたリリースです。
 
-### LINE Bridge — 外部 channel 拡張第 1 例（Inbound、完成 + 凍結）
+**主な変更**
 
-### LINE Bridge — 外部 channel 拡張第 1 例（Inbound、完成 + 凍結）
+- **PWA 更新検知**（[#355](https://github.com/gamasenninn/tealus/issues/355) / [#356](https://github.com/gamasenninn/tealus/issues/356)）— 新しいクライアントが自分の陳腐化に気づいて更新バナーを出すようになりました。**プロフィール画面の下部にビルド ID が常時表示**され、実機が新旧どちらかを目視で判定できます
+- **エージェント指示の履歴ピッカー**（[#354](https://github.com/gamasenninn/tealus/issues/354) / [#357](https://github.com/gamasenninn/tealus/issues/357) / [#358](https://github.com/gamasenninn/tealus/issues/358)）— 🤖 パネルに「最近の指示」が出ます。登録は不要で、過去に自分が送った `@アシスタント` / `@cc-*` 宛のメッセージをそのまま再利用できます。PC では `/` → `↑` がシェルの履歴と同じ操作です。「直近の画像 N 枚で〜」のように数字だけが変わる指示は 1 件にまとまり、**変わる位置だけが選択状態**で挿入されます（挿入するだけで、送信はしません）
+- **ルームのタグ削除**（[#351](https://github.com/gamasenninn/tealus/issues/351)）— 従来は追加のみでしたが、タグ画面の「管理」トグルから削除できるようになりました
+- **LINE の複数画像を 1 メッセージにまとめる**（[#353](https://github.com/gamasenninn/tealus/issues/353)）— 順不同で別々に届く画像を待ち合わせて 1 件に再構成します（待ち時間は `LINE_IMAGESET_FLUSH_MS`、既定 15 秒）。詳細は [LINE Bridge 連携](guide/integration/line-bridge.md)
+- **organon なしでも語彙の正規化が効く**（[#348](https://github.com/gamasenninn/tealus/issues/348) / [#349](https://github.com/gamasenninn/tealus/issues/349)）— 辞書テーブルから `dictionary.local.ttl` を発行し、エージェントはこれを優先して読みます。organon を導入していない環境でも別名→正規名の正規化が生き続けます
 
-- **[LINE Bridge 連携](guide/integration/line-bridge.md) 新規 page**（Phase 1: [#288](https://github.com/gamasenninn/tealus/issues/288) / Phase 2.1: [#289](https://github.com/gamasenninn/tealus/issues/289) / Phase 2.2: [#290](https://github.com/gamasenninn/tealus/issues/290) / Phase 2.3: [#291](https://github.com/gamasenninn/tealus/issues/291)、6/2-6/6 5 日間で実装、6/6 Day 21 凍結宣言）
-    - LINE Official Account からの投稿を Tealus ルームに取り込む **Inbound 専用 bridge**。webhook `POST /api/line` で受信、既存の messages / voice / media pipeline に投影
-    - **7 type 完全対応**: text / image / audio（自動文字起こし + organon polyseme inject）/ video / file（原名 + 原拡張子保持）/ sticker（LINE 公式 sticker CDN 経由）/ location（緯度経度 + Google Maps link）
-    - **2 file 案 mapping**（Phase 2.3）: `server/config/line-groups.json`（自動 catalog）+ `server/config/line-group-mappings.json`（手動編集）、両ファイル next webhook で即反映（server restart 不要）
-    - **LINE 公式 spec 準拠**: secret path mismatch / signature verify failed でも **200 silent return** で LINE 側 webhook auto-suspend trigger を構造的にゼロに
-    - **Tealus PWA 内蔵 TextFilePreview**: MD / JSON / CSV / TXT inline preview、UTF-8 decode、256 KB truncate、react-markdown + remarkGfm + remarkBreaks 統一
-    - **scope 凍結**: Phase 2.4 outbound（Tealus → LINE post）/ Phase 2.3 UI（mapping CRUD 画面）/ Phase 1.5 既存 LINE 業務グループ受信 / Phase 3 enhancement 候補は user voice surface 待ち
+!!! warning "★ 更新時の急所"
+    - **DB migration の追加はゼロ**です
+    - ★ `cd client && npm run build` — **再ビルドしないと更新検知そのものが入りません**（エラーにはならず、静かに機能しません）
+    - ★ `cd agent-server && npm install` + 再起動 — 依存に `n3` が追加されました。忘れると **agent-server が起動時に落ちます**
+    - ★ **この版に上げるときだけ**、各端末で 1 回だけ手動リロードが必要です（旧クライアント側に更新を検知する手段がないため）。**次回以降はバナーが自動で出ます**
+    - リバースプロキシを挟んでいる場合、`index.html` / `sw.js` / `*.webmanifest` の Cache-Control をプロキシ側が上書きしていないか確認してください
 
-### Light backend config 化 + default v1 → v2 flip（[#292](https://github.com/gamasenninn/tealus/issues/292)）
+[変更履歴 v0.6.0...v0.7.0（19 コミット）](https://github.com/gamasenninn/tealus/compare/v0.6.0...v0.7.0) ／ [リリースページ](https://github.com/gamasenninn/tealus/releases/tag/v0.7.0)
 
-- **`AGENT_LIGHT_BACKEND` env 導入**（6/8、commit `91e2356` + `0e04189` + `e006b93`）: `/light` の default backend を v1 / v2 で切替可能に、config 化 mechanism。詳細は [Agent ガイド > AGENT_LIGHT_BACKEND env](dev/agents.md#light-v1-v2) を参照
-- **default flip: v1 → v2**（6/9、commit `d0e9645`）: サブスクリプション保有 user voice 起点。新規 onboarding は v2 default。既存運用で v1 を維持したい場合は `AGENT_LIGHT_BACKEND=v1` を設定
-- **image / video / file 転送機能**（6/7、commit `5763ab9`、tealus-mcp v0.14.1 連動）: Light v2 で添付済みの image / video / file をリンク方式で他 room に転送、binary 重複なし
-- **cross-room delegation primitive**（6/13、commit `28c4a67` + `fd52b3c`）: Light v2 の cross-room タスクで **in-flight tracking + safety net** primitive を追加、自 room への send_message + 最終 auto-post 重複防止。詳細は [Agent ガイド > Cross-room delegation primitive](dev/agents.md#cross-room-delegation)
-- **WORKSPACE_ROOT path normalize**（6/8、commit `25c855b`）: 採用者環境（藤井さん）の Deep Codex bug fix、`path.resolve` で env path を normalize
-- **tealus-mcp v0.14.1 — `get_message_media` image 判定を mime_type ベースに緩和**（[#292](https://github.com/gamasenninn/tealus/issues/292)、6/7、commit `5763ab9`）: image attachment の判定ロジックを extension ベースから mime_type ベースに緩和、Light v2 の cross-room 画像転送で extension 不明な path にも対応
+## v0.6.0 — AI に「構造」を渡す（2026年7月21日）
 
-### Codex 認証エラー検出 helper（pre-α、6/8）
+AI に定型の確認や判断を集めさせるための**汎用フォーム**と、「アシスタントに聞いたつもりが無反応だった」を減らす**エージェントの起動入口**が入りました。
 
-- **Codex 認証エラー検出 helper** 新設（detection only）（commits `72fe07c` + `892d888` + `c2184d1` + `878cb08`）: Codex Deep / Light v2 の **認証エラー** （`~/.codex/auth.json` 期限切れ / 不正）を helper で検出し、明示的なエラーメッセージで採用者を guide
-    - **4 commit chain**: 純関数 helper + test 14 件（`72fe07c`） → lightV2 `ThreadError` / 外側 catch / post-turn warn に detection（`892d888`） → deepCodex stderr / spawn error に detection（`c2184d1`） → 認証切れ対処 docs + `.env` memo（`878cb08`）
-    - **detection only** （自動 recovery はしない）: `.env` 設定誤りや `codex login` 期限切れ時の troubleshoot を高速化
+**主な変更**
 
-### 採用者保護 + ゲスト Phase D/E + transcription mtime auto-reload
+- **汎用フォーム**（[#336](https://github.com/gamasenninn/tealus/issues/336)）— ルームに回答フォーム（単一選択 + 自由記述）を投稿できます。回答者が [回答する] を押すと、回答が返信として投稿されると同時に担当エージェントが起動します（コピペ + 手書き + 別途メンション、が 1 ボタンに畳まれます）。MCP からは `send_form`（[MCP Server](dev/mcp.md)）
+- **エージェント起動入口**（[#338](https://github.com/gamasenninn/tealus/issues/338)）— 入力欄の 🤖 ボタン / メッセージ長押しの「エージェントに送る」で正しい宛先が自動で入ります。**呼び忘れたメッセージを編集して先頭にメンションを足すと、そこから起動**します
+- **未適用 migration の起動時 warn**（[#334](https://github.com/gamasenninn/tealus/issues/334)、採用者保護）— migration を忘れた状態でも起動してしまい、機能だけが静かに欠ける事故を、起動ログの `[migration-check]` で可視化しました
+- **エージェント受付の可視化**（[#335](https://github.com/gamasenninn/tealus/issues/335)）— `@cc-*` を投げたときに「届きました」と表示が出るようになり、「反応が返るのか分からないまま待つ」状態が解消しました
 
-- **ゲストユーザ Phase D/E 運用可能化**（[#282](https://github.com/gamasenninn/tealus/issues/282)、6/16、commits `4c54dfe` + `ad41620`）: ゲストにホーム surface（お知らせ / ポータル）を見せない fail-closed 修正、招待ガードの穴を fail-closed で塞ぐ、Phase 1 (v0.3.0) の 3 層構造を運用可能 phase に押し上げ。詳細は [AIエージェント設定 > ゲストユーザ role](admin/agent.md#ゲストユーザ-role-phase-1-de-運用可能化v030)
-- **transcription vocab mtime 自動リロード**（[#296](https://github.com/gamasenninn/tealus/issues/296)、6/15、commit `0edbda7`）: `transcription_guideline.json` の **mtime 自動 detect** で cache reload、[#287](https://github.com/gamasenninn/tealus/issues/287) admin POST endpoint の手動運用摩擦を解消。endpoint は手動 reset の fallback として残存
-- **Aivis 3000 文字 hard cap**（[#300](https://github.com/gamasenninn/tealus/issues/300)、6/15、commit `a9e7ddb`）: 終礼議事録のような長文の TTS 読み上げ失敗を防ぐ hard cap。詳細は [TTS 読み上げ > Aivis 3000 文字 hard cap](guide/advanced/tts.md)
-- **アクセスログ MVP**（[#301](https://github.com/gamasenninn/tealus/issues/301)、6/16、commit `d3996f2`）: 管理ダッシュボードに最終投稿 / 最終閲覧の集計ビュー追加。詳細は [ダッシュボード > アクセスログ MVP](admin/dashboard.md)
-- **文字起こし連続編集**（[#302](https://github.com/gamasenninn/tealus/issues/302)、6/18、commit `6b2773a`）: 編集 modal に「前/次」ボタンで隣の voice メッセージへ送って続けて編集。朝礼ルーム等で効率向上。詳細は [音声メッセージ > 文字起こしの編集](guide/basic/voice.md)
-- **`bot membership` endpoint 新設**（[#282](https://github.com/gamasenninn/tealus/issues/282) 連動、6/15、commit `7ffe51a`）: `%委譲%` 委譲権限 gate で bot のルームメンバーシップ確認に使用
-- **TTS bubble button 経由の個人 TTS は全文読上げ**（truncate skip、6/13、commit `758fa58`）: チャット吹き出しの TTS button から発火した個人 TTS では 500 文字 truncate を skip。詳細は [TTS 読み上げ > TTS bubble button](guide/advanced/tts.md)
-- **iPhone 12 等狭画面で chat-header title 縦折返し回避**（6/13、commit `8aba69b`）
-- **Deep agent instruction 強化**（6/10、commit `8caf5b4`）: 末尾 section 必須化 + 推測 alias body 記載 + 確信度 3 段階明示
-- **Deep `/deep` モード議事録生成で organon 参照 + format spec instruction 追加**（6/9、commit `706354c`）
-- **server: socket `room:join` DoS crash 対処 + global unhandledRejection safety net**（6/9、commit `c2fdf1b`）
-- **RoomList に「すべて / 1:1 ルーム / グループ」tab 切り替え追加**（6/7、commit `afa14aa`）
-- **TextFilePreview body 背景 + media-file 背景の不透明白系統一**（6/7、commits `fdc0f79` + `af72796`）
-- **LINE Bridge sender info を context object pattern に refactor**（6/6、commits `08c1efd` + `ba46379`、Option D、bubble icon + name 抜け bug fix）
+**直った不具合** — スリープ復帰後に「考え中 / 入力中」が残る（[#340](https://github.com/gamasenninn/tealus/issues/340)）／フォームの回答ボタンが何度も押せる二重回答（[#341](https://github.com/gamasenninn/tealus/issues/341)）
 
-### Fixed — W5 累積（6/14-6/18）
+!!! warning "★ 更新時の急所"
+    - ★ `cd server && npm run migrate` — 追加は `026_message_form_type.sql` の 1 本。**忘れるとフォーム投稿が DB 制約で失敗**します
+    - ★ `cd client && npm run build` — フォーム UI と起動入口が入っているため再ビルド必須
+    - `cd agent-server && npm install` + 再起動
+    - MCP から `send_form` を使う場合は **tealus-mcp v0.14.8 以上**（タグ固定運用なら pin 更新 + Claude Code のフル再起動）。本体の更新だけでは MCP クライアント側は変わりません
 
-- **dispatcher: `@アシスタント` mention を先頭限定に**（6/15、commit `bd9e58e`）: 文中 / 例示の誤発火防止
-- **client: 「考え中」インジケータが残り続ける / 他ルームに残る bug**（[#298](https://github.com/gamasenninn/tealus/issues/298)、6/15、commit `7e428d5`）
-- **client: 入力中インジケータが他ルームに漏れる bug**（[#297](https://github.com/gamasenninn/tealus/issues/297)、6/15、commit `7c988fc`）
-- **client: 管理ユーザー追加フォームでブラウザが ID/パスワードを自動入力する bug**（[#299](https://github.com/gamasenninn/tealus/issues/299)、6/15、commit `4106aff`）
-- **client: メッセージ単位の error boundary**（[#306](https://github.com/gamasenninn/tealus/issues/306)、6/18、commit `e0ffa58`）: 1 件の描画例外でチャット全体が白紙化しないように
-- **botApi.request HTTP ステータス握り潰し修正**（[#303](https://github.com/gamasenninn/tealus/issues/303)、6/18、commit `4bb4471`）: 偽 sent 停止 + 401 自動回復 + 診断ログ
-- **deepCodex: `~/.codex/auth.json` rotation 書き戻し**（[#307](https://github.com/gamasenninn/tealus/issues/307)、6/18、commit `50db607`）: codex が rotation した auth.json を ~/.codex に書き戻し recurring refresh_token_reused を解消
+[変更履歴 v0.5.0...v0.6.0（16 コミット）](https://github.com/gamasenninn/tealus/compare/v0.5.0...v0.6.0) ／ [リリースページ](https://github.com/gamasenninn/tealus/releases/tag/v0.6.0)
+
+## v0.5.0 — TypeScript 化と、自己成長する辞書（2026年7月14日）
+
+コードベース全体の TypeScript 化という土台の入れ替えと、**人の修正履歴から別名を自動で学習していく辞書**が入った、範囲の大きいリリースです。
+
+**主な変更**
+
+- **コードベース 100% TypeScript 化**（[#330](https://github.com/gamasenninn/tealus/issues/330)）— 全レイヤーを `.mts` / `.ts` 化し、サーバーは**ビルドせず直接実行**する構成になりました（型検査は別途 `tsc --noEmit`）。★ **この変更により Node 24 が必要**です（[サーバー構築](admin/server-setup.md)）
+- **自己成長する変換辞書**（[#327](https://github.com/gamasenninn/tealus/issues/327)）— 別名→正規名の辞書がファイルから DB テーブルへ移りました。**人が文字起こしを直した履歴から別名を自動学習**し、精度の基準を満たしたものだけが実際に効き始めます。管理ダッシュボードに承認 / 却下の育成画面が付きました（[ダッシュボード](admin/dashboard.md)）
+- **自ホスト STT + organon 文脈補正**（[#326](https://github.com/gamasenninn/tealus/issues/326)）— `TRANSCRIPTION_MODE=organon` で、自ホストの音声認識の出力を組織の語彙で補正する 2 段構成に切り替えられます（データ主権を保ったまま固有名詞を回収する構成）
+- **organon から辞書を自動取り込み**（[#331](https://github.com/gamasenninn/tealus/issues/331)）— organon 側の更新が 5 分以内に辞書と文字起こしへ自動反映されます
+- **画像・帳票まわりの強化** — 貼り付け（Ctrl+V）でのアップロード（[#311](https://github.com/gamasenninn/tealus/issues/311)）／1 メッセージの**複数画像・複数文書をすべて読めるように**（[#316](https://github.com/gamasenninn/tealus/issues/316) / [#317](https://github.com/gamasenninn/tealus/issues/317)、従来は 1 件目だけ）／業務語彙を画像 OCR にも効かせる `VOCAB_INJECT`（[#315](https://github.com/gamasenninn/tealus/issues/315)、既定 OFF）
+- **完了を表す ✅ リアクションと、その抽出**（[#323](https://github.com/gamasenninn/tealus/issues/323) / [#325](https://github.com/gamasenninn/tealus/issues/325)）— 「✅ が付いていないもの一覧」をエージェントが確実に絞り込めるようになりました
+- **Deep のタイムアウトを 5 分 → 8 分に延長**（[#314](https://github.com/gamasenninn/tealus/issues/314)）
+
+**直った不具合** — 音声認識が日本語を中国語と誤検出して文字起こしが壊れる（[#332](https://github.com/gamasenninn/tealus/issues/332)）／日本語ファイル名の文字化け（[#319](https://github.com/gamasenninn/tealus/issues/319)）／画像生成が全失敗（[#313](https://github.com/gamasenninn/tealus/issues/313)、`gpt-image-1` へ移行）／「ルーム情報の取得に失敗しました」の頻発（[#322](https://github.com/gamasenninn/tealus/issues/322)、通信の間欠停止に対するリトライ）
+
+!!! warning "★ 更新時の急所"
+    - ★ **Node 24 が必要です。** TypeScript 化により、型注釈をそのまま解釈できない版では起動しません。24 未満では `npm install` 自体が `EBADENGINE` で止まります（[サーバー構築 > 前提条件](admin/server-setup.md)）
+    - ★ `cd server && npm run migrate` — 辞書テーブルの `023`〜`025` が追加されました。**忘れると辞書育成タブが 500 になり、自己成長辞書が静かに効きません**（この事故を可視化する起動時 warn は次の v0.6.0 で入りました）
+    - `cd client && npm run build` + 全パッケージの `npm install` と再起動
+
+    このリリースはアップグレードガイド（v0.6.0 で新設）のバージョン別ノートより前のため、上記は CHANGELOG からの要約です。
+
+[変更履歴 v0.4.0...v0.5.0](https://github.com/gamasenninn/tealus/compare/v0.4.0...v0.5.0) ／ [リリースページ](https://github.com/gamasenninn/tealus/releases/tag/v0.5.0)
+
+## v0.4.0 — 外部チャネル連携と、room を越える AI 協働（2026年6月21日）
+
+LINE からの投稿を取り込む外部連携と、AI が room の境界を越えて協働するための明示構文が入りました。
+
+**主な変更**
+
+- **LINE Bridge（受信）**（[#288](https://github.com/gamasenninn/tealus/issues/288) 〜 [#291](https://github.com/gamasenninn/tealus/issues/291) / [#309](https://github.com/gamasenninn/tealus/issues/309)）— LINE 公式アカウントへの投稿を Tealus のルームに取り込みます。テキスト / 画像 / 音声（自動で文字起こし）/ 動画 / ファイル / スタンプ / 位置情報の 7 種に対応。詳細は [LINE Bridge 連携](guide/integration/line-bridge.md)
+- **`%委譲%` — room 間の AI 委譲**（[#295](https://github.com/gamasenninn/tealus/issues/295) / [#292](https://github.com/gamasenninn/tealus/issues/292)）— 「どう頼んだか」の言い回しに依存せず、明示構文で確実に他ルームの AI へ委譲できます。複数ルームへの同時委譲も可能です。詳細は [Agent ガイド](dev/agents.md#delegation-syntax)
+- **Light の backend を設定で切り替え可能に**（[#292](https://github.com/gamasenninn/tealus/issues/292)）— `AGENT_LIGHT_BACKEND` で v1 / v2 を選べるようになり、**既定が v2 に変わりました**。詳細は [Agent ガイド](dev/agents.md#light-v1-v2)
+- **アクセスログ**（[#301](https://github.com/gamasenninn/tealus/issues/301)）— 管理ダッシュボードに最終投稿 / 最終閲覧の集計ビュー。詳細は [ダッシュボード](admin/dashboard.md)
+- **ゲスト role の運用開始**（[#282](https://github.com/gamasenninn/tealus/issues/282)）— 外部の問い合わせ者向けに、見える範囲を絞った役割を運用可能にしました。詳細は [AIエージェント設定](admin/agent.md)
+- **メッセージの部分コピー**（[#308](https://github.com/gamasenninn/tealus/issues/308)）／**文字起こしの連続編集**（[#302](https://github.com/gamasenninn/tealus/issues/302)、前後の音声へ送りながら編集）／**長文 TTS の失敗防止**（[#300](https://github.com/gamasenninn/tealus/issues/300)、[TTS 読み上げ](guide/advanced/tts.md)）
+
+**直った不具合** — 「考え中」表示が残り続ける / 他ルームに漏れる（[#298](https://github.com/gamasenninn/tealus/issues/298) / [#297](https://github.com/gamasenninn/tealus/issues/297)）／1 件の描画エラーでチャット全体が白紙化する（[#306](https://github.com/gamasenninn/tealus/issues/306)）／送信に失敗しても「送信済み」に見える（[#303](https://github.com/gamasenninn/tealus/issues/303)）／Codex の認証トークンが繰り返し失効する（[#307](https://github.com/gamasenninn/tealus/issues/307)）
+
+!!! warning "★ 更新時の急所"
+    - **DB migration の追加はゼロ**です
+    - ★ **organon を使っている場合、環境変数の名前と既定値が変わりました**（[#304](https://github.com/gamasenninn/tealus/issues/304)）。`INJECT_ORGANON_POLYSEME`（既定 ON）は**廃止**され、`ORGANON_INJECT=true`（**既定 OFF の opt-in**）になりました。互換の読み替えはないため、**旧名のままでは何も注入されずに静かに動きます**
+    - ★ **Light の既定 backend が v1 → v2 に変わりました。** 従来どおり v1 で運用したい場合は `AGENT_LIGHT_BACKEND=v1` を明示してください
+    - `cd client && npm run build` + 再起動
+
+    このリリースはアップグレードガイド（v0.6.0 で新設）のバージョン別ノートより前のため、上記は CHANGELOG からの要約です。
+
+[変更履歴 v0.3.0...v0.4.0](https://github.com/gamasenninn/tealus/compare/v0.3.0...v0.4.0) ／ [リリースページ](https://github.com/gamasenninn/tealus/releases/tag/v0.4.0)
 
 ## v0.3.0 — 「組織記憶辞書が動作する道具に転化した release」（2026年6月1日）
 

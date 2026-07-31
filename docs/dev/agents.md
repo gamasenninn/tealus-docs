@@ -21,14 +21,14 @@ agent-server は v0.2.2 で「**AI 班 dispatcher**」化されました（[#213
 | v0.1.0 | Light / Deep の 2 層（Router + 2 agents） |
 | v0.2.0 | Light agent も Tealus MCP 統合（[#199](https://github.com/gamasenninn/tealus/issues/199)） |
 | v0.2.2 | Claude Code session も dispatch 先に追加（cc-tealus Phase A、[#213](https://github.com/gamasenninn/tealus/issues/213)） |
-| `[Unreleased]`（Phase 4） | **Light v2（codex SDK backed）** を `/light2` prefix で並列追加（[#258](https://github.com/gamasenninn/tealus/issues/258)）、`cc-aliases.json` で `@Claude` 等の alias を設定ファイル化（[#263](https://github.com/gamasenninn/tealus/issues/263)） |
+| v0.3.0 | **Light v2（codex SDK backed）** を `/light2` prefix で並列追加（[#258](https://github.com/gamasenninn/tealus/issues/258)）、`cc-aliases.json` で `@Claude` 等の alias を設定ファイル化（v0.2.3、[#263](https://github.com/gamasenninn/tealus/issues/263)） |
 | 将来 | multi-session lock（[#214](https://github.com/gamasenninn/tealus/issues/214) Phase B）など |
 
 cc-tealus は **終点ではなく現時点の到達点**です。「人と AI が同じテーブル」の AI 側を、内蔵 agent だけでなく**採用者の手元で動く Claude Code session** にも開いた、という位置づけです。Light agent は v0.1.0 の OpenAI Agents SDK 単一実装から、v2（codex SDK）併設への並列進化に移行しています（用途別の選び分けは [Light v1 / v2 の選び分け](#light-v1-v2) 参照）。
 
 ## 比較表（Light / Deep）
 
-Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え、`[Unreleased]`（Phase 4）で codex SDK backed の **Light v2**（`/light2` prefix）が並列追加されました。下表は **Light v1** を代表値として記載しています。Light v1 と v2 の選び分けは [Light v1 / v2 の選び分け](#light-v1-v2) を参照してください。
+Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え、v0.3.0 で codex SDK backed の **Light v2**（`/light2` prefix）が並列追加されました。下表は **Light v1** を代表値として記載しています。Light v1 と v2 の選び分けは [Light v1 / v2 の選び分け](#light-v1-v2) を参照してください。
 
 | 比較軸 | Light Agent | Deep Agent |
 |---|---|---|
@@ -61,12 +61,12 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 | TODO 管理（完了マーク・一覧） | **Light** | MCP ツール（`mark_tag_done` / `search_messages`）の組み合わせのみで完結 |
 | 画像の内容認識・OCR 的依頼 | **Light** | `get_message_media` で画像視認、コード生成は不要 |
 | ファイル編集・コードレビュー | **Deep** | Claude Code の編集ツール群が必須 |
-| 長いリファクタリング・複数ファイル変更 | **Deep** | 5 分のタイムアウトと `--resume` での継続セッション |
+| 長いリファクタリング・複数ファイル変更 | **Deep** | 8 分のタイムアウトと `--resume` での継続セッション |
 | Issue ↔ コード ↔ 履歴の横断調査 | **Deep** | Tealus MCP + ローカルファイル + Web 検索を組み合わせやすい |
 
 ## Light v1 / v2 の選び分け {#light-v1-v2}
 
-`[Unreleased]`（Phase 4）で **Light v2（codex SDK backed）** が `/light2` prefix で並列追加されました（[#258](https://github.com/gamasenninn/tealus/issues/258)）。Light v1（OpenAI Agents SDK 実装）と並走し、用途別に使い分けます。
+v0.3.0 で **Light v2（codex SDK backed）** が `/light2` prefix で並列追加されました（[#258](https://github.com/gamasenninn/tealus/issues/258)）。Light v1（OpenAI Agents SDK 実装）と並走し、用途別に使い分けます。
 
 | 比較軸 | Light v1 | Light v2 |
 |---|---|---|
@@ -82,25 +82,25 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 
 | コマンド | 振り分け先 |
 |---|---|
-| `/light` | Light（**default backend は v2**、v0.3.0 以降。`AGENT_LIGHT_BACKEND` env で `v1` / `v2` 切替可） |
+| `/light` | Light（**default backend は v2**、v0.4.0 以降。`AGENT_LIGHT_BACKEND` env で `v1` / `v2` 切替可） |
 | `/light2` | Light v2（codex SDK、backend 設定を無視して明示指定） |
 | `/deep` | Deep agent（default は Claude Code、`DEEP_AGENT_PROVIDER=codex` で **Codex Deep** に切替可） |
 | なし（自動判定） | Router が `light` / `deep` を判定（`light` 時は `AGENT_LIGHT_BACKEND` の default に従う） |
 
-### `AGENT_LIGHT_BACKEND` env — Light backend 設定ファイル化（v0.3.0〜、[#292](https://github.com/gamasenninn/tealus/issues/292)）
+### `AGENT_LIGHT_BACKEND` env — Light backend 設定ファイル化（v0.4.0〜、[#292](https://github.com/gamasenninn/tealus/issues/292)）
 
-v0.3.0 cut 後（6/8-6/9）に **Light backend が config 化** され、`/light` の default backend を env で切り替えられるようになりました。同時に **default が v1 → v2 に flip**（サブスクリプション保有 user の voice 起点、6/9 commit `d0e9645`）。
+v0.3.0 cut 後（6/8-6/9）に **Light backend が config 化** され（出荷は v0.4.0）、`/light` の default backend を env で切り替えられるようになりました。同時に **default が v1 → v2 に flip**（サブスクリプション保有 user の voice 起点、6/9 commit `d0e9645`）。
 
 | 値 | 動作 |
 |---|---|
-| `v2`（**default**、v0.3.0〜） | `/light` は Light v2（codex SDK）で動作。`/light2` と同等 |
+| `v2`（**default**、v0.4.0〜） | `/light` は Light v2（codex SDK）で動作。`/light2` と同等 |
 | `v1` | `/light` は Light v1（OpenAI Agents SDK）で動作（v0.2.4 以前の挙動） |
 
 設定例:
 
 ```bash
 # .env
-AGENT_LIGHT_BACKEND=v2   # v0.3.0〜 default
+AGENT_LIGHT_BACKEND=v2   # v0.4.0〜 default
 # AGENT_LIGHT_BACKEND=v1 # 旧 default に戻す
 ```
 
@@ -131,9 +131,9 @@ AGENT_LIGHT_BACKEND=v2   # v0.3.0〜 default
 !!! info "なぜ並列実装か"
     [#220](https://github.com/gamasenninn/tealus/issues/220) で議論された「task decomposition が浅い」等の Light v1 の構造的弱点に対し、prompt 改善には天井があるという観察から、**codex CLI 内蔵の reasoning + tool orchestration が structurally 強い** ことが verify で実証されました。prompt 投資（v1 改善）と SDK 入替（v2）の trade-off の上で、両者を並列保持し用途で選び分ける形に着地しています。
 
-### Cross-room delegation primitive（v0.3.0〜、[#292](https://github.com/gamasenninn/tealus/issues/292) follow-up） {#cross-room-delegation}
+### Cross-room delegation primitive（v0.4.0〜、[#292](https://github.com/gamasenninn/tealus/issues/292) follow-up） {#cross-room-delegation}
 
-Light v2 が他 room の context を参照しながら応答を組み立てる際の **in-flight tracking + safety net** primitive が v0.3.0 後 (6/13) に追加されました。Light v2 の cross-room 探索完結率を支える内部 mechanism です。
+Light v2 が他 room の context を参照しながら応答を組み立てる際の **in-flight tracking + safety net** primitive が 6/13 に追加され、v0.4.0 で出荷されました。Light v2 の cross-room 探索完結率を支える内部 mechanism です。
 
 - 自 room への `send_message` と最終 auto-post の重複防止（`fd52b3c`）
 - delegation in-flight tracking で **複数 room を跨ぐ tool call の状態管理**
@@ -254,7 +254,7 @@ Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)*
 !!! info "外部クライアントとの一貫性"
     Tealus MCP は独立 repo（`gamasenninn/tealus-mcp`）で配布されており、Claude Code など外部 MCP クライアントからも `npx -y github:gamasenninn/tealus-mcp` で利用できます。Tealus 内蔵の Light/Deep agent と同じツールセットなので、開発体験と本番挙動が乖離しません。
 
-## Claude Code session（cc-tealus）
+## Claude Code session（cc-tealus） {#claude-code-session-cc-tealus}
 
 v0.2.2 で agent-server が **採用者の手元 Claude Code session** にも dispatch できるようになりました（[#213](https://github.com/gamasenninn/tealus/issues/213) Phase A）。Tealus 上の `@cc-{project}` mention を検知して file beacon に追記、Claude Code 側が Monitor でファイル変化を検知して sub-second で wake up する仕組みです。
 
@@ -298,7 +298,7 @@ v0.2.2 で agent-server が **採用者の手元 Claude Code session** にも di
 
 `@cc-{project}` が**メッセージ行頭にある場合のみ** match します。AI reply の本文中に過去 mention が含まれていても、先頭ではないため自然にスキップされます。`CC_SKIP_SENDER_IDS` env で特定 bot の skip 追加も可能です（defense in depth）。
 
-### `cc-aliases.json` — alias を設定ファイル化（`[Unreleased]`、[#263](https://github.com/gamasenninn/tealus/issues/263)） {#cc-aliases-json}
+### `cc-aliases.json` — alias を設定ファイル化（v0.2.3、[#263](https://github.com/gamasenninn/tealus/issues/263)） {#cc-aliases-json}
 
 `@cc-{project}` 以外に、より自然な mention 名（例: `@Claude`、`@AI`）からも同じ queue へ routing できるようにする alias 機構です。code 変更不要で alias を追加できます。
 

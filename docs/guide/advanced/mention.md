@@ -28,7 +28,7 @@
 
 `@アシスタント名` に続けて `/` を入力すると、スラッシュコマンドの候補が表示されます。AIエージェントに対して特定の操作を指示できます。
 
-### `cc-proj` 仮想ユーザー（`[Unreleased]`、[#253](https://github.com/gamasenninn/tealus/issues/253)）
+### `cc-proj` 仮想ユーザー（v0.2.3〜、[#253](https://github.com/gamasenninn/tealus/issues/253)）
 
 メンション picker には、Bot メンバー以外に **`@cc-{project}` 形式の仮想ユーザー**が候補として表示されます。Tealus 上のメッセージから採用者の手元 [Claude Code session（cc-tealus）](../../dev/agents.md#claude-code-session-cc-tealus) を呼び出すための mention で、実体は agent-server の dispatcher が file beacon に追記して Claude Code 側を sub-second で wake する仕組みです。
 

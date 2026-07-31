@@ -59,7 +59,7 @@ Agent Server (port 4000)
 |---|---|
 | `/deep` コマンド | Deep Agent |
 | `/light` コマンド | Light Agent v1（OpenAI Agents SDK） |
-| `/light2` コマンド（`[Unreleased]`、[#258](https://github.com/gamasenninn/tealus/issues/258)） | Light Agent v2（codex SDK backed） |
+| `/light2` コマンド（v0.3.0〜、[#258](https://github.com/gamasenninn/tealus/issues/258)） | Light Agent v2（codex SDK backed） |
 | 挨拶パターン（こんにちは、ありがとう等） | Router が直接応答 |
 | Deep キーワード（コード、リファクタ、デバッグ、実装、PR等） | Deep Agent |
 | 該当なし | 第2段へ |
@@ -78,7 +78,7 @@ Agent Server (port 4000)
 
 ## Light Agent — OpenAI Agents SDK（v1）/ codex SDK（v2）
 
-日常的な質問やタスクを高速に処理する軽量エージェントです。Light は v0.1.0 以来の **OpenAI Agents SDK 実装（v1）** に加え、`[Unreleased]`（Phase 4）で **codex SDK backed の v2**（`/light2` prefix、[#258](https://github.com/gamasenninn/tealus/issues/258)）が並列追加されました。本セクションは主に Light v1 の構造を扱います。Light v1 と v2 の選び分けは [Agent ガイド](agents.md#light-v1-v2) を参照してください。
+日常的な質問やタスクを高速に処理する軽量エージェントです。Light は v0.1.0 以来の **OpenAI Agents SDK 実装（v1）** に加え、v0.3.0 で **codex SDK backed の v2**（`/light2` prefix、[#258](https://github.com/gamasenninn/tealus/issues/258)）が並列追加されました。本セクションは主に Light v1 の構造を扱います。Light v1 と v2 の選び分けは [Agent ガイド](agents.md#light-v1-v2) を参照してください。
 
 ### セッション管理（TealusSession）
 
@@ -194,7 +194,7 @@ claude -p - \
 | 出力分割 | 4000字単位でチャットに送信 |
 | プロセス終了 | SIGTERM（Windows: `taskkill /T /F`） |
 
-### ユーザーによる中断（`[Unreleased]`、[#250](https://github.com/gamasenninn/tealus/issues/250)）
+### ユーザーによる中断（v0.2.4〜、[#250](https://github.com/gamasenninn/tealus/issues/250)）
 
 Deep Agent が暴走したり、想定以上の長時間実行になった場合に、ユーザーが**応答途中でキャンセル**できる機構が追加されました。
 

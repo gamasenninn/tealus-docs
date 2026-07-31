@@ -46,7 +46,7 @@
 
 編集した内容はリアルタイムで全メンバーに反映されます。
 
-!!! tip "音声を聴きながら編集（`[Unreleased]`、[#248](https://github.com/gamasenninn/tealus/issues/248)）"
+!!! tip "音声を聴きながら編集（v0.2.3〜、[#248](https://github.com/gamasenninn/tealus/issues/248)）"
     編集 modal 内に**音声再生スライダー**が組み込まれており、原音を聴きながら文字起こしを修正できます。聞き取りにくい箇所のシークがしやすく、特に長尺の voice メッセージで効果的です。
 
 !!! tip "連続編集 — 前/次ボタンで隣の音声へ送る（v0.3.0 後、[#302](https://github.com/gamasenninn/tealus/issues/302)）"

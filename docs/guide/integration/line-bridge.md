@@ -1,6 +1,6 @@
 # LINE Bridge 連携
 
-Tealus は **LINE Official Account** からの投稿を Tealus ルームに取り込む **LINE Bridge** を v0.3.0 以降の Phase 4 後半（2026-06-02 〜 06-06）で実装、Phase 1 〜 Phase 2.3 までを完成 + 凍結しました。LINE グループ内の会話を **Tealus の context space** に流し込み、AI agent と業務知識辞書の対象として扱えるようにする外部 channel 拡張の第 1 例です。
+Tealus は **LINE Official Account** からの投稿を Tealus ルームに取り込む **LINE Bridge** を Phase 4 後半（2026-06-02 〜 06-06）で実装し、**v0.4.0 で出荷**しました（Phase 1 〜 Phase 2.3 まで完成 + 凍結）。LINE グループ内の会話を **Tealus の context space** に流し込み、AI agent と業務知識辞書の対象として扱えるようにする外部 channel 拡張の第 1 例です。
 
 本ページは **採用者向けの概念紹介**で、技術的な step-by-step 手順は本体 repo の [`setup-line-bridge.md`](https://github.com/gamasenninn/tealus/blob/main/docs/setup-line-bridge.md) を参照してください。
 
@@ -86,5 +86,5 @@ step-by-step は本体 repo の **[`setup-line-bridge.md`](https://github.com/ga
 - [tealus #289](https://github.com/gamasenninn/tealus/issues/289) — Phase 2.1（file + video + TextFilePreview）
 - [tealus #290](https://github.com/gamasenninn/tealus/issues/290) — Phase 2.2（sticker + location）
 - [tealus #291](https://github.com/gamasenninn/tealus/issues/291) — Phase 2.3（2 file 案 + 凍結宣言）
-- [リリースノート](../../releases.md): post-v0.3.0 [Unreleased] の LINE Bridge cluster
+- [リリースノート](../../releases.md): v0.4.0 の LINE Bridge cluster
 - 本体 doc: [`setup-line-bridge.md`](https://github.com/gamasenninn/tealus/blob/main/docs/setup-line-bridge.md) — 技術的な step-by-step 手順
