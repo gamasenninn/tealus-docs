@@ -81,7 +81,10 @@ Tealusのイベントを外部HTTPエンドポイントに通知する機能で�
 | `member.left` | メンバー退会 |
 | `reaction.added` | リアクション追加 |
 
-### Webhook登録
+!!! warning "★ `message.created` は socket 経路でのみ発火します（不変条件）"
+    メッセージ送信には **Socket.IO 経由**と **REST 経由**の 2 つの経路がありますが、**`message.created` webhook が発火するのは socket 経路だけ**です。REST で送ったメッセージでは発火しません（v0.6.0 [#342](https://github.com/gamasenninn/tealus/issues/342) で本体の不変条件として明文化）。
+
+    この差は、**メッセージは投稿されているのにエージェントが起動しない**という形で表面化します。実際、汎用フォーム（[#336](https://github.com/gamasenninn/tealus/issues/336)）の実装時に同じ事故が起きました。クライアント側の送信経路は `sendRoomMessage` の 1 関数に集約され、「socket 優先 / REST フォールバック」がそこだけに存在する形になっています。
 
 管理画面の「Webhook」タブから登録するか、APIで登録します。`room_id` を `NULL` にすると全ルームのイベントを受信します。
 

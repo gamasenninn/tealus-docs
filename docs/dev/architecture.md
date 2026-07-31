@@ -81,6 +81,11 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 !!! info "更新時の注意"
     サーバー系はビルド不要ですが、**client / dashboard は `npm run build` が必要**です。再ビルドを忘れると古い画面が配信され続けます（v0.7.0 では、これが原因で更新検知そのものが入らない、という事故が起きます）。起動時の `[build-check]` ログで成果物の有無を確認できます。
 
+!!! warning "★ PWA 更新検知を触るときの地雷"
+    更新検知（[#356](https://github.com/gamasenninn/tealus/issues/356)）は、ビルド時に生成される `dist/version.json` と、バンドルに焼き込まれた同じ ID を突き合わせて判定します。
+
+    **`vite.config.js` の `globIgnores` から `version.json` を外すと、更新検知が黙って死にます。** precache 対象に入ってしまうと常に古い ID が返るためです。エラーにはならず、バナーが出なくなるだけなので気づけません。同様に `/api/*` が precache 対象外かつ navigateFallback の除外に入っていることも、検知が成立する前提条件です。
+
 ## コンポーネント構成
 
 ### フロントエンド（client/）

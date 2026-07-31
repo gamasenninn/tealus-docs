@@ -88,7 +88,7 @@ Claude Code や他の MCP クライアントの設定ファイル（`mcp_config.
 !!! note "旧環境変数名との互換"
     旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` も内部で fallback されますが、新規セットアップでは `TEALUS_USER_ID` / `TEALUS_PASSWORD` の使用を推奨します。
 
-!!! warning "`TEALUS_` prefix なしの env 名は silent fail（`[Unreleased]`、[tealus #267](https://github.com/gamasenninn/tealus/issues/267)）"
+!!! warning "`TEALUS_` prefix なしの env 名は silent fail（**全バージョン共通**、[tealus #267](https://github.com/gamasenninn/tealus/issues/267)）"
     tealus-mcp は **`TEALUS_` prefix 付きの env のみ** を読み込みます（multi-MCP 環境での衝突回避設計）。`API_URL` / `BOT_ID` / `BOT_PASS` のような prefix なし短縮名は無視され、`TEALUS_API_URL` は default の `http://localhost:3000` に fallback します。
 
     | ❌ 誤り | ✅ 正しい |
