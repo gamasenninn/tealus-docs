@@ -87,12 +87,15 @@ nav:
       - メンション: guide/advanced/mention.md
       - スタンプ: guide/advanced/stamp.md
       - TODO機能: guide/advanced/todo.md
+      - フォーム: guide/advanced/form.md
+      - エージェントの呼び出し口: guide/advanced/agent-entry.md
       - 音声・ビデオ通話: guide/advanced/call.md
       - TTS 読み上げ: guide/advanced/tts.md
     - 設定:
       - プロフィール: guide/settings/profile.md
       - 表示設定: guide/settings/display.md
       - 通知設定: guide/settings/notification.md
+      - アプリの更新: guide/settings/update.md
     - 統合:
       - Claude Code 連携: guide/integration/claude-code.md
       - LINE Bridge 連携: guide/integration/line-bridge.md
@@ -102,6 +105,7 @@ nav:
     - サーバー構築: admin/server-setup.md
     - ユーザー管理: admin/user-management.md
     - ダッシュボード: admin/dashboard.md
+    - 業務辞書（自己成長辞書）: admin/dictionary.md
     - AIエージェント設定: admin/agent.md
     - 運用・監視: admin/operations.md
   - 開発者ガイド:

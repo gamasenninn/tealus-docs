@@ -119,6 +119,6 @@
   <text x="632" y="664" font-size="10" font-style="italic" fill="#546E7A">→ stdio 経由で 1 session 内に複数 MCP server を並列起動</text>
 
   <!-- External services side annotation -->
-  <text x="600" y="715" text-anchor="middle" font-size="11" fill="#546E7A">外部 service (opt-in): OpenAI API (Whisper / gpt-4o-mini / gpt-5.4-mini) | Aivis Cloud TTS | Google Gemini (vision) | DALL-E 3 (画像生成) | Anthropic Claude API (Deep)</text>
+  <text x="600" y="715" text-anchor="middle" font-size="11" fill="#546E7A">外部 service (opt-in): OpenAI API (Whisper / gpt-4o-mini / gpt-5.4-mini) | Aivis Cloud TTS | Google Gemini (vision) | gpt-image-1 (画像生成) | Anthropic Claude API (Deep)</text>
   <text x="600" y="735" text-anchor="middle" font-size="10" font-style="italic" fill="#78909C">いずれも env / API key で個別 enable、依存ゼロでも基本動作 (チャット + 通話 + ファイル共有) は完結</text>
 </svg>

@@ -30,6 +30,11 @@ Tealus は **LINE Official Account** からの投稿を Tealus ルームに取�
 | LINE スタンプ | `sticker` | image（LINE 公式 sticker CDN 経由） | **Phase 2.2** |
 | 位置情報 | `location` | text + markdown（緯度経度 + Google Maps link） | **Phase 2.2** |
 
+!!! info "複数画像の同時送信は 1 メッセージにまとまります（v0.7.0、[#353](https://github.com/gamasenninn/tealus/issues/353)）"
+    LINE で複数枚の写真をまとめて送ると、**画像ごとに別々の webhook が順不同で届く**ため、以前は Tealus 側でバラバラのメッセージになっていました。
+
+    v0.7.0 から、同じ送信に属する画像を待ち合わせて **1 メッセージ + 複数メディア**として再構成します。待ち時間は `LINE_IMAGESET_FLUSH_MS`（既定 15 秒）で、全枚が揃った時点で待たずに投稿されます。揃わなかった場合は待ち時間の経過後に届いた分だけで投稿されます。
+
 ## 設定方式 — 2 file 案（Phase 2.3）
 
 LINE グループから Tealus ルームへの mapping は **2 ファイル** で管理します。**両ファイルとも書き換え後 next webhook で即反映** (server restart 不要)。
