@@ -3636,6 +3636,7 @@
 <div class="admonition danger">
 <p class="admonition-title">★ <code>/media/</code> を Nginx から直接配信（<code>alias</code>）しないでください</p>
 <p>以前この例は <code>/media/</code> をディスクから直接配信していました。v0.11.0 から、<strong>削除した投稿・部屋の添付は server が 404 を返します</strong>（<a href="https://github.com/gamasenninn/tealus/issues/601">#601</a> <a href="https://github.com/gamasenninn/tealus/issues/602">#602</a>）。Nginx が直接配ると<strong>この判定を通らず、消したはずの添付がリンクで開けてしまいます</strong>。</p>
+<p>★ さらに、server は添付に <strong>CSP sandbox</strong> を付けて返します（アップロードされた HTML などを、本体とは別のオリジンとして開くため。PDF を除く）。直接配るとこれも付かず、<strong>アップロードされた HTML が本体と同じオリジンで動きます</strong>。</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">旧版の例にあった不足</p>
