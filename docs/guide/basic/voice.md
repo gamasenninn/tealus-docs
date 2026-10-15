@@ -31,7 +31,10 @@
 !!! tip "業務辞書 inject による業界用語認識（v0.2.4〜、[#269](https://github.com/gamasenninn/tealus/issues/269) Phase 2）"
     v0.2.4 で default model が `gpt-4o-transcribe` → **`gpt-4o-mini-transcribe`** に切替、業務辞書（vocabulary）を Whisper prompt に inject する **model-aware vocabulary inject** が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。
 
-    辞書 (vocabulary) は `transcription_guideline.json` で管理、運用者が業務固有用語を追加できます。AI 整形段階で別途辞書を投入する pipeline は従来通り共存します。
+    辞書の語は、**データベースの業務辞書（`dictionary` テーブル）**から読みます（[#327](https://github.com/gamasenninn/tealus/issues/327)。テーブルが空のときだけ `transcription_guideline.json` の語を使います）。辞書は使われ方から育ちます（[業務辞書](../../admin/dictionary.md)）。organon を使う環境では、整形の段で organon の知識も渡します。
+
+!!! info "文字起こしの経路は 3 つから選べます（[#424](https://github.com/gamasenninn/tealus/issues/424)）"
+    管理者が `STT_BACKEND` で選びます: `openai`（既定）／ `local`（自ホストの Qwen3-ASR）／ `gemini`（辞書の語を音声認識の段で渡せる。固有名詞の正答が 50% → 85% に上がった実測あり）。local / gemini が失敗したときは openai に切り替わります。
 
 !!! info "動画/音声 文字起こしツール（v0.2.4〜、[#271](https://github.com/gamasenninn/tealus/issues/271)）"
     Tealus に投稿した **動画メッセージ** も AI エージェントから文字起こしできるようになりました（`transcribe_media` MCP tool、tealus-mcp v0.13.0）。10MB を超える動画も server-side で ffmpeg `-vn` audio 抽出 → Whisper API のフローで処理、抽出した text はキャッシュされて再呼び出し時は即時返却されます。詳細は [MCP Server](../../dev/mcp.md) の `transcribe_media` を参照。
@@ -49,15 +52,31 @@
 !!! tip "音声を聴きながら編集（v0.2.3〜、[#248](https://github.com/gamasenninn/tealus/issues/248)）"
     編集 modal 内に**音声再生スライダー**が組み込まれており、原音を聴きながら文字起こしを修正できます。聞き取りにくい箇所のシークがしやすく、特に長尺の voice メッセージで効果的です。
 
-!!! tip "連続編集 — 前/次ボタンで隣の音声へ送る（v0.3.0 後、[#302](https://github.com/gamasenninn/tealus/issues/302)）"
-    編集 modal に **「前/次」ボタン** が追加され、隣接する voice メッセージへ送って続けて編集できます。朝礼ルーム等で複数の voice 文字起こしを連続して修正する dogfood で効率が大幅向上します。
+!!! tip "連続編集 — 前/次ボタンで隣の音声へ送る（[#302](https://github.com/gamasenninn/tealus/issues/302)）"
+    編集画面の **「前/次」ボタン** で、隣の音声メッセージへ送って続けて編集できます。直した内容は保存してから移ります（直していなければ保存しません）。
+
+!!! tip "時刻タグから音声へ飛ぶ（[#398](https://github.com/gamasenninn/tealus/issues/398)）"
+    通話の録音など、**音声が添付された投稿の編集画面**では、本文に `[1:23]` のような時刻タグがある場合、テキスト欄の外に**タグがチップとして並び**、押すとその位置へ再生が飛びます。端には **10 秒戻し／10 秒送り**のボタンがあります。
+
+### キーボード操作（PC、[#604](https://github.com/gamasenninn/tealus/issues/604)）
+
+| キー | 動き |
+|---|---|
+| **Alt + ← / →** | 前 / 次の音声へ（保存してから移る） |
+| **Ctrl + Enter** | 確定 |
+| **Esc** | 戻る（閉じる） |
+| **Ctrl + Space** | 再生 / 一時停止 |
+| **Alt + , / Alt + .** | 10 秒戻す / 10 秒送る（日本語入力がオンでも効く） |
+| ← / →、Space | テキスト欄の外にいるとき: 前 / 次、再生 / 一時停止 |
+
+日本語の変換中のキーは拾いません。PC ではボタンにキーの案内が出ます。Ctrl + Space と Alt + , / . は、音声が添付された投稿（通話の録音など）の編集画面でも使えます。
 
 ### 編集履歴
 
 過去の編集内容は「履歴ボタン」からバージョン管理で確認できます。
 
 !!! note "編集権限"
-    デフォルトでは送信者のみ編集可能ですが、ルーム設定で「メンバー全員が編集可」に変更できます。
+    文字起こしの編集は、既定では**送信者のみ**です。部屋の管理者がルーム設定の「**文字起こし編集**」を「メンバー全員」にすると、誰でも直せます（本文の「メッセージ編集」とは別の設定です）。
 
 ## 再文字起こし
 

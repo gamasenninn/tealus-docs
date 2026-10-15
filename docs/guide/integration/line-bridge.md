@@ -33,7 +33,10 @@ Tealus は **LINE Official Account** からの投稿を Tealus ルームに取�
 !!! info "複数画像の同時送信は 1 メッセージにまとまります（v0.7.0、[#353](https://github.com/gamasenninn/tealus/issues/353)）"
     LINE で複数枚の写真をまとめて送ると、**画像ごとに別々の webhook が順不同で届く**ため、以前は Tealus 側でバラバラのメッセージになっていました。
 
-    v0.7.0 から、同じ送信に属する画像を待ち合わせて **1 メッセージ + 複数メディア**として再構成します。待ち時間は `LINE_IMAGESET_FLUSH_MS`（既定 15 秒）で、全枚が揃った時点で待たずに投稿されます。揃わなかった場合は待ち時間の経過後に届いた分だけで投稿されます。
+    v0.7.0 から、同じ送信に属する画像を待ち合わせて **1 メッセージ + 複数メディア**として再構成します。待ち時間は `LINE_IMAGESET_FLUSH_MS`（既定 **60 秒**、[#552](https://github.com/gamasenninn/tealus/issues/552) で 15 秒から変更）で、全枚が揃った時点で待たずに投稿されます。揃わなかった場合は**最後の 1 枚から**待ち時間の経過後に届いた分だけで投稿されます。画像が届き続けても、**最初の 1 枚から `LINE_IMAGESET_MAX_WAIT_MS`（既定 5 分）**で区切って投稿します。
+
+!!! tip "LINE の引用返信は、Tealus でも返信として届きます（[#490](https://github.com/gamasenninn/tealus/issues/490)）"
+    LINE で引用返信した投稿は、Tealus 側でも元の投稿へのリプライとして表示されます（以前は引用元なしで届いていました）。引用元が Tealus に届いていない場合（記録を始める前の投稿など）は、本文に「（LINE の引用返信。引用元はこちらに届いていません）」が添えられます。
 
 ## 設定方式 — 2 file 案（Phase 2.3）
 
@@ -41,7 +44,7 @@ LINE グループから Tealus ルームへの mapping は **2 ファイル** �
 
 | file | 役割 | 編集者 |
 |---|---|---|
-| `server/config/line-groups.json` | **catalog file**。webhook 受信時に LINE API で group name を自動取得し atomic write | 自動（手動編集不要） |
+| `server/config/line-groups.json` | **catalog file**。webhook 受信時に LINE API で group name を自動取得し atomic write。★ **bot をグループに招待した時点で載ります**（投稿を待たない、[#367](https://github.com/gamasenninn/tealus/issues/367)）。対応づけを先に書けるので、最初の投稿を取りこぼしません | 自動（手動編集不要） |
 | `server/config/line-group-mappings.json` | **mappings file**。LINE group → Tealus room の紐付け | 採用者が手動編集 |
 
 mappings file は object form（D2 推奨）と pure string form（後方互換）の **両形式に対応**しています。

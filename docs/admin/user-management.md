@@ -64,7 +64,7 @@ PATCH /api/admin/users/:id/status
 !!! note "Botユーザー"
     AIエージェント用のBotユーザーは `is_bot` フラグで識別されます。作成フォームの「**AIエージェント**」にチェックを入れるか、管理 API に `"is_bot": true` を渡して作れます（**データベースを直接編集する必要はありません**。以前このページはその手順を書いていましたが、古くなっていました）。
 
-## ゲスト（`guest`）
+## ゲスト（`guest`） {#guest}
 
 社外の人など、**特定の部屋にだけ参加してもらう**ためのロールです（[#282](https://github.com/gamasenninn/tealus/issues/282)）。
 

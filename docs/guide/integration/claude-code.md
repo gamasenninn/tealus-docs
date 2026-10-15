@@ -80,8 +80,14 @@ tealus-mcp は **2 つの transport** を提供します（v0.12.0+、[tealus #2
 - Tealus サーバが**社内サーバ / クラウド**に居て、Claude Code は採用者のローカル PC
 - HTTPS / reverse proxy（nginx 等）で TLS 終端、JWT で auth
 
-!!! info "Phase 1 alpha の限界"
-    Phase 1 alpha は **HTTP request/response（tools 呼び出し）のみ**。Inbound 通知（Tealus → Claude Code の wake-up）は **stdio + file beacon 経路に依存**します。cross-machine 構成では、wake-up 用に **stdio + file beacon は同一マシンが必要**で、HTTP は tools 呼び出し補完として使う構図です。Phase 2 で SSE event broker（server-push wake-up）が乗ると HTTP 単独で完結する予定です。
+!!! info "Inbound（起こす知らせ）も HTTP で届きます（v0.8.0〜、[#214](https://github.com/gamasenninn/tealus/issues/214)）"
+    以前このページは「Inbound は同じマシンの file 経由のみ、HTTP 対応は Phase 2 で予定」と書いていましたが、**古くなっていました**。v0.8.0 から、`@cc-…` の起こす知らせを **`/agent-api/cc-queue/stream`（NDJSON のストリーム）**で別のマシンへ届けられます。**Tealus サーバと別のマシンだけで、往路（道具の呼び出し）と復路（起こす知らせ）の両方が完結します。**
+
+    - 復路は `listen-tealus` skill の **http mode**（設定に `stream_url` を書く）が受け取ります
+    - 設定手順は本体の [setup-cc-remote.md](https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md)（Claude Code 自身が読んで実行する手順書）にあります
+    - 前段に Nginx を置く場合は、cc-queue の口に `proxy_buffering off` と長い `proxy_read_timeout` が要ります（[サーバー構築 > Nginx設定例](../../admin/server-setup.md)）
+
+    ★ 別マシンにする狙いは利便性より**隔離**です。サーバと同じホストで AI を動かすと、本番 DB・メディア・`server/.env` の鍵に原理的に手が届きます。
 
 ## どちらを使うべきか
 

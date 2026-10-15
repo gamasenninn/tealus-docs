@@ -23,6 +23,9 @@ Tealus の基本的な使い方を説明します。
     - [TODO機能](advanced/todo.md)
     - [音声・ビデオ通話](advanced/call.md)
     - [TTS 読み上げ](advanced/tts.md)
+    - [会話モード（AI と音声で話す）](advanced/voice-chat.md)
+    - [マルチトーク（PC）](advanced/multi-talk.md)
+    - [お知らせ](advanced/announcement.md)
     - [フォーム](advanced/form.md)
     - [エージェントの呼び出し口](advanced/agent-entry.md)
 - **設定**
