@@ -363,6 +363,8 @@ server {
 !!! danger "★ `/media/` を Nginx から直接配信（`alias`）しないでください"
     以前この例は `/media/` をディスクから直接配信していました。v0.11.0 から、**削除した投稿・部屋の添付は server が 404 を返します**（[#601](https://github.com/gamasenninn/tealus/issues/601) [#602](https://github.com/gamasenninn/tealus/issues/602)）。Nginx が直接配ると**この判定を通らず、消したはずの添付がリンクで開けてしまいます**。
 
+    ★ さらに、server は添付に **CSP sandbox** を付けて返します（アップロードされた HTML などを、本体とは別のオリジンとして開くため。PDF を除く）。直接配るとこれも付かず、**アップロードされた HTML が本体と同じオリジンで動きます**。
+
 !!! warning "旧版の例にあった不足"
     以前の例には `/agent-api/`（cc-queue の `proxy_buffering off` を含む）・`/rtc/`・`/system/` がありませんでした。そのとおりに設定すると、ダッシュボード・通話・別マシンの Claude Code 連携が動きません。プロキシの内側で動かすときは [`TRUST_PROXY`](#all-env) も設定してください。
 
