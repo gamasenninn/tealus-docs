@@ -1790,6 +1790,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#guest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ゲスト（guest）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1898,6 +1909,34 @@
     
   
     運用・監視
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルームトリガーと見張り
   
 
     
@@ -2590,6 +2629,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#guest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ゲスト（guest）
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2611,7 +2661,7 @@
 
 
 <h1 id="_1">ユーザー管理<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>管理者は <code>/admin</code> ダッシュボードからユーザーを管理できます。</p>
+<p>管理者は <code>/admin</code>（アプリの <strong>プロフィール → 管理ダッシュボード</strong>）の「ユーザー」タブから管理できます。</p>
 <h2 id="_2">管理画面へのアクセス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>管理者ロール（<code>admin</code>）を持つユーザーのみアクセス可能です。</p>
 <h2 id="_3">ユーザー一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -2638,8 +2688,12 @@
 <td>初期パスワード</td>
 </tr>
 <tr>
-<td>ロール</td>
-<td><code>admin</code>（管理者）または <code>user</code>（一般）</td>
+<td>権限（ロール）</td>
+<td><code>admin</code>（管理者）／ <code>user</code>（一般）／ <code>guest</code>（ゲスト、下記）</td>
+</tr>
+<tr>
+<td>AIエージェント</td>
+<td>チェックすると Bot ユーザー（<code>is_bot = true</code>）として作成</td>
 </tr>
 </tbody>
 </table>
@@ -2669,7 +2723,47 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Botユーザー</p>
-<p>AIエージェント用のBotユーザーは <code>is_bot</code> フラグで識別されます。Botユーザーを作成する場合は、通常のユーザー登録の後にデータベースで <code>is_bot = true</code> を設定してください。</p>
+<p>AIエージェント用のBotユーザーは <code>is_bot</code> フラグで識別されます。作成フォームの「<strong>AIエージェント</strong>」にチェックを入れるか、管理 API に <code>"is_bot": true</code> を渡して作れます（<strong>データベースを直接編集する必要はありません</strong>。以前このページはその手順を書いていましたが、古くなっていました）。</p>
+</div>
+<h2 id="guest">ゲスト（<code>guest</code>）<a class="headerlink" href="#guest" title="Permanent link">&para;</a></h2>
+<p>社外の人など、<strong>特定の部屋にだけ参加してもらう</strong>ためのロールです（<a href="https://github.com/gamasenninn/tealus/issues/282">#282</a>）。</p>
+<table>
+<thead>
+<tr>
+<th>できないこと</th>
+<th>理由・挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>部屋を作る・他の人を招待する</td>
+<td>403</td>
+</tr>
+<tr>
+<td>他の利用者を検索・一覧する</td>
+<td>自分自身しか見えない</td>
+</tr>
+<tr>
+<td>お知らせ・ポータルリンクを見る</td>
+<td>社内の情報なので空で返す</td>
+</tr>
+<tr>
+<td>スタンプを作る</td>
+<td>費用がかかり、パックは全員の共有資産のため（送ることはできる）<a href="https://github.com/gamasenninn/tealus/issues/495">#495</a></td>
+</tr>
+<tr>
+<td><code>@cc-…</code> で AI のセッションを起こす</td>
+<td>配送しない（記録だけ残る）<a href="https://github.com/gamasenninn/tealus/issues/491">#491</a></td>
+</tr>
+<tr>
+<td>社内アシスタントに応答させる</td>
+<td>ゲストの投稿には応答しない <a href="https://github.com/gamasenninn/tealus/issues/492">#492</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>ゲストを部屋に招待するのは、その部屋のメンバー（一般ユーザー・管理者）です。招待した部屋の中の投稿は、ゲストにもすべて見えます。</p>
 </div>
 
 

@@ -1755,6 +1755,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2772,7 +2800,7 @@
 <p>将来的には NAS クラスター構成による水平スケールも計画しています。</p>
 <h3 id="q-line-slack">Q: LINE や Slack から移行できますか？<a class="headerlink" href="#q-line-slack" title="Permanent link">&para;</a></h3>
 <p>現時点ではデータ移行ツールはありません。Bot API 経由でメッセージのインポートは技術的に可能です。</p>
-<p>LINE 連携ブリッジは将来計画として検討中です（<a href="https://github.com/gamasenninn/tealus/issues/160">gamasenninn/tealus#160</a>）。</p>
+<p>LINE とは<strong>連携ブリッジがあります</strong>（LINE のグループと Tealus の部屋をつなぐ。過去の履歴の移行ではありません）。詳しくは <a href="../guide/integration/line-bridge/">LINE Bridge 連携</a> を参照してください。</p>
 <h3 id="q_1">Q: スマホアプリはありますか？<a class="headerlink" href="#q_1" title="Permanent link">&para;</a></h3>
 <p>ネイティブアプリはありません。PWA（Progressive Web App）として対応しています。</p>
 <p>ブラウザからホーム画面に追加するだけで、アプリのように利用できます。プッシュ通知にも対応しています（iOS / Android / PC）。</p>
@@ -2878,7 +2906,34 @@
 <h2 id="_2">セキュリティ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="q_3">Q: データは社外に出ますか？<a class="headerlink" href="#q_3" title="Permanent link">&para;</a></h3>
 <p>チャットデータ・メディアファイルは完全にオンプレミスで管理されます。</p>
-<p>AI 機能を使う場合のみ、メッセージ内容が AI API（OpenAI / Anthropic / Aivis）に送信されます。AI を使わなければ外部への通信は一切発生しません。</p>
+<p>AI 機能を使う場合、メッセージ内容が AI API（OpenAI / Anthropic / Aivis / Google Gemini）に送信されます。</p>
+<p>★ <strong>AI を使わなくても、次の外部通信はあります</strong>（以前このページは「外部への通信は一切発生しない」と書いていましたが、誤りでした）:</p>
+<table>
+<thead>
+<tr>
+<th>通信</th>
+<th>送られるもの</th>
+<th>止め方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>リンクプレビュー</td>
+<td>投稿に含まれる URL へ、server がページを取りに行く（社内のアドレスへは取りに行かない）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>プッシュ通知</td>
+<td>通知が Apple / Google / Mozilla の配信サービスを経由する（中身は端末の鍵で暗号化され、配信サービスは読めない。宛先と時刻・大きさは分かる）</td>
+<td>VAPID 鍵を設定しない</td>
+</tr>
+<tr>
+<td>文字起こし・読み上げ</td>
+<td>音声・文が OpenAI / Google（<code>STT_BACKEND=gemini</code>・<code>TTS_PROVIDER=gemini</code> のとき）へ</td>
+<td><code>STT_BACKEND=local</code>・<code>TTS_PROVIDER=browser</code></td>
+</tr>
+</tbody>
+</table>
 <h3 id="q-https">Q: HTTPS に対応していますか？<a class="headerlink" href="#q-https" title="Permanent link">&para;</a></h3>
 <p>はい。Cloudflare 経由、またはリバースプロキシ（Nginx / Synology DSM）で SSL/HTTPS に対応します。</p>
 <p>詳しくは <a href="../admin/server-setup/">サーバー構築</a> を参照してください。</p>

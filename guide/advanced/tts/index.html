@@ -1984,6 +1984,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../admin/automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2821,7 +2849,11 @@
 </tbody>
 </table>
 <h2 id="_4">音声モデル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>ルームごとに、読み上げの<strong>エンジン</strong>と<strong>声</strong>を選べます。設定はトーク画面右上の <strong>≡</strong> → ルーム設定の「<strong>読み上げエンジン</strong>」「<strong>声</strong>」から行います（v0.10.0、<a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>）。</p>
+<p>ルームごとに、読み上げの<strong>エンジン</strong>と<strong>声</strong>を選べます。設定はトーク画面右上の <strong>≡</strong> → ルーム設定の「<strong>読み上げエンジン</strong>」「<strong>声</strong>」から行います（v0.10.0、<a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>）。変えられるのは、<strong>1:1 のトークでは本人、グループでは部屋の管理者</strong>です。管理者はダッシュボード（<code>/system</code>）のルーム設定からも同じ設定ができます。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>全体の設定 <code>TTS_PROVIDER</code> が <code>browser</code> か <code>none</code> のときは、部屋ごとの選択は効きません（画面にもその旨が出ます）。鍵が未設定のエンジンは選べません。</p>
+</div>
 <p>エンジンは <strong>Aivis Cloud / OpenAI / Gemini</strong> の 3 つで、未設定の部屋は全体の設定（<code>TTS_PROVIDER</code>）に従います。下の表は Aivis の声（10 種）です。</p>
 <ul>
 <li><strong>OpenAI</strong>（13 種）: marin・cedar（おすすめ）、alloy、ash、ballad、coral、echo、fable、nova、onyx、sage、shimmer、verse</li>
