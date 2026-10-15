@@ -3537,7 +3537,7 @@
 </tr>
 <tr>
 <td><code>OPENAI_IMAGE_MODEL</code></td>
-<td>画像生成モデルの上書き（default <code>gpt-image-1</code>、v0.5.0 <a href="https://github.com/gamasenninn/tealus/issues/313">#313</a>）。★ 読むのは agent-server ではなく<strong>子の tealus-mcp</strong>（<code>generate_and_send_image</code>）。子に渡す許可一覧に入ったのは本体 2026-10-15 の変更からで、<strong>v0.11.1 以前は <code>.env</code> に書いても届きません</strong>（<a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）</td>
+<td>画像生成モデルの上書き（default <code>gpt-image-1</code>、v0.5.0 <a href="https://github.com/gamasenninn/tealus/issues/313">#313</a>）。★ 読むのは agent-server ではなく<strong>子の tealus-mcp</strong>（<code>generate_and_send_image</code>）。agent-server の <code>.env</code> に書けば tealus-mcp に届きます（本体 <code>db890c7</code> 以降、agent-server の再起動後から）。<strong>v0.11.1 以前は子に渡す許可一覧に無く、書いても届きません</strong>（<a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）</td>
 </tr>
 <tr>
 <td><code>TTS_BROADCAST_MEDIASOUP</code></td>
