@@ -3482,7 +3482,7 @@
 <tr>
 <td>コンテキスト</td>
 <td>必要な履歴を道具（<code>get_messages</code> 等）で自分で取る（<code>LIGHT_CONTEXT_MESSAGES</code> は <a href="https://github.com/gamasenninn/tealus/issues/230">#230</a> で削除）</td>
-<td><code>--resume tealus-room-{roomId}</code> で継続セッション</td>
+<td>前回の CLI のセッション ID（<code>agent_contexts.session_id</code>）を <code>--resume</code> に渡して継続</td>
 </tr>
 <tr>
 <td>月額目安</td>
@@ -3707,7 +3707,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>api_key</code>（default）</td>
+<td><code>api-key</code>（default。<code>subscription</code> 以外はすべてこの扱い）</td>
 <td><code>OPENAI_API_KEY</code> 経由で API 課金</td>
 <td>v1 と同じ料金体系</td>
 </tr>
@@ -3720,7 +3720,7 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">ChatGPT サブスクリプション path は前提化しすぎない</p>
-<p><code>LIGHTV2_AUTH=subscription</code> は ChatGPT Plus 等のサブスクリプションを持っている採用者に対して <strong>API cost を 0 にできる選択肢</strong> ですが、サブスクリプションを持たない採用者には適用できません。default は <code>api_key</code> のままです。新規 onboarding では「サブスクリプション持ちなら subscription path も選べる」程度の紹介に留めるのが推奨です。</p>
+<p><code>LIGHTV2_AUTH=subscription</code> は ChatGPT Plus 等のサブスクリプションを持っている採用者に対して <strong>API cost を 0 にできる選択肢</strong> ですが、サブスクリプションを持たない採用者には適用できません。default は <code>api-key</code> のままです。新規 onboarding では「サブスクリプション持ちなら subscription path も選べる」程度の紹介に留めるのが推奨です。</p>
 </div>
 <h3 id="_4">推奨運用<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
@@ -3889,7 +3889,7 @@
 </tbody>
 </table>
 <h3 id="workspace-agentsmd">Workspace + AGENTS.md<a class="headerlink" href="#workspace-agentsmd" title="Permanent link">&para;</a></h3>
-<p>Codex Deep agent は room ごとの <code>CODEX_HOME</code> を動的生成し、<code>auth.json</code> copy + <code>config.toml</code> を room-specific に組み立てます。★ 置き場は <strong>workspace の外</strong>（<code>&lt;WORKSPACE_ROOT&gt;/_codex-homes/&lt;agentId&gt;/&lt;roomId&gt;</code>）です（<a href="https://github.com/gamasenninn/tealus/issues/419">#419</a>）。以前は workspace の中の <code>.codex_home/</code> で、AI がファイルとして読める場所に鍵や DB の資格情報が写り込んでいました。既定のモデルは <code>gpt-5.6-sol</code>（<code>AGENT_DEEP_CODEX_MODEL</code>）です。Codex CLI は project root の <code>AGENTS.md</code>（上限 32 KB）を自動 read するため、<code>CLAUDE.md</code> の literal copy として <code>AGENTS.md</code> を repo root に配置しています。</p>
+<p>Codex Deep agent は room ごとの <code>CODEX_HOME</code> を動的生成し、<code>auth.json</code> copy + <code>config.toml</code> を room-specific に組み立てます。★ 置き場は <strong>workspace の外</strong>（<code>&lt;WORKSPACE_ROOT&gt;/_codex-homes/&lt;agentId&gt;/&lt;roomId&gt;</code>）です（<a href="https://github.com/gamasenninn/tealus/issues/419">#419</a>）。以前は workspace の中の <code>.codex_home/</code> で、AI がファイルとして読める場所に鍵や DB の資格情報が写り込んでいました。既定のモデルは <code>gpt-5.6-sol</code>（<code>AGENT_DEEP_CODEX_MODEL</code>）です。Codex CLI は project root の <code>AGENTS.md</code>（上限 32 KB）を自動 read するため、repo root に <code>AGENTS.md</code> を置いています（当初は <code>CLAUDE.md</code> の写しでしたが、現在は内容に差があります）。</p>
 <h3 id="_7">推奨運用<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

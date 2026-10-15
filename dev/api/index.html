@@ -3404,7 +3404,7 @@
 <tr>
 <td>PUT</td>
 <td><code>/api/rooms/:id</code></td>
-<td>ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など。<code>is_announcement</code> は admin のみ）</td>
+<td>ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など）。★ <strong>グループで、メンバーで、部屋の管理者</strong>のとき。<code>is_announcement</code> はさらに admin のみ</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3422,7 +3422,7 @@
 <tr>
 <td>POST</td>
 <td><code>/api/rooms/:id/icon</code></td>
-<td>グループアイコンアップロード</td>
+<td>グループアイコンアップロード（グループ・メンバー・部屋の管理者）</td>
 <td>必要</td>
 </tr>
 <tr>

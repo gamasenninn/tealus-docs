@@ -3102,7 +3102,7 @@
 <td><strong>Layer 2</strong></td>
 <td>Context Space (tealus core)</td>
 <td>コンテキストの場、流れる substrate</td>
-<td><code>tealus</code> repo (server / client / agent-server / tealus-mcp / rtc-server)</td>
+<td><code>tealus</code> repo (server / client / agent-server / rtc-server) と独立 repo <code>tealus-mcp</code></td>
 </tr>
 <tr>
 <td><strong>Layer 3</strong></td>
@@ -3209,7 +3209,7 @@
 </table>
 <p><strong>v0.6 schema candidate</strong> (5/21 〜): <code>organization.parent_organization</code> 新軸（JU 系 sub-location → A オークション 階層化）、<code>polyseme.sql_mapping</code> field（業務語彙 ↔ DB column 値翻訳、後述 6b SQL bridge thesis）、4 polyseme PoC（流れ / 納品 / 売上 / 残金）。</p>
 <h3 id="layer-3-layer-2-inject-pipelinev030">Layer 3 → Layer 2 への自動 inject pipeline（v0.3.0〜）<a class="headerlink" href="#layer-3-layer-2-inject-pipelinev030" title="Permanent link">&para;</a></h3>
-<p>organon の <code>polyseme.sql_mapping</code> を持つ entries は、v0.3.0 (2026-05-31) 以降 <strong>全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に自動 inject</strong> されます。詳細は <a href="../../dev/agents/#organon-polyseme-inject">Agent ガイド &gt; organon polyseme.sql_mapping auto inject pipeline</a> を参照。</p>
+<p>organon の <code>polyseme.sql_mapping</code> を持つ entries は、v0.3.0 (2026-05-31) 以降 <strong>全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に inject</strong> されます。★ <strong><code>ORGANON_INJECT=true</code> を設定したときだけ</strong>です（既定 OFF の opt-in、v0.4.0 <a href="https://github.com/gamasenninn/tealus/issues/304">#304</a>）。詳細は <a href="../../dev/agents/#organon-polyseme-inject">Agent ガイド &gt; organon polyseme.sql_mapping auto inject pipeline</a> を参照。</p>
 <p>「<strong>organon-side が polyseme.sql_mapping を蓄積するだけで、全 AI agent が同時に組織記憶辞書を読みながら推論できる</strong>」architecture が成立、5/16 dogfood の <strong>4 round LLM 訂正 → 1 round 正解</strong> transition を両 agent path で N=2 evidence として再現。<strong>「組織記憶辞書が動作する道具に転化した」</strong> v0.3.0 release narrative の core。</p>
 <h3 id="layer-4-meta-axis-observation">Layer 4 — Meta-axis Observation<a class="headerlink" href="#layer-4-meta-axis-observation" title="Permanent link">&para;</a></h3>
 <p>判断軸そのものの変化を観測する外側の層。<strong>将来 module</strong> として位置付け、module 実装は未着手だが、観測 feedback loop は organon repo の hazard log family として既に稼働中。</p>

@@ -3301,7 +3301,7 @@
 <p>第1段で判定できなかったメッセージを LLM で分類します。</p>
 <ul>
 <li><strong>モデル</strong>: GPT系（gpt-5.4-mini）</li>
-<li><strong>パラメータ</strong>: <code>max_tokens: 10</code>, <code>temperature: 0</code>（決定論的に判定）</li>
+<li><strong>パラメータ</strong>: <code>max_completion_tokens: 10</code>, <code>temperature: 0</code>（決定論的に判定。新しいモデルは <code>max_tokens</code> を受け付けないため <a href="https://github.com/gamasenninn/tealus/issues/256">#256</a> で改名）</li>
 <li><strong>出力</strong>: <code>light</code> または <code>deep</code> の1単語</li>
 <li><strong>フォールバック</strong>: エラー時は Light Agent に振る</li>
 </ul>
@@ -3375,6 +3375,10 @@
 <tr>
 <td><code>get_current_time</code></td>
 <td>現在時刻の取得</td>
+</tr>
+<tr>
+<td><code>share_text_as_file</code></td>
+<td>長い文をファイルとして投稿</td>
 </tr>
 <tr>
 <td><code>list_workspace_files</code></td>
@@ -3499,7 +3503,7 @@
 </code></pre></div>
 <ul>
 <li>プロンプトは <strong>stdin</strong> から送信</li>
-<li><code>--resume tealus-room-{roomId}</code> で前のセッションから再開可能</li>
+<li>ルームごとに前回の CLI のセッション ID（<code>agent_contexts.session_id</code>）を保存し、<code>--resume</code> に渡して前のセッションから再開</li>
 </ul>
 <h3 id="mcp">動的 MCP 設定生成<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
 <p>実行時に MCP 設定 JSON を動的に組み立てます。</p>
