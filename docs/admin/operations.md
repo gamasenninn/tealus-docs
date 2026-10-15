@@ -50,6 +50,11 @@ GET /api/admin/agent-logs    # 応答ログ
 
 Webhookペイロードは `X-Tealus-Signature: sha256=HMAC(secret, body)` ヘッダで署名されます。受信側で署名を検証することで改ざんを防止できます。
 
+!!! danger "★ agent-server を使う場合、secret は両側に同じ値が要ります"
+    [#478](https://github.com/gamasenninn/tealus/issues/478) から、agent-server の受け口も署名を検証します。**本体の Webhook 登録に入れた secret と、`agent-server/.env` の `WEBHOOK_SECRET` に同じ値**を設定してください。
+
+    片方だけだと **401 で弾かれ、エージェントが黙って起きません**（投稿は普通に成功して見えるため、送った側からは気づけません）。`agent-server` の `npm run doctor` でも未設定を検出できます。
+
 ### リトライ
 
 配信失敗時は指数バックオフで3回リトライします（5秒 → 15秒 → 45秒）。
@@ -69,8 +74,29 @@ GET /api/health
 PostgreSQLの標準的なバックアップ手法を使用します。
 
 ```bash
-pg_dump -U tealus -d tealus > backup_$(date +%Y%m%d).sql
+docker-compose exec -T postgres pg_dump -U tealus tealus > backup-$(date +%Y%m%d).sql
 ```
+
+!!! danger "★ Windows の PowerShell 5.1 では上の `>` を使わないでください"
+    PowerShell の `>` が**文字コードを変えてしまい、ダンプが壊れます**（[#566](https://github.com/gamasenninn/tealus/issues/566)）。**壊れたことは復元しようとするまで分かりません。**
+
+    コンテナの中でファイルに書いてから取り出してください（custom 形式）:
+
+    ```powershell
+    docker exec tealus_postgres pg_dump -U tealus -Fc -f /tmp/backup.dump tealus
+    docker cp tealus_postgres:/tmp/backup.dump .\backup.dump
+    ```
+
+!!! warning "DB だけでは戻せません"
+    復元には次の 3 つが揃っている必要があります。1 つでも欠けると、戻したつもりで欠けた状態になります。
+
+    | 対象 | 内容 | 欠けるとどうなるか |
+    |---|---|---|
+    | DB のダンプ | `pg_dump` の出力 | 投稿・利用者・部屋がすべて失われる |
+    | メディア | `MEDIA_ROOT` の中身（画像・動画・音声・ファイル・サムネイル） | 投稿は残るが、添付が開けない |
+    | 鍵と設定 | `.env`（`JWT_SECRET` / VAPID 鍵など） | 全員が再ログイン、プッシュの購読が無効になる |
+
+    復元の具体的な手順は、本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) の「壊れたときの復元」にあります。
 
 ### メディアファイル
 

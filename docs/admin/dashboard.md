@@ -80,6 +80,9 @@ Deep Agent（Claude Code）のシステムプロンプト（`CLAUDE.md`）を編
 !!! note
     設定の変更は `room_settings.json` に保存されます。
 
+!!! danger "★ 道具が使う鍵は `env` に明示してください（v0.11.0〜）"
+    道具（MCP サーバー）は agent-server の環境変数を**受け継がなくなりました**（[#573](https://github.com/gamasenninn/tealus/issues/573)）。以前は書かなくても動いていた API キーや DSN が届かなくなっているので、`env` に `${VAR}` で書いてください。npx で起動する道具は**版を固定**してください（[#577](https://github.com/gamasenninn/tealus/issues/577)）。詳細は [AIエージェント設定 > MCP設定](agent.md#mcp-settings) を参照してください。
+
 ## 技術仕様
 
 ダッシュボードは `tealus/dashboard/` にReact + Viteで実装された独立したSPAです。PC向けの設計で、Tealus Server から `/system` パスで静的配信されます。

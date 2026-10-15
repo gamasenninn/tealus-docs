@@ -24,10 +24,28 @@ Tealus の agent-server は「**メッセージ → 適切な処理者へ dispat
 |---|---|---|
 | Router | gpt-5.4-mini | メッセージの意図分類・複雑度判定 |
 | Light Agent v1 | OpenAI Agents SDK（gpt-5.4-mini） | 日常Q&A・翻訳・簡単なタスク（`AGENT_LIGHT_BACKEND=v1` で選択） |
-| Light Agent v2（**default**、v0.3.0〜） | codex SDK | cross-room 探索・多角的な tool orchestration（`/light2` prefix、`LIGHTV2_AUTH=subscription` でサブスク認証） |
+| Light Agent v2（**default**、v0.4.0〜） | codex SDK | cross-room 探索・多角的な tool orchestration（`/light2` prefix、`LIGHTV2_AUTH=subscription` でサブスク認証） |
 | Deep Agent — Claude Code CLI（default） | Claude Code CLI（MAX プラン or API key） | コード生成・複雑な分析・長いワークフロー（既存運用） |
 | Deep Agent — Codex CLI（v0.3.0〜） | Codex CLI（ChatGPT サブスクリプション or API key） | Anthropic 環境外でも Deep mode 同等運用（`DEEP_AGENT_PROVIDER=codex`、[#276](https://github.com/gamasenninn/tealus/issues/276)） |
 | Claude Code session（cc-tealus） | 採用者の手元 Claude Code | `@cc-{project}` / `@{alias}` mention でリアルタイム連携（[#213](https://github.com/gamasenninn/tealus/issues/213)、詳細は [Agent ガイド](../dev/agents.md)） |
+
+!!! danger "★ ChatGPT アカウントで Codex を使う環境は、モデルと SDK の両方を更新してください（v0.11.0）"
+    **`gpt-5.5` は 2026-10-14 に ChatGPT アカウントの Codex から外されました。** 既定は **`gpt-5.6-sol`** に変わっています（`AGENT_DEEP_CODEX_MODEL`）。
+
+    ★ **モデル名だけ替えても直りません。** 古い codex（0.128）は `gpt-5.6-sol` を扱えないため、**`@openai/codex-sdk` を `^0.162.1` に上げる必要があります**:
+
+    ```bash
+    cd agent-server
+    npm install        # codex-sdk 0.162.1 が入る
+    # .env で AGENT_DEEP_CODEX_MODEL を指定している場合は gpt-5.6-sol に
+    ```
+
+    グローバルに入れた `codex` CLI を使う場合も、モデルごとに下限があります（`gpt-5.6-sol` は 0.154 以上、`gpt-6.1-sol` は 0.162 以上）。
+
+!!! warning "ChatGPT アカウントでは mini 系のモデルは使えません"
+    サブスクリプション認証（`LIGHTV2_AUTH=subscription` / `DEEP_CODEX_AUTH=subscription`）では、**mini 系は系統ごと使えません**（400 になる）。また「新しい名前なら使える」とも限らず、**名前ごとに可否が違います**。
+
+    ★ 失敗したときの表示が `auth failed (unauthorized)` になることがあり、**再ログインの問題に見えて誤誘導されます**。認証ではなくモデル名を疑ってください。設定の取り違えは agent-server の起動時に警告が出ます（止まりはしません）。
 | **LINE Bridge** (Inbound、v0.3.0〜) | webhook `POST /api/line` | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は [LINE Bridge 連携](../guide/integration/line-bridge.md)） |
 
 ## ゲストユーザ role — Phase 1 〜 D/E 運用可能化（v0.3.0〜）
@@ -88,9 +106,31 @@ Agent Server は Port 4000 で独立したExpressプロセスとして動作し�
 - 最大ターン数（`maxTurns`）
 - システムプロンプト（`system_prompt`）
 
-### MCP設定
+### MCP設定 {#mcp-settings}
 
 `agent-server/mcp_config.json` でMCP接続を設定します。
+
+!!! danger "★ 道具（MCP サーバー）は親の環境変数を受け継ぎません（v0.11.0〜）"
+    [#573](https://github.com/gamasenninn/tealus/issues/573) から、agent-server が起動する子プロセス（MCP の道具・Deep の CLI）には**許可した環境変数だけ**が渡ります（`PATH` などは入る）。以前は親の環境変数をすべて渡していたため、**`agent-server/.env` に書いた API キーを道具が暗黙に使えていましたが、今は届きません。**
+
+    道具が必要とする資格情報（DB の DSN・API キーなど）は、**設定ファイルの `env` に明示**してください。`${VAR}` と書くと agent-server の環境変数から展開されます:
+
+    ```json
+    {
+      "mcpServers": {
+        "dbhub": {
+          "command": "npx",
+          "args": ["-y", "<パッケージ名>@<確かめた版>"],
+          "env": { "DSN": "${DBHUB_DSN}" }
+        }
+      }
+    }
+    ```
+
+    ★ ただし **`JWT_SECRET` / `WEBHOOK_SECRET` / `DB_PASSWORD` / `TEALUS_BOT_PASS` など本体の中核の鍵は `${VAR}` で引けません**。設定ファイルは AI が書ける場所にあるため、AI が自分で書いた設定から署名鍵を道具へ渡せないようにしています。定義されていない変数は空文字にならず `${VAR}` のまま残ります（壊れているのに正しそうに見える値を作らないため）。
+
+!!! warning "npx で起動する道具は版を固定してください"
+    `@latest` や版なしにすると、**起動のたびにその時 registry が返す版が動きます**（[#577](https://github.com/gamasenninn/tealus/issues/577)）。DSN などの鍵を渡す子プロセスが、確かめていないコードになります。版を上げるときは書き換えたうえで、先に手で 1 回 `npx -y <名前@版> --help` を流してキャッシュに入れてください。本体が自分で起動する道具も版を 1 か所で固定しています（例: `@modelcontextprotocol/server-filesystem@2026.1.14`、`agent-server/src/lib/mcpPackages.mts`）。
 
 ## コンテキスト管理
 

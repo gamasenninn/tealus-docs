@@ -44,9 +44,18 @@ v0.1.x（[#188](https://github.com/gamasenninn/tealus/issues/188)）から、ser
 
 | 構成 | 起動コマンド | 含まれるサービス | 対応OS |
 |---|---|---|---|
-| 開発（DB + Redis のみ） | `docker-compose up -d` | postgres / postgres-test / redis | Mac / Windows / Linux |
+| 開発（DB のみ） | `docker-compose up -d` | postgres / postgres-test | Mac / Windows / Linux |
 | **フル**（server + agent 含む） | `docker-compose -f docker-compose.full.yml up -d` | 上記 + server:3000 + agent-server:4000 | Mac / Windows / Linux |
 | + RTC（通話・legacy TTS） | `docker-compose -f docker-compose.full.yml -f docker-compose.rtc.yml up -d` | 上記 + rtc-server:3100 | **Linux のみ** |
+
+!!! warning "★ コードを更新したら `--build` が要ります"
+    `docker-compose ... up -d` だけでは**イメージが作り直されず、古いコードのまま起動します**（[#558](https://github.com/gamasenninn/tealus/issues/558)）。更新時は `up -d --build` を使ってください。
+
+!!! info "初回起動時の migration"
+    PostgreSQL の initdb は migration を流しません。**server の起動時に実行されます**（[#557](https://github.com/gamasenninn/tealus/issues/557)）ので、初回は server のログで `[migration-check]` を確認してください。
+
+!!! note "Redis は使いません"
+    以前このページには Redis が構成に含まれると書いていましたが、**誤りでした**。Redis は初期設計の名残で**一度もコードから使われておらず**、[#466](https://github.com/gamasenninn/tealus/issues/466) で依存ごと削除されています。在席状態は Socket.IO が内部で持ち、LINE の画像の束ね・ログイン試行の制限はいずれもプロセス内のメモリで処理しています（「1 台・1 プロセス」構成が前提）。
 
 !!! info "TTS のみなら rtc-server は不要"
     v0.1.x の default TTS 配信は Socket.IO blob 経由のため、TTS だけ使うなら **+RTC 構成は不要**です。WebRTC 通話機能を使う場合、または `TTS_BROADCAST_MEDIASOUP=true` で legacy mediasoup TTS を使う場合のみ rtc-server が必要になります。
@@ -144,10 +153,26 @@ npx web-push generate-vapid-keys
 npm run migrate
 ```
 
-マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（001〜026）が順に実行されます。`021` で全文検索高速化用の `pg_trgm` 拡張と GIN index が追加されます（v0.1.x、[#194](https://github.com/gamasenninn/tealus/issues/194)）。以降 `022` ゲスト role、`023`〜`025` 辞書テーブル（v0.5.0 [#327](https://github.com/gamasenninn/tealus/issues/327)）、`026` 汎用フォーム（v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)）が追加されています。
+マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（**001〜040**）が順に実行されます。適用済みの記録は DB の **`schema_migrations` テーブル**（台帳）に残ります（[#406](https://github.com/gamasenninn/tealus/issues/406)）。
+
+!!! danger "★ 更新するときは、必ず migrate を**再起動の前**に"
+    v0.11.0 以降、**`034` を流さずにサーバーを再起動すると、ログインそのものが失敗します**（認証の問い合わせが新しい列を読むため）。プッシュの送信も止まります。
+
+    更新の正しい順序は「コード取得 → 依存更新 → **migrate** → client 再ビルド → 再起動」です。手順の本文は本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) にあります。
+
+!!! danger "★ 台帳より前から動かしている DB は、`--baseline-through` が要ります"
+    台帳（`schema_migrations`）が導入される前から動かしている DB には適用済みの記録がないため、**通常の `npm run migrate` は止まります**。このとき案内に出る `--baseline`（上限なし）を打つと、**まだ流していない migration まで「適用済み」として記録され、静かに壊れます**（[#500](https://github.com/gamasenninn/tealus/issues/500)）。
+
+    **どこまで適用済みかを指定して記録し、残りは通常実行で流します。** 例えば v0.9.0 相当（`026` まで適用済み）の DB では:
+
+    ```bash
+    cd server
+    npm run migrate -- --baseline-through 026_message_form_type.sql   # ここまでを「適用済み」と記録（流さない）
+    npm run migrate                                                   # 027 以降が実際に流れる
+    ```
 
 !!! warning "migrate 忘れは「クラッシュしないが静かに壊れる」"
-    未適用の migration がある状態でも**サーバーは起動してしまい**、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成タブが 500、自己成長辞書が効かない）。v0.6.0（[#334](https://github.com/gamasenninn/tealus/issues/334)）から起動時に loud warn が出るようになったので、**起動ログの `[migration-check]` / `[build-check]`** を確認してください。既存環境の更新手順は本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) にまとまっています。
+    未適用の migration がある状態でも**サーバーが起動してしまう**ことがあり、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成画面が 500、自己成長辞書が効かない）。起動時の確認は v0.11.1 で強化され、台帳とファイルを突き合わせて **`[migration-check] ★ 未適用 N 件: …`** とファイル名つきで出るようになりました。**起動ログの `[migration-check]` / `[build-check]`** を必ず確認してください。
 
 !!! warning "managed PostgreSQL 環境での注意"
     migration 021 は `pg_trgm` extension を要求します。`CREATE EXTENSION` 権限がない managed PostgreSQL 環境（一部のクラウド DB）では migration が失敗するため、運用前に extension 作成権限を確認してください。
@@ -194,7 +219,12 @@ curl -X POST http://localhost:3000/api/auth/register \
 ```
 
 !!! info "最初のユーザーは自動的に admin"
-    v0.2.1（[#211](https://github.com/gamasenninn/tealus/issues/211)）から、**最初の非 Bot ユーザー**（`is_bot=false` の COUNT が 0 の状態で `register` を呼んだユーザー）が自動的に `admin` role で作成されます。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターンです。2 人目以降は通常 `user` role で作成され、必要に応じて管理者ダッシュボードから昇格させてください。
+    v0.2.1（[#211](https://github.com/gamasenninn/tealus/issues/211)）から、**最初の非 Bot ユーザー**（`is_bot=false` の COUNT が 0 の状態で `register` を呼んだユーザー）が自動的に `admin` role で作成されます。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターンです。
+
+!!! danger "★ この curl が通るのは 1 回だけです"
+    **自己登録は「人の利用者が 0 人のとき」しか開いていません**（[#469](https://github.com/gamasenninn/tealus/issues/469)）。1 人でも登録済みだと、同じ curl は **403** を返します。以前このページは「2 人目以降もこの方法で」と読める書き方をしていましたが、**その手順では作れません**。
+
+    **2 人目以降は、管理者でログインして `/admin` のユーザー管理から作成**してください。Bot ユーザーも同じ画面で作れます（DB を直接編集する必要はありません）。
 
 以降はログイン画面からユーザーIDとパスワードでログインできます。
 
@@ -217,15 +247,17 @@ npm run dev
 | 変数名 | 説明 |
 |---|---|
 | `TEALUS_API_URL` | Tealus本体のURL（例: `http://localhost:3000`） |
-| `TEALUS_USER_ID` | BotユーザーのユーザーID |
-| `TEALUS_PASSWORD` | Botユーザーのパスワード |
+| **`TEALUS_BOT_ID`** | Bot ユーザーのログイン ID（★ `TEALUS_USER_ID` ではありません） |
+| **`TEALUS_BOT_PASS`** | Bot ユーザーのパスワード（★ `TEALUS_PASSWORD` ではありません） |
+| **`JWT_SECRET`** | **本体と同じ値**。agent-server も同じトークンで認証するため必須 |
+| `WEBHOOK_SECRET` | webhook の署名検証用。**本体の Webhook 登録に入れた secret と同じ値**（[#478](https://github.com/gamasenninn/tealus/issues/478)） |
 | `OPENAI_API_KEY` | OpenAI APIキー |
 | `AGENT_WORKSPACE_ROOT` | ワークスペースのパス |
 | `AIVIS_API_KEY` | Aivis Cloud API キー（TTS 音声合成用） |
 | `AIVIS_MODEL_UUID` | デフォルト音声モデル UUID（デフォルト: 凛音エル） |
 | `TTS_ENABLED` | TTS 読み上げの有効/無効（`"false"` で無効化、デフォルト: 有効） |
 | `TTS_MAX_LENGTH` | 読み上げ最大文字数（デフォルト: 500） |
-| `WHISPER_MODEL` | 音声文字起こしモデル（v0.2.2〜、default `gpt-4o-transcribe`、旧モデルに戻すなら `whisper-1`、半額の選択肢として `gpt-4o-mini-transcribe`） |
+| `WHISPER_MODEL` | 音声文字起こしモデル（default **`gpt-4o-mini-transcribe`**、[#284](https://github.com/gamasenninn/tealus/issues/284)。`gpt-4o-transcribe` は無音やノイズで業務無線らしい文を作る幻覚が出たため既定から外した） |
 | `ORGANON_INJECT` | organon の `sql_mapping` を agent prompt に注入（**default OFF の opt-in**、v0.4.0 [#304](https://github.com/gamasenninn/tealus/issues/304)。旧 `INJECT_ORGANON_POLYSEME` は廃止・fallback 無し） |
 | `ORGANON_REPO_PATH` | organon repo の path override |
 | `VOCAB_INJECT` | 業務語彙辞書（別名→正規名）を Light / Deep の prompt にも注入し、画像 OCR・帳票読み取りの表記揺れを正規化（**default OFF の opt-in**、v0.5.0 [#315](https://github.com/gamasenninn/tealus/issues/315)） |
@@ -234,8 +266,12 @@ npm run dev
 | `CC_ACK_TTL_MS` | `@cc-<project>` 投入時に出る受付エコーの表示時間（default 5000 = 5 秒、v0.6.0 [#335](https://github.com/gamasenninn/tealus/issues/335)） |
 | `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)） |
 
-!!! note "旧環境変数名との互換"
-    旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` も内部で fallback されますが、新規セットアップでは `TEALUS_USER_ID` / `TEALUS_PASSWORD` の使用を推奨します（v0.1.x、Tealus MCP との表記統一）。
+!!! danger "★ 以前このページは逆のことを書いていました"
+    「`TEALUS_USER_ID` / `TEALUS_PASSWORD` を推奨、旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` は fallback」と書いていましたが、**誤りです**。
+
+    **agent-server が読むのは `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` だけ**で、`TEALUS_USER_ID` / `TEALUS_PASSWORD` を書いても読まれません（`agent-server/src/config.mts`）。表のとおりに設定すると **bot がログインできず、エージェントが黙って応答しない**状態になります。
+
+    紛らわしいのは、agent-server が**子プロセス（Deep / Light v2 の CLI や MCP の道具）へ渡すときに `TEALUS_USER_ID` / `TEALUS_PASSWORD` という名前に置き換えている**ことです。そちらは MCP クライアント側の名前で、**`agent-server/.env` に書く名前とは別物**です。
 
 ## 7. 本番デプロイ
 

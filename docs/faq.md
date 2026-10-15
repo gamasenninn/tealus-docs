@@ -42,8 +42,12 @@ LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/te
 
 - **データベース**: PostgreSQL の `pg_dump` で定期バックアップ
 - **メディアファイル**: `media/` ディレクトリを rsync 等でバックアップ
+- **鍵と設定**: `.env`（`JWT_SECRET` や VAPID 鍵）。これが無いと、戻しても全員が再ログインになりプッシュが無効になります
 
-詳しくは [運用・監視](admin/operations.md) を参照してください。
+!!! danger "★ Windows の PowerShell で `pg_dump ... > backup.sql` を使わないでください"
+    `>` が文字コードを変えて**ダンプが壊れ、復元しようとするまで気づけません**（[#566](https://github.com/gamasenninn/tealus/issues/566)）。コンテナの中でファイルに書いてから `docker cp` で取り出してください。
+
+詳しい手順は [運用・監視](admin/operations.md) を参照してください。
 
 ## AI 機能
 
@@ -55,11 +59,15 @@ LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/te
 
 | 用途 | モデル | 提供元 |
 |---|---|---|
-| Light Agent（日常Q&A） | gpt-5.4-mini | OpenAI |
-| Deep Agent（複雑な分析） | Claude | Anthropic |
-| Router（振り分け判定） | gpt-5.4-mini | OpenAI |
-| 音声合成（TTS） | Aivis Cloud API | Aivis Project |
-| 音声文字起こし | gpt-4o-transcribe（v0.2.2〜default、env で whisper-1 戻し可） | OpenAI |
+| Light Agent v2（既定） | codex SDK（ChatGPT アカウントなら `gpt-5.6-sol` 系） | OpenAI |
+| Light Agent v1 | gpt-5.4-mini（API キー） | OpenAI |
+| Deep Agent | Claude Code CLI（既定）／ Codex CLI（`gpt-5.6-sol`） | Anthropic ／ OpenAI |
+| Router（振り分け判定） | gpt-5.4-mini（API キー） | OpenAI |
+| 音声合成（TTS） | Aivis Cloud ／ OpenAI ／ Gemini ／ ブラウザ内蔵（`TTS_PROVIDER` で選択） | 各社 |
+| 音声文字起こし | **gpt-4o-mini-transcribe**（既定、`WHISPER_MODEL` で変更可）／自ホスト／ Gemini（`STT_BACKEND`） | OpenAI ほか |
+
+!!! warning "ChatGPT アカウント（サブスクリプション）で Codex を使う場合"
+    **mini 系のモデルは使えません**（400 になります）。`gpt-5.5` は 2026-10-14 に外され、既定は `gpt-5.6-sol` です。**モデル名を替えるだけでなく `cd agent-server && npm install` が必要**です（codex-sdk 0.162.1）。詳しくは [AIエージェント設定](admin/agent.md) を参照してください。
 
 詳しくは [AI アーキテクチャ](dev/ai-architecture.md) を参照してください。
 
