@@ -35,7 +35,7 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 | 実装基盤 | OpenAI Agents SDK（v1）/ codex SDK（v2、`/light2`） | Claude Code CLI（default）/ Codex CLI（`DEEP_AGENT_PROVIDER=codex`、v0.3.0〜） |
 | モデル | gpt-5.4-mini | Claude（MAX プラン or API 課金）/ Codex（ChatGPT サブスクリプション or API 課金） |
 | 起動形態 | プロセス常駐（v1）/ ephemeral subprocess via SDK（v2） | コマンド毎に CLI を spawn |
-| コンテキスト | 必要な履歴を道具（`get_messages` 等）で自分で取る（`LIGHT_CONTEXT_MESSAGES` は [#230](https://github.com/gamasenninn/tealus/issues/230) で削除） | `--resume tealus-room-{roomId}` で継続セッション |
+| コンテキスト | 必要な履歴を道具（`get_messages` 等）で自分で取る（`LIGHT_CONTEXT_MESSAGES` は [#230](https://github.com/gamasenninn/tealus/issues/230) で削除） | 前回の CLI のセッション ID（`agent_contexts.session_id`）を `--resume` に渡して継続 |
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
 | 得意領域 | 日常会話、軽量 Q&A、定型タスク、自然言語検索、**cross-room 探索（v2 が強い）** | コード生成・分析、長いワークフロー、リファクタリング |
 | ローカルツール | `write_memory` / `read_memory` / `get_current_time` / `share_text_as_file` / `list_workspace_files` / `generate_image` / `code_interpreter` | Claude Code 標準ツール（ファイル編集・bash 実行など） |
@@ -114,11 +114,11 @@ AGENT_LIGHT_BACKEND=v2   # v0.4.0〜 default
 
 | 値 | 認証 path | 備考 |
 |---|---|---|
-| `api_key`（default） | `OPENAI_API_KEY` 経由で API 課金 | v1 と同じ料金体系 |
+| `api-key`（default。`subscription` 以外はすべてこの扱い） | `OPENAI_API_KEY` 経由で API 課金 | v1 と同じ料金体系 |
 | `subscription` | ChatGPT サブスクリプション認証 | ChatGPT Plus / Pro 持ちなら API cost 0、ただし生成・画像系は別途 `OPENAI_API_KEY` が必要 |
 
 !!! warning "ChatGPT サブスクリプション path は前提化しすぎない"
-    `LIGHTV2_AUTH=subscription` は ChatGPT Plus 等のサブスクリプションを持っている採用者に対して **API cost を 0 にできる選択肢** ですが、サブスクリプションを持たない採用者には適用できません。default は `api_key` のままです。新規 onboarding では「サブスクリプション持ちなら subscription path も選べる」程度の紹介に留めるのが推奨です。
+    `LIGHTV2_AUTH=subscription` は ChatGPT Plus 等のサブスクリプションを持っている採用者に対して **API cost を 0 にできる選択肢** ですが、サブスクリプションを持たない採用者には適用できません。default は `api-key` のままです。新規 onboarding では「サブスクリプション持ちなら subscription path も選べる」程度の紹介に留めるのが推奨です。
 
 ### 推奨運用
 
@@ -208,7 +208,7 @@ v0.3.0 (2026-06-01) で Deep agent の **provider 切替** が導入されまし
 
 ### Workspace + AGENTS.md
 
-Codex Deep agent は room ごとの `CODEX_HOME` を動的生成し、`auth.json` copy + `config.toml` を room-specific に組み立てます。★ 置き場は **workspace の外**（`<WORKSPACE_ROOT>/_codex-homes/<agentId>/<roomId>`）です（[#419](https://github.com/gamasenninn/tealus/issues/419)）。以前は workspace の中の `.codex_home/` で、AI がファイルとして読める場所に鍵や DB の資格情報が写り込んでいました。既定のモデルは `gpt-5.6-sol`（`AGENT_DEEP_CODEX_MODEL`）です。Codex CLI は project root の `AGENTS.md`（上限 32 KB）を自動 read するため、`CLAUDE.md` の literal copy として `AGENTS.md` を repo root に配置しています。
+Codex Deep agent は room ごとの `CODEX_HOME` を動的生成し、`auth.json` copy + `config.toml` を room-specific に組み立てます。★ 置き場は **workspace の外**（`<WORKSPACE_ROOT>/_codex-homes/<agentId>/<roomId>`）です（[#419](https://github.com/gamasenninn/tealus/issues/419)）。以前は workspace の中の `.codex_home/` で、AI がファイルとして読める場所に鍵や DB の資格情報が写り込んでいました。既定のモデルは `gpt-5.6-sol`（`AGENT_DEEP_CODEX_MODEL`）です。Codex CLI は project root の `AGENTS.md`（上限 32 KB）を自動 read するため、repo root に `AGENTS.md` を置いています（当初は `CLAUDE.md` の写しでしたが、現在は内容に差があります）。
 
 ### 推奨運用
 

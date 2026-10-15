@@ -93,10 +93,10 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | POST | `/api/rooms` | グループ作成 | 必要 |
 | POST | `/api/rooms/direct` | 1対1ルーム作成 | 必要 |
 | GET | `/api/rooms/:id` | ルーム詳細 | 必要 |
-| PUT | `/api/rooms/:id` | ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など。`is_announcement` は admin のみ） | 必要 |
+| PUT | `/api/rooms/:id` | ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など）。★ **グループで、メンバーで、部屋の管理者**のとき。`is_announcement` はさらに admin のみ | 必要 |
 | PUT | `/api/rooms/:id/notification` | **自分の分だけ**このルームの通知を切り替え（`{ "muted": boolean }`、[#463](https://github.com/gamasenninn/tealus/issues/463)）。通話の着信は止めない | 必要 |
 | DELETE | `/api/rooms/:id` | グループ削除。**作成者で、メンバーが自分だけのとき**。メッセージと添付も消える | 必要 |
-| POST | `/api/rooms/:id/icon` | グループアイコンアップロード | 必要 |
+| POST | `/api/rooms/:id/icon` | グループアイコンアップロード（グループ・メンバー・部屋の管理者） | 必要 |
 | GET | `/api/rooms/portal-links` | ポータルリンク一覧 | 必要 |
 | GET | `/api/rooms/announcements` | お知らせ一覧 | 必要 |
 

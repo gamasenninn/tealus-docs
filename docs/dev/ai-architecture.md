@@ -70,7 +70,7 @@ Agent Server (port 4000)
 第1段で判定できなかったメッセージを LLM で分類します。
 
 - **モデル**: GPT系（gpt-5.4-mini）
-- **パラメータ**: `max_tokens: 10`, `temperature: 0`（決定論的に判定）
+- **パラメータ**: `max_completion_tokens: 10`, `temperature: 0`（決定論的に判定。新しいモデルは `max_tokens` を受け付けないため [#256](https://github.com/gamasenninn/tealus/issues/256) で改名）
 - **出力**: `light` または `deep` の1単語
 - **フォールバック**: エラー時は Light Agent に振る
 
@@ -111,6 +111,7 @@ Light は、必要な履歴を**自分で `get_messages` / `search_messages` を
 | `write_memory` | エージェントのメモリに情報を書き込み |
 | `read_memory` | 保存済みメモリの読み取り |
 | `get_current_time` | 現在時刻の取得 |
+| `share_text_as_file` | 長い文をファイルとして投稿 |
 | `list_workspace_files` | ワークスペース内のファイル一覧 |
 | `generate_image` | OpenAI Images API による画像生成（設定でON/OFF可） |
 | `code_interpreter` | Python コード実行（設定でON/OFF可） |
@@ -174,7 +175,7 @@ claude -p - \
 ```
 
 - プロンプトは **stdin** から送信
-- `--resume tealus-room-{roomId}` で前のセッションから再開可能
+- ルームごとに前回の CLI のセッション ID（`agent_contexts.session_id`）を保存し、`--resume` に渡して前のセッションから再開
 
 ### 動的 MCP 設定生成
 

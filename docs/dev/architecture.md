@@ -7,7 +7,7 @@
 Phase 4 中盤 (2026-05) の構成図。Light v1 / Light v2 (codex SDK backed) / Deep agent の 3 tier、cc-tealus bridge、HTTP transport (cross-machine 構成、`/mcp` proxy) を含む完成 phase。詳細な component 説明は本 page 以降を参照。
 
 !!! note "図は 2026-05 時点のスナップショットです"
-    サービス構成そのものは現在も同じですが、図中の細部にはその後変わったものがあります。**MCP ツールは 18**（[MCP Server](mcp.md)）、**コードは全レイヤー TypeScript 化**され `.mts` を直接実行する構成（下記「実行モデル」）、**画像生成は `gpt-image-1`** です。
+    サービス構成そのものは現在も同じですが、図中の細部にはその後変わったものがあります。**MCP ツールは 19**（tealus-mcp v0.15.0 以降、[MCP Server](mcp.md)）、**コードは全レイヤー TypeScript 化**され `.mts` を直接実行する構成（下記「実行モデル」）、**画像生成は `gpt-image-1`** です。
 
 ## Tealus ↔ organon 接続層（v0.3.0〜）
 

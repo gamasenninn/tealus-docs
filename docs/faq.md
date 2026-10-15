@@ -59,7 +59,7 @@ LINE とは**連携ブリッジがあります**（LINE のグループと Tealu
 
 | 用途 | モデル | 提供元 |
 |---|---|---|
-| Light Agent v2（既定） | codex SDK（ChatGPT アカウントなら `gpt-5.6-sol` 系） | OpenAI |
+| Light Agent v2（既定） | codex SDK。モデルは `AGENT_LIGHT_MODEL`（`.env.example` の値は `gpt-5.6-sol`。★ 未設定時のコード上の既定 `gpt-5.4-mini` は ChatGPT アカウントでは使えないので、**必ず設定してください**） | OpenAI |
 | Light Agent v1 | gpt-5.4-mini（API キー） | OpenAI |
 | Deep Agent | Claude Code CLI（既定）／ Codex CLI（`gpt-5.6-sol`） | Anthropic ／ OpenAI |
 | Router（振り分け判定） | gpt-5.4-mini（API キー） | OpenAI |

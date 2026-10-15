@@ -48,7 +48,7 @@ LINE / Slack / Teams 等の従来 messenger は Layer 1〜2 までで止まる�
 | Layer | 名称 | 役割 | 実装担体 |
 |---|---|---|---|
 | **Layer 1** | Activity Modality | 現場の経験 (個別 modality) | chat / voice / 無線 / mention / edit / 判断 / 会議 / files |
-| **Layer 2** | Context Space (tealus core) | コンテキストの場、流れる substrate | `tealus` repo (server / client / agent-server / tealus-mcp / rtc-server) |
+| **Layer 2** | Context Space (tealus core) | コンテキストの場、流れる substrate | `tealus` repo (server / client / agent-server / rtc-server) と独立 repo `tealus-mcp` |
 | **Layer 3** | Organic Ontology (crystallized) | 意味構造の結晶 | `tealus-organon` repo (private) |
 | **Layer 4** | Meta-axis Observation | 判断軸そのものの観測 | 将来 module (axis drift / hazard pattern / value evolution) |
 
@@ -121,7 +121,7 @@ Layer 1〜2 の経験から結晶化する意味構造。**`tealus-organon` 別 
 
 ### Layer 3 → Layer 2 への自動 inject pipeline（v0.3.0〜）
 
-organon の `polyseme.sql_mapping` を持つ entries は、v0.3.0 (2026-05-31) 以降 **全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に自動 inject** されます。詳細は [Agent ガイド > organon polyseme.sql_mapping auto inject pipeline](../dev/agents.md#organon-polyseme-inject) を参照。
+organon の `polyseme.sql_mapping` を持つ entries は、v0.3.0 (2026-05-31) 以降 **全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に inject** されます。★ **`ORGANON_INJECT=true` を設定したときだけ**です（既定 OFF の opt-in、v0.4.0 [#304](https://github.com/gamasenninn/tealus/issues/304)）。詳細は [Agent ガイド > organon polyseme.sql_mapping auto inject pipeline](../dev/agents.md#organon-polyseme-inject) を参照。
 
 「**organon-side が polyseme.sql_mapping を蓄積するだけで、全 AI agent が同時に組織記憶辞書を読みながら推論できる**」architecture が成立、5/16 dogfood の **4 round LLM 訂正 → 1 round 正解** transition を両 agent path で N=2 evidence として再現。**「組織記憶辞書が動作する道具に転化した」** v0.3.0 release narrative の core。
 
