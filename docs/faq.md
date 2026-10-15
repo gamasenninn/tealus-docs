@@ -105,7 +105,7 @@ AI 機能を使う場合、メッセージ内容が AI API（OpenAI / Anthropic 
 |---|---|---|
 | リンクプレビュー | 投稿に含まれる URL へ、server がページを取りに行く（社内のアドレスへは取りに行かない） | — |
 | プッシュ通知 | 通知が Apple / Google / Mozilla の配信サービスを経由する（中身は端末の鍵で暗号化され、配信サービスは読めない。宛先と時刻・大きさは分かる） | VAPID 鍵を設定しない |
-| 文字起こし・読み上げ | 音声・文が OpenAI / Google（`STT_BACKEND=gemini`・`TTS_PROVIDER=gemini` のとき）へ | `STT_BACKEND=local`・`TTS_PROVIDER=browser` |
+| 文字起こし・読み上げ | 音声・文が OpenAI / Google（`STT_BACKEND=gemini`・`TTS_PROVIDER=gemini` のとき）へ | 読み上げは `TTS_PROVIDER=browser`（または `none`）。文字起こしは `STT_BACKEND=local` に加えて `STT_LOCAL_STRICT=1`（失敗時に OpenAI へ切り替えない）。★ ただし**文字起こしの整形（AI 整形）は経路に関係なく OpenAI に文を送ります**。完全に止めるには音声の文字起こし自体を使わない運用になります |
 
 ### Q: HTTPS に対応していますか？
 

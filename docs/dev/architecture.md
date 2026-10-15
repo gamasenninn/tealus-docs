@@ -23,7 +23,7 @@ v0.3.0 (2026-06-01) で **organon polyseme.sql_mapping auto inject pipeline** �
 詳細な architecture は [organic ontology 概念設計](../concepts/organic-ontology.md) を参照。Codex Deep agent + Light v1/v2 すべての agent path で **5/16 4 round → 0 round transition** が N=2 evidence として再現された **「組織記憶辞書が動作する道具に転化した」** v0.3.0 release narrative の core 技術構成です。
 
 !!! info "RTC Server はオプショナル"
-    RTC Server は **通話機能** および **TTS の legacy 配信経路**（`TTS_BROADCAST_MEDIASOUP=true`）で利用されます。default の TTS 配信は Socket.IO blob 経由のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。
+    RTC Server は **通話機能** および **TTS の legacy 配信経路**（`TTS_BROADCAST_MEDIASOUP=true`）で利用されます。default の TTS 配信は Socket.IO で URL を配る形のため、TTS のみ利用するなら RTC Server なしで動作します。Mac / Windows ホスト含めた幅広い環境で立ち上げやすくなりました。
 
 ### 詳細 ASCII reference
 
@@ -173,7 +173,7 @@ Socket.IO接続時も `handshake.auth.token` でJWTを検証します。
 
 ## TTS 音声合成パイプライン
 
-AIエージェントの回答を音声で読み上げる経路には **default（Socket.IO blob）** と **legacy（mediasoup PlainTransport）** の 2 種類があります。default は rtc-server なしで動作するため、Mac / Windows を含む全プラットフォームでセットアップが容易です。
+AIエージェントの回答を音声で読み上げる経路には **default（Socket.IO で URL を配信）** と **legacy（mediasoup PlainTransport）** の 2 種類があります。default は rtc-server なしで動作するため、Mac / Windows を含む全プラットフォームでセットアップが容易です。
 
 ### default 経路: URL を Socket.IO で配信
 

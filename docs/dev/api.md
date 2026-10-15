@@ -110,6 +110,7 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | GET | `/api/rooms/:id/messages/:msgId/edits` | 編集履歴取得 | 必要 |
 | DELETE | `/api/rooms/:id/messages/:msgId` | メッセージ削除（論理削除） | 必要 |
 | POST | `/api/rooms/:id/messages/:msgId/reactions` | 絵文字リアクション（トグル） | 必要 |
+| GET | `/api/rooms/:id/prompts/history?targets=アシスタント,cc-tealus&limit=30` | 自分がこのルームで送った「宛先 + 本文」の投稿を新しい順に（「最近の指示」パネル、[#354](https://github.com/gamasenninn/tealus/issues/354)） | 必要 |
 | PATCH | `/api/rooms/:id/messages/:msgId/publish` | お知らせに公開/非公開（送信者か部屋の管理者） | 必要 |
 | GET | `/api/rooms/:id/messages/days?month=YYYY-MM&tz_offset=分` | その月で投稿がある日（カレンダーの印、[#476](https://github.com/gamasenninn/tealus/issues/476)） | 必要 |
 | GET | `/api/rooms/:id/messages/first-of-day?date=YYYY-MM-DD&tz_offset=分` | その日の最初の投稿（無ければ `message_id: null`） | 必要 |
@@ -361,18 +362,26 @@ curl "http://localhost:3000/api/bot/tags?limit=20" \
 
 画像メッセージ・音声メッセージのメディアデータを取得します。AI エージェントが画像を**直接視認**するためのエンドポイントです（[#185](https://github.com/gamasenninn/tealus/issues/185)）。
 
-| メディア種別 | レスポンス |
+**JSON** を返します（バイナリではありません）。
+
+| フィールド | 内容 |
 |---|---|
-| 画像 | binary stream（Content-Type: `image/*`）。MCP ツール（`get_message_media`）経由では MCP 仕様の image content に変換され、AI が画像内容を直接認識可能 |
-| 音声 | 文字起こしテキストを優先返却（`voice_transcriptions.formatted_text`）。生 wav が必要な場合は `?raw=1` |
+| `media_count` | そのメッセージの添付の数。複数あるときは `?index=0,1,…` で 1 枚ずつ取る（範囲外は 400） |
+| `media` | 全添付のメタ情報（`index` / `mime_type` / `file_name` / `file_size`、本体なし） |
+| `index` / `mime_type` / `file_name` / `file_size` | 今回取った 1 件 |
+| `data_base64` | 中身（base64）。★ **10MB を超えるときは省き**、`error` に理由が入る |
+| `transcription` | 音声メッセージのときだけ。`{ raw_text, formatted_text, status }`（最新版） |
 
 **curl サンプル**:
 
 ```bash
-curl "http://localhost:3000/api/bot/messages/$MSG_ID/media" \
+curl "http://localhost:3000/api/bot/messages/$MSG_ID/media?index=0" \
   -H "Authorization: Bearer $TOKEN" \
-  -o output.jpg
+  | jq -r '.data_base64' | base64 -d > output.jpg
 ```
+
+!!! warning "以前の記述の誤り"
+    以前このページは「画像は binary stream で返る」「音声は `?raw=1` で生 wav」と書いていましたが、**どちらも誤り**でした。返事は常に JSON で、`raw` というクエリはありません。
 
 !!! info "MCP ツールとの関係"
     [Tealus MCP](mcp.md) の `get_message_media` ツールは、本 HTTP API のラッパーです。AI エージェントから利用する場合は MCP ツール経由が標準で、MCP 側で画像/音声の種別判定と MCP 仕様の返却形式（image content / 文字起こしテキスト）への変換が行われます。HTTP API として直接呼ぶことも可能です。

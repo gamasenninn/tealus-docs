@@ -55,7 +55,9 @@ Webhookペイロードは `X-Tealus-Signature: sha256=HMAC(secret, body)` ヘッ
 !!! danger "★ agent-server を使う場合、secret は両側に同じ値が要ります"
     [#478](https://github.com/gamasenninn/tealus/issues/478) から、agent-server の受け口も署名を検証します。**本体の Webhook 登録に入れた secret と、`agent-server/.env` の `WEBHOOK_SECRET` に同じ値**を設定してください。
 
-    片方だけだと **401 で弾かれ、エージェントが黙って起きません**（投稿は普通に成功して見えるため、送った側からは気づけません）。`agent-server` の `npm run doctor` でも未設定を検出できます。
+    **agent-server 側に `WEBHOOK_SECRET` があり、本体側の secret が無い・違う**と、**401 で弾かれ、エージェントが黙って起きません**（投稿は普通に成功して見えるため、送った側からは気づけません）。
+
+    逆に **agent-server 側が未設定**だと、署名を検査せずに受け付けます（起動時に警告が出るだけで動きます）。動くからといって安全ではないので、両側に設定してください。`agent-server` の `npm run doctor` でも未設定を検出できます。
 
 ### リトライ
 
@@ -88,8 +90,14 @@ GET /api/health
 PostgreSQLの標準的なバックアップ手法を使用します。
 
 ```bash
+# 開発用（docker-compose.yml、コンテナ tealus_postgres）
 docker-compose exec -T postgres pg_dump -U tealus tealus > backup-$(date +%Y%m%d).sql
+
+# フル構成（docker-compose.full.yml、コンテナ tealus_postgres_prod）
+docker compose -f docker-compose.full.yml exec -T postgres pg_dump -U tealus tealus > backup-$(date +%Y%m%d).sql
 ```
+
+★ コンテナ名は構成で違います。**開発用は `tealus_postgres`、フル構成は `tealus_postgres_prod`** です（下の PowerShell の例もこれに合わせて置き換えてください）。`-f docker-compose.full.yml` を付け忘れると、フル構成の DB には届きません。
 
 !!! danger "★ Windows の PowerShell 5.1 では上の `>` を使わないでください"
     PowerShell の `>` が**文字コードを変えてしまい、ダンプが壊れます**（[#566](https://github.com/gamasenninn/tealus/issues/566)）。**壊れたことは復元しようとするまで分かりません。**
@@ -97,6 +105,7 @@ docker-compose exec -T postgres pg_dump -U tealus tealus > backup-$(date +%Y%m%d
     コンテナの中でファイルに書いてから取り出してください（custom 形式）:
 
     ```powershell
+    # フル構成なら tealus_postgres_prod に置き換える
     docker exec tealus_postgres pg_dump -U tealus -Fc -f /tmp/backup.dump tealus
     docker cp tealus_postgres:/tmp/backup.dump .\backup.dump
     ```

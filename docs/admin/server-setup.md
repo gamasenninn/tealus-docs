@@ -57,7 +57,7 @@ v0.1.x（[#188](https://github.com/gamasenninn/tealus/issues/188)）から、ser
     以前このページには Redis が構成に含まれると書いていましたが、**誤りでした**。Redis は初期設計の名残で**一度もコードから使われておらず**、[#466](https://github.com/gamasenninn/tealus/issues/466) で依存ごと削除されています。在席状態は Socket.IO が内部で持ち、LINE の画像の束ね・ログイン試行の制限はいずれもプロセス内のメモリで処理しています（「1 台・1 プロセス」構成が前提）。
 
 !!! info "TTS のみなら rtc-server は不要"
-    v0.1.x の default TTS 配信は Socket.IO blob 経由のため、TTS だけ使うなら **+RTC 構成は不要**です。WebRTC 通話機能を使う場合、または `TTS_BROADCAST_MEDIASOUP=true` で legacy mediasoup TTS を使う場合のみ rtc-server が必要になります。
+    v0.1.x の default の TTS 配信は Socket.IO で URL を配る形のため、TTS だけ使うなら **+RTC 構成は不要**です。WebRTC 通話機能を使う場合、または `TTS_BROADCAST_MEDIASOUP=true` で legacy mediasoup TTS を使う場合のみ rtc-server が必要になります。
 
 ### 各 Dockerfile の概要
 
@@ -102,7 +102,11 @@ npm install
 
 ### 環境変数の設定
 
-`server/.env` にはデフォルト値が設定されていますが、本番環境では以下を必ず変更してください。
+見本の `server/.env.example` をコピーして `server/.env` を作り、本番環境では以下を必ず変更してください。
+
+```bash
+cp server/.env.example server/.env
+```
 
 | 変数 | 説明 | 注意事項 |
 |---|---|---|
@@ -134,18 +138,17 @@ npx web-push generate-vapid-keys
 | `JWT_SECRET` | **本番では必ず固有値を生成** （`openssl rand -hex 32` 等）| JWT署名シークレット |
 | `VAPID_PUBLIC_KEY` | — | Web Push公開鍵（`npx web-push generate-vapid-keys` で生成） |
 | `VAPID_PRIVATE_KEY` | — | Web Push秘密鍵（同上） |
-| `VAPID_SUBJECT` | — | Web Push の連絡先。★ **実在するメールアドレス（`mailto:`）か `https:` の URL** にしてください。実在しないドメインだと **iPhone への通知が 403（BadJwtToken）で断られます**。未設定・形式違いは起動時に警告が出ます |
+| `VAPID_SUBJECT` | `mailto:admin@example.com`（`.env.example`。★ **そのままにしない**） | Web Push の連絡先。★ **実在するメールアドレス（`mailto:`）か `https:` の URL** にしてください。実在しないドメインだと **iPhone への通知が 403（BadJwtToken）で断られます**。未設定・形式違いは起動時に警告が出ます |
 | `OPENAI_API_KEY` | — | OpenAI APIキー |
-| `MEDIA_ROOT` | ../../media | アップロードファイル保存先 |
+| `MEDIA_ROOT` | `../media`（`.env.example`。server から見て 1 つ上 = リポジトリ直下の `media/`） | アップロードファイル保存先 |
 | `AGENT_PORT` | 4000 | エージェントサーバーポート |
 | `RTC_PORT` | 3100 | mediasoupシグナリングポート（rtc-server を使う場合） |
-| `TTS_BROADCAST_MEDIASOUP` | `false` | TTS を mediasoup 経由で配信（legacy）。`true` で v0.1.0 以前の rtc-server 経由配信に切替（[#189](https://github.com/gamasenninn/tealus/issues/189)） |
 | `LOG_LEVEL` | debug（開発） / info（本番） | ログレベル |
 | `NODE_ENV` | — | ★ **本番は `production` を推奨**（[#603](https://github.com/gamasenninn/tealus/issues/603)）。`JWT_SECRET` 未設定なら**起動を止める**、Socket.IO の CORS を閉じる、記録の既定を `info` にする。今までどおり `[debug]` 行を残すなら `LOG_LEVEL=debug` も |
 | `TRUST_PROXY` | — | ★ **リバースプロキシ（Nginx / Cloudflare 等）の内側で動かすなら設定**（[#362](https://github.com/gamasenninn/tealus/issues/362)）。信頼する前段の IP（例 `loopback`）を入れると、そこから来たときだけ `X-Forwarded-For` を見る。未設定だとログインの回数制限が**全員を前段 1 つの IP として数える**（起動時に警告が出ます） |
-| `STT_BACKEND` | `openai` | 文字起こしの経路（[#424](https://github.com/gamasenninn/tealus/issues/424)）。`openai`（`WHISPER_MODEL`）／`local`（自ホスト Qwen3-ASR、`QWEN_WORKER_URL`）／`gemini`（`GEMINI_API_KEY` 必須、辞書の語を渡す）。local / gemini が失敗したときは openai に切り替わる |
-| `AGENT_URL` / `RTC_URL` / `MCP_HTTP_URL` | `http://localhost:{AGENT_PORT / RTC_PORT / MCP_HTTP_PORT}` | server が中継する先（[#556](https://github.com/gamasenninn/tealus/issues/556)）。agent-server・rtc-server・MCP を**別のホストやコンテナ**で動かすときに指定（Docker フルデプロイでは compose 側で設定済み） |
-| `VITE_ALLOWED_HOSTS` | — | 外部ホスト経由で vite dev server に access する場合に許可ホストを指定（v0.2.0〜の注意点） |
+| `STT_BACKEND` | `openai` | 文字起こしの経路（[#424](https://github.com/gamasenninn/tealus/issues/424)）。`openai`（`WHISPER_MODEL`）／`local`（自ホスト Qwen3-ASR、`QWEN_WORKER_URL`）／`gemini`（server の `GEMINI_API_KEY` 必須、辞書の語を渡す。★ 読み上げ（agent-server）の `GOOGLE_API_KEY` とは別）。local / gemini が失敗したときは openai に切り替わる |
+| `WHISPER_MODEL` | `gpt-4o-mini-transcribe` | ★ **server が読む**。音声文字起こしモデル（[#284](https://github.com/gamasenninn/tealus/issues/284)。`gpt-4o-transcribe` は無音やノイズで業務無線らしい文を作る幻覚が出たため既定から外した） |
+| `AGENT_URL` / `RTC_URL` / `MCP_HTTP_URL` | `http://localhost:{AGENT_PORT / RTC_PORT / MCP_HTTP_PORT}` | server が中継する先（[#556](https://github.com/gamasenninn/tealus/issues/556)）。agent-server・rtc-server・MCP を**別のホストやコンテナ**で動かすときに指定。★ Docker フルデプロイ（`docker-compose.full.yml`）が設定するのは **`AGENT_URL` だけ**です。rtc-server（`docker-compose.rtc.yml`、`network_mode: host`）を併用するときは、**server コンテナから届くアドレスを `RTC_URL` に**設定してください（コンテナの中の `localhost` はホストではありません） |
 | `TRANSCRIPTION_MODE` | — | `organon` を指定すると、自ホスト STT（Qwen3-ASR）の生出力を organon 知識で文脈補正する 2 段構成に切替（v0.5.0、[#326](https://github.com/gamasenninn/tealus/issues/326)） |
 | `LINE_IMAGESET_FLUSH_MS` | **60000** | LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。全枚が揃えば即投稿、揃わなければ**最後の 1 枚から**この時間で届いた分だけ投稿（v0.7.0 [#353](https://github.com/gamasenninn/tealus/issues/353)、既定 15 秒 → 60 秒 [#552](https://github.com/gamasenninn/tealus/issues/552)） |
 | `LINE_IMAGESET_MAX_WAIT_MS` | 300000 | 同じ束ねの**最初の 1 枚から**の上限（5 分）。画像が届き続けても、ここで区切って投稿する（[#552](https://github.com/gamasenninn/tealus/issues/552)） |
@@ -260,14 +263,14 @@ npm run dev
 | `AIVIS_MODEL_UUID` | デフォルト音声モデル UUID（デフォルト: 凛音エル） |
 | `TTS_ENABLED` | TTS 読み上げの有効/無効（`"false"` で無効化、デフォルト: 有効） |
 | `TTS_MAX_LENGTH` | 読み上げ最大文字数（デフォルト: 500） |
-| `WHISPER_MODEL` | 音声文字起こしモデル（default **`gpt-4o-mini-transcribe`**、[#284](https://github.com/gamasenninn/tealus/issues/284)。`gpt-4o-transcribe` は無音やノイズで業務無線らしい文を作る幻覚が出たため既定から外した） |
 | `ORGANON_INJECT` | organon の `sql_mapping` を agent prompt に注入（**default OFF の opt-in**、v0.4.0 [#304](https://github.com/gamasenninn/tealus/issues/304)。旧 `INJECT_ORGANON_POLYSEME` は廃止・fallback 無し） |
 | `ORGANON_REPO_PATH` | organon repo の path override |
 | `VOCAB_INJECT` | 業務語彙辞書（別名→正規名）を Light / Deep の prompt にも注入し、画像 OCR・帳票読み取りの表記揺れを正規化（**default OFF の opt-in**、v0.5.0 [#315](https://github.com/gamasenninn/tealus/issues/315)） |
 | `DEEP_TIMEOUT` | Deep agent のタイムアウト（**default 480000 = 8 分**、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で 5 分から延長） |
 | `QUEUE_TASK_TIMEOUT` | キュー投入タスクのタイムアウト（**default 540000 = 9 分**、同 [#314](https://github.com/gamasenninn/tealus/issues/314)） |
 | `CC_ACK_TTL_MS` | `@cc-<project>` 投入時に出る受付エコーの表示時間（default 5000 = 5 秒、v0.6.0 [#335](https://github.com/gamasenninn/tealus/issues/335)） |
-| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)） |
+| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)）。★ 読むのは agent-server ではなく**子の tealus-mcp**（`generate_and_send_image`）。子に渡す許可一覧に入ったのは本体 2026-10-15 の変更からで、**v0.11.1 以前は `.env` に書いても届きません**（[#573](https://github.com/gamasenninn/tealus/issues/573)） |
+| `TTS_BROADCAST_MEDIASOUP` | `false` | ★ agent-server が読む。TTS を mediasoup 経由で配信（legacy）。`true` で v0.1.0 以前の rtc-server 経由配信に切替（[#189](https://github.com/gamasenninn/tealus/issues/189)） |
 
 !!! danger "★ 以前このページは逆のことを書いていました"
     「`TEALUS_USER_ID` / `TEALUS_PASSWORD` を推奨、旧名 `TEALUS_BOT_ID` / `TEALUS_BOT_PASS` は fallback」と書いていましたが、**誤りです**。

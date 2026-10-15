@@ -28,6 +28,7 @@ Tealus の agent-server は「**メッセージ → 適切な処理者へ dispat
 | Deep Agent — Claude Code CLI（default） | Claude Code CLI（MAX プラン or API key） | コード生成・複雑な分析・長いワークフロー（既存運用） |
 | Deep Agent — Codex CLI（v0.3.0〜） | Codex CLI（ChatGPT サブスクリプション or API key） | Anthropic 環境外でも Deep mode 同等運用（`DEEP_AGENT_PROVIDER=codex`、[#276](https://github.com/gamasenninn/tealus/issues/276)） |
 | Claude Code session（cc-tealus） | 採用者の手元 Claude Code | `@cc-{project}` / `@{alias}` mention でリアルタイム連携（[#213](https://github.com/gamasenninn/tealus/issues/213)、詳細は [Agent ガイド](../dev/agents.md)） |
+| **LINE Bridge** (Inbound、v0.3.0〜) | webhook `POST /api/line/webhook/<LINE_WEBHOOK_SECRET_PATH>` | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は [LINE Bridge 連携](../guide/integration/line-bridge.md)） |
 
 !!! danger "★ ChatGPT アカウントで Codex を使う環境は、モデルと SDK の両方を更新してください（v0.11.0）"
     **`gpt-5.5` は 2026-10-14 に ChatGPT アカウントの Codex から外されました。** 既定は **`gpt-5.6-sol`** に変わっています（`AGENT_DEEP_CODEX_MODEL`）。
@@ -46,7 +47,6 @@ Tealus の agent-server は「**メッセージ → 適切な処理者へ dispat
     サブスクリプション認証（`LIGHTV2_AUTH=subscription` / `DEEP_CODEX_AUTH=subscription`）では、**mini 系は系統ごと使えません**（400 になる）。また「新しい名前なら使える」とも限らず、**名前ごとに可否が違います**。
 
     ★ 失敗したときの表示が `auth failed (unauthorized)` になることがあり、**再ログインの問題に見えて誤誘導されます**。認証ではなくモデル名を疑ってください。設定の取り違えは agent-server の起動時に警告が出ます（止まりはしません）。
-| **LINE Bridge** (Inbound、v0.3.0〜) | webhook `POST /api/line` | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は [LINE Bridge 連携](../guide/integration/line-bridge.md)） |
 
 ## ゲストユーザ role — Phase 1 〜 D/E 運用可能化（v0.3.0〜）
 
@@ -152,7 +152,7 @@ AIエージェントの回答を音声で読み上げる機能です。エンジ
 | （未設定） | `AIVIS_API_KEY` があれば `aivis-cloud`、無ければ `browser` | — |
 | `aivis-cloud` | Aivis Cloud で合成し、Socket.IO で配信 | `AIVIS_API_KEY` |
 | `openai` | OpenAI（gpt-4o-mini-tts）で合成 | `OPENAI_API_KEY`（★ 明示しないと選ばれません） |
-| `gemini` | Gemini で合成 | `GEMINI_API_KEY`（★ **有料プラン**で。無料枠は送った文が製品改善に使われます） |
+| `gemini` | Gemini で合成 | **`GOOGLE_API_KEY`**（agent-server の `.env`。★ **有料プラン**で。無料枠は送った文が製品改善に使われます）。★ server 側の文字起こし（`STT_BACKEND=gemini`）の鍵 `GEMINI_API_KEY` とは**別の変数**です |
 | `browser` | 各端末のブラウザ標準音声（Web Speech API）。サーバーは合成しない | — |
 | `none` | 読み上げない | — |
 

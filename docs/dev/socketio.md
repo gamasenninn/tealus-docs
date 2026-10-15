@@ -27,7 +27,7 @@ Socket.IO接続時に `handshake.auth.token` でJWTを検証します。管理�
 | イベント | 受信者 | 説明 |
 |---|---|---|
 | `message:new` | ルームメンバー全員 | 新着メッセージ通知 |
-| `message:read` | メッセージ送信者 | 既読更新通知 |
+| `message:read` | その部屋の**他の接続全員**（`{ room_id, read_counts }`） | 既読数の更新 |
 | `message:deleted` | ルームメンバー全員 | メッセージ削除通知 |
 | `message:reaction` | ルームメンバー全員 | リアクション更新 |
 | `voice:status` | ルームメンバー全員 | 文字起こしステータス更新 |

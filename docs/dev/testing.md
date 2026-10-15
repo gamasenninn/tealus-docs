@@ -55,7 +55,7 @@ npm run typecheck
 |---|---|---|---|
 | server | Jest + Supertest | `server/__tests__/`（unit / integration / socket） | `*.test.mts` |
 | agent-server | Jest | `agent-server/__tests__/`（unit / integration） | `*.test.mts` |
-| client | Vitest + React Testing Library | `client/src` 配下 | `*.test.ts(x)` |
+| client | Vitest + React Testing Library | `client/__tests__/`（111 本） | `*.test.ts(x)` |
 | CLI | Jest | `scripts/__tests__/` | `*.test.ts` |
 
 !!! note "テストはすべて `.test.mts` です"

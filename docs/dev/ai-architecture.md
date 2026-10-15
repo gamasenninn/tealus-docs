@@ -148,7 +148,7 @@ v0.1.x までは MCP は Deep Agent 専用でしたが、`agent-server/src/mcp/r
 
 ```
 agent-server 起動時
-  ├─ TEALUS_USER_ID / TEALUS_PASSWORD が config に存在?
+  ├─ TEALUS_BOT_ID / TEALUS_BOT_PASS が config に存在?（子の tealus-mcp には TEALUS_USER_ID / TEALUS_PASSWORD として渡す）
   │    └─ Yes: MCPServerStdio で `npx -y github:gamasenninn/tealus-mcp` を spawn
   │           → Light/Deep 両 Agent が同じ MCP プロセスを共有
   └─ No: MCP なしで起動（ローカルツールのみ）
@@ -228,8 +228,10 @@ Agent Server がメッセージを受け取り、エージェントに渡すま�
 | イベント | 処理 |
 |---|---|
 | `message.created` | Router 経由でエージェントに振り分け |
+| `message.updated` | **編集で先頭に mention を新しく付けたとき**だけ起動（呼び忘れを編集で直せる、[#338](https://github.com/gamasenninn/tealus/issues/338)）。編集者が元の投稿者のときだけ・付け直しでは再応答しない・bot 自身の編集は無視 |
 | `voice.transcription_completed` | 音声文字起こし完了時にエージェント処理 |
 | `member.joined` / `member.left` | Bot のルーム参加状態を追跡 |
+| `reaction.added` | 受け取るのみ（承認フロー用の将来拡張） |
 
 ## TTS 音声合成パイプライン
 

@@ -71,7 +71,7 @@ LLM 系 E2E は **決定論前提では機能しない** という観察に基�
 node agent-server/tools/e2e/run.mts
 
 # 特定 scenario のみ
-node agent-server/tools/e2e/run.mts --filter S1,S2
+node agent-server/tools/e2e/run.mts --filter=S1,S2
 
 # dry-run（投下せず schema validation のみ）
 node agent-server/tools/e2e/run.mts --dry-run

@@ -85,8 +85,17 @@ Tealusのイベントを外部HTTPエンドポイントに通知する機能で�
 | `message.updated` | メッセージ編集（ペイロード例は下） |
 | `voice.transcription_completed` | 音声の文字起こし（整形まで）が終わった |
 
-!!! warning "★ `message.created` は socket 経路でのみ発火します（不変条件）"
-    メッセージ送信には **Socket.IO 経由**と **REST 経由**の 2 つの経路がありますが、**`message.created` webhook が発火するのは socket 経路だけ**です。REST で送ったメッセージでは発火しません（v0.6.0 [#342](https://github.com/gamasenninn/tealus/issues/342) で本体の不変条件として明文化）。
+!!! warning "★ `message.created` が出る経路と出ない経路があります"
+    `message.created` webhook（= エージェントが起きる合図）は、**投稿の経路によって出たり出なかったりします**。
+
+    | 出る | 出ない |
+    |---|---|
+    | 画面からの投稿（Socket.IO の `message:send`） | `POST /api/rooms/:id/messages`（REST の新規投稿・スタンプ） |
+    | Bot API のテキスト投稿（`POST /api/bot/push`）・ルームトリガー | Bot API の画像・ファイル（`/push-image`・`/push-file`、意図） |
+    | 音声メッセージ（`POST /api/rooms/:id/voice`） | 素のメディアアップロード（`POST /api/rooms/:id/media`、意図） |
+    | メディアの転送（`POST /api/rooms/:id/media/forward`） | LINE からの投稿・システムメッセージ |
+
+    経路ごとの一覧（配信・通知・webhook・リンクプレビュー）は本体の [07_投稿経路と付随処理.md](https://github.com/gamasenninn/tealus/blob/main/docs/07_投稿経路と付随処理.md) が正です。以前このページは「socket 経路だけ」と書いていましたが、古くなっていました。
 
     この差は、**メッセージは投稿されているのにエージェントが起動しない**という形で表面化します。実際、汎用フォーム（[#336](https://github.com/gamasenninn/tealus/issues/336)）の実装時に同じ事故が起きました。クライアント側の送信経路は `sendRoomMessage` の 1 関数に集約され、「socket 優先 / REST フォールバック」がそこだけに存在する形になっています。
 
@@ -97,7 +106,7 @@ Tealusのイベントを外部HTTPエンドポイントに通知する機能で�
 ペイロードは HMAC-SHA256 で署名されます。
 
 !!! danger "★ agent-server も受け側として検証します（[#478](https://github.com/gamasenninn/tealus/issues/478)）"
-    本体の Webhook 登録に入れた secret と、`agent-server/.env` の **`WEBHOOK_SECRET` に同じ値**を設定してください。片方だけだと **401 で弾かれ、エージェントが黙って起きません**（投稿自体は成功して見えます）。自作の受け側でも、下の方法で必ず検証してください。
+    本体の Webhook 登録に入れた secret と、`agent-server/.env` の **`WEBHOOK_SECRET` に同じ値**を設定してください。**agent-server 側にあり、本体側が無い・違う**と **401 で弾かれ、エージェントが黙って起きません**（投稿自体は成功して見えます）。agent-server 側が未設定だと検査せずに受け付けます（警告のみ）。自作の受け側でも、下の方法で必ず検証してください。
 
 ```
 X-Tealus-Signature: sha256=HMAC(secret, body)
