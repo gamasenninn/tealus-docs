@@ -117,7 +117,7 @@ Light は、必要な履歴を**自分で `get_messages` / `search_messages` を
 
 #### Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）
 
-[Tealus MCP](mcp.md) を介して Light Agent も以下のツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。★ ただし本体の agent-server は tealus-mcp を **`#v0.14.7` に固定**しているため、`send_form`（v0.14.8）と `edit_message`（v0.15.0）は本体のエージェントからは使えません（外部の MCP クライアントでは最新の 19 ツールが使えます）。
+[Tealus MCP](mcp.md) を介して Light Agent も以下のツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。本体の agent-server は tealus-mcp `#v0.16.0` を使い、19 ツールすべてが使えます（v0.11.1 以前の本体は `#v0.14.7` 固定で、`send_form` と `edit_message` が使えませんでした）。
 
 | ツール名 | 説明 |
 |---|---|

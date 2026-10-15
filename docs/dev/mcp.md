@@ -15,8 +15,10 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 !!! warning "見えるツール数は pin しているバージョンで変わります"
     `.mcp.json` で **タグ pin**（`github:gamasenninn/tealus-mcp#v0.14.6` のような形）にしている場合、そのタグ時点のツールセットしか見えません。`send_form` は **v0.14.8 以降**、`edit_message` は **v0.15.0 以降**です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を**案内文（instructions）**として接続時に渡します。
 
-!!! danger "★ 本体の AI エージェントが使う版は、最新ではありません"
-    本体の agent-server（Light v2 / Deep）は tealus-mcp を **`#v0.14.7` に固定**して起動しています（`agent-server/src/agents/lightV2.mts` / `deep.mts`）。そのため**本体の AI エージェントからは `send_form` と `edit_message` が見えません**。外部の MCP クライアント（Claude Code 等）で最新を使っている場合と、使える道具が違う点に注意してください（本体側で対応を検討中）。
+!!! note "本体の AI エージェントが使う版"
+    本体の agent-server（Light v2 / Deep / 会話モード）は tealus-mcp を **`#v0.16.0`** に固定して起動します。版は `agent-server/src/lib/mcpPackages.mts` の `TEALUS_MCP_PACKAGE` の 1 か所で決まります。
+
+    以前（v0.11.1 まで）は `#v0.14.7` に固定されていて、**本体のエージェントからは `send_form` と `edit_message` が見えませんでした**。本体の 2026-10-15 の変更（`2ef45fc`）で 19 ツールすべてが使えるようになっています。v0.11.1 以前の本体を動かしている場合は、この差が残っています。
 
     また、pin を上げたあと **Claude Code をフル再起動**（プロセスごと）しないと反映されません。in-app reload や `/mcp` 再接続では **stdio 子プロセスが生き残り、`npx` が再解決されない**ためです。ref 無し（`github:gamasenninn/tealus-mcp` = HEAD 追従）の場合はフル再起動だけで反映されます。
 

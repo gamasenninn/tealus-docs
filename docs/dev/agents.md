@@ -39,7 +39,7 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
 | 得意領域 | 日常会話、軽量 Q&A、定型タスク、自然言語検索、**cross-room 探索（v2 が強い）** | コード生成・分析、長いワークフロー、リファクタリング |
 | ローカルツール | `write_memory` / `read_memory` / `get_current_time` / `share_text_as_file` / `list_workspace_files` / `generate_image` / `code_interpreter` | Claude Code 標準ツール（ファイル編集・bash 実行など） |
-| Tealus MCP | 共通（v0.2.0〜、[#199](https://github.com/gamasenninn/tealus/issues/199)）。★ 本体は tealus-mcp `#v0.14.7` 固定のため `send_form` / `edit_message` は無し | 同左 |
+| Tealus MCP | 共通 19 ツール（v0.2.0〜、[#199](https://github.com/gamasenninn/tealus/issues/199)。本体は tealus-mcp `#v0.16.0` を使う） | 同左 |
 | タイムアウト | 短め（リアルタイム前提） | **8 分**（`DEEP_TIMEOUT`、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で延長） |
 
 ## 選択基準
@@ -239,7 +239,7 @@ Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)*
 
 両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.mts` の `getOrCreateSharedGlobal()` で programmatic に注入され、agent-server の `.env` に **`TEALUS_BOT_ID` / `TEALUS_BOT_PASS`** があれば自動で追加されます（子の tealus-mcp には `TEALUS_USER_ID` / `TEALUS_PASSWORD` という名前で渡します。agent-server の `.env` に書く名前ではありません）。
 
-利用可能なツール（[MCP Server](mcp.md) と同じ一覧。★ ただし本体の agent-server は tealus-mcp を `#v0.14.7` に固定しているため、下表の `send_form` は本体のエージェントからは使えません。`edit_message`（v0.15.0）も同様）:
+利用可能なツール（[MCP Server](mcp.md) と同じ一覧。本体の agent-server は tealus-mcp `#v0.16.0` を使います。v0.11.1 以前の本体は `#v0.14.7` 固定で、`send_form` と `edit_message` が使えませんでした）:
 
 | ツール名 | 用途 |
 |---|---|
@@ -248,6 +248,7 @@ Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)*
 | `send_text_as_file` | 長文 text を file として投稿（v0.11.0） |
 | `generate_and_send_image` | `gpt-image-1` で画像生成 → 投稿（v0.11.0、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で DALL-E 3 から移行） |
 | `send_form` | 回答フォームを投稿（tealus-mcp v0.14.8、本体 v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)） |
+| `edit_message` | 既存メッセージの本文を直す（部分置換・全文差し替え・`dry_run`。tealus-mcp v0.15.0、[#394](https://github.com/gamasenninn/tealus/issues/394)） |
 | `get_messages` | メッセージ履歴取得 |
 | `get_message_media` | メディア取得（画像視認 / 音声文字起こし、v0.14.1 で image 判定を mime_type ベースに緩和） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice/video transcription versions、v0.14.0） |
