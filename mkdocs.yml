@@ -108,6 +108,7 @@ nav:
     - 業務辞書（自己成長辞書）: admin/dictionary.md
     - AIエージェント設定: admin/agent.md
     - 運用・監視: admin/operations.md
+    - ルームトリガーと見張り: admin/automation.md
   - 開発者ガイド:
     - はじめに: dev/index.md
     - アーキテクチャ: dev/architecture.md

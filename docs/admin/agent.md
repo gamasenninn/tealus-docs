@@ -145,11 +145,22 @@ Webhook受信時に `sender.is_bot` を確認し、Botからのメッセージ�
 
 ## TTS 読み上げ（音声合成）
 
-AIエージェントの回答を音声で読み上げる機能です。Aivis Cloud API を使用します。
+AIエージェントの回答を音声で読み上げる機能です。エンジンは `agent-server/.env` の `TTS_PROVIDER` で選びます。
+
+| `TTS_PROVIDER` | 読み上げ方 | 必要な鍵 |
+|---|---|---|
+| （未設定） | `AIVIS_API_KEY` があれば `aivis-cloud`、無ければ `browser` | — |
+| `aivis-cloud` | Aivis Cloud で合成し、Socket.IO で配信 | `AIVIS_API_KEY` |
+| `openai` | OpenAI（gpt-4o-mini-tts）で合成 | `OPENAI_API_KEY`（★ 明示しないと選ばれません） |
+| `gemini` | Gemini で合成 | `GEMINI_API_KEY`（★ **有料プラン**で。無料枠は送った文が製品改善に使われます） |
+| `browser` | 各端末のブラウザ標準音声（Web Speech API）。サーバーは合成しない | — |
+| `none` | 読み上げない | — |
+
+`aivis-cloud` / `openai` / `gemini` のときは、部屋ごとにエンジンと声を変えられます（下記）。
 
 ### Aivis Cloud API
 
-音声合成サービスとして [Aivis Cloud API](https://aivis-project.com/) を利用しています。
+[Aivis Cloud API](https://aivis-project.com/) の料金:
 
 | プラン | 料金 |
 |---|---|
@@ -160,7 +171,7 @@ AIエージェントの回答を音声で読み上げる機能です。Aivis Clo
 
 ### ルームごとの音声モデル設定
 
-ダッシュボードのルーム設定（基本設定タブ）から、ルームごとに読み上げの音声モデルを選択できます。設定は `room_settings.json` の `tts_model_uuid` フィールドに保存されます。
+ダッシュボードのルーム設定（基本設定タブ）、またはアプリ内の ≡ → ルーム設定から、ルームごとに**読み上げエンジン**と**声**を選択できます。設定は `room_settings.json` の `tts_engine` と、Aivis なら `tts_model_uuid`・OpenAI / Gemini なら `tts_voice` に保存されます。
 
 選べる声はエンジンごとに異なり、**Aivis 10 種・OpenAI 13 種・Gemini 30 種**です（v0.10.0 [#444](https://github.com/gamasenninn/tealus/issues/444)。一覧は `agent-server/src/lib/ttsRoom.mts`）。詳細は [TTS 読み上げ](../guide/advanced/tts.md) を参照してください。
 

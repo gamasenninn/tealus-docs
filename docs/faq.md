@@ -26,7 +26,7 @@ NAS（Synology 推奨）または Linux サーバーがあれば動作します�
 
 現時点ではデータ移行ツールはありません。Bot API 経由でメッセージのインポートは技術的に可能です。
 
-LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/tealus#160](https://github.com/gamasenninn/tealus/issues/160)）。
+LINE とは**連携ブリッジがあります**（LINE のグループと Tealus の部屋をつなぐ。過去の履歴の移行ではありません）。詳しくは [LINE Bridge 連携](guide/integration/line-bridge.md) を参照してください。
 
 ### Q: スマホアプリはありますか？
 
@@ -97,7 +97,15 @@ LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/te
 
 チャットデータ・メディアファイルは完全にオンプレミスで管理されます。
 
-AI 機能を使う場合のみ、メッセージ内容が AI API（OpenAI / Anthropic / Aivis）に送信されます。AI を使わなければ外部への通信は一切発生しません。
+AI 機能を使う場合、メッセージ内容が AI API（OpenAI / Anthropic / Aivis / Google Gemini）に送信されます。
+
+★ **AI を使わなくても、次の外部通信はあります**（以前このページは「外部への通信は一切発生しない」と書いていましたが、誤りでした）:
+
+| 通信 | 送られるもの | 止め方 |
+|---|---|---|
+| リンクプレビュー | 投稿に含まれる URL へ、server がページを取りに行く（社内のアドレスへは取りに行かない） | — |
+| プッシュ通知 | 通知が Apple / Google / Mozilla の配信サービスを経由する（中身は端末の鍵で暗号化され、配信サービスは読めない。宛先と時刻・大きさは分かる） | VAPID 鍵を設定しない |
+| 文字起こし・読み上げ | 音声・文が OpenAI / Google（`STT_BACKEND=gemini`・`TTS_PROVIDER=gemini` のとき）へ | `STT_BACKEND=local`・`TTS_PROVIDER=browser` |
 
 ### Q: HTTPS に対応していますか？
 

@@ -22,7 +22,7 @@ git clone https://github.com/gamasenninn/tealus.git
 cd tealus
 ```
 
-## 2. Docker 起動（開発用: DB + Redis のみ）
+## 2. Docker 起動（開発用: DB のみ）
 
 ```bash
 docker-compose up -d
@@ -119,7 +119,7 @@ npm install
 npx web-push generate-vapid-keys
 ```
 
-### 全環境変数一覧
+### 全環境変数一覧 {#all-env}
 
 !!! danger "本番運用前の必須変更"
     下表の **「開発用デフォルト」列は localhost 検証用の値** です。**本番ではすべて固有の値に置換してください**。特に `JWT_SECRET` / `DB_PASSWORD` を未変更のまま外部公開した場合、トークン偽造や DB 侵入の対象になります。
@@ -142,7 +142,10 @@ npx web-push generate-vapid-keys
 | `RTC_PORT` | 3100 | mediasoupシグナリングポート（rtc-server を使う場合） |
 | `TTS_BROADCAST_MEDIASOUP` | `false` | TTS を mediasoup 経由で配信（legacy）。`true` で v0.1.0 以前の rtc-server 経由配信に切替（[#189](https://github.com/gamasenninn/tealus/issues/189)） |
 | `LOG_LEVEL` | debug（開発） / info（本番） | ログレベル |
-| `NODE_ENV` | — | `production` 設定時にCORSを制限 |
+| `NODE_ENV` | — | ★ **本番は `production` を推奨**（[#603](https://github.com/gamasenninn/tealus/issues/603)）。`JWT_SECRET` 未設定なら**起動を止める**、Socket.IO の CORS を閉じる、記録の既定を `info` にする。今までどおり `[debug]` 行を残すなら `LOG_LEVEL=debug` も |
+| `TRUST_PROXY` | — | ★ **リバースプロキシ（Nginx / Cloudflare 等）の内側で動かすなら設定**（[#362](https://github.com/gamasenninn/tealus/issues/362)）。信頼する前段の IP（例 `loopback`）を入れると、そこから来たときだけ `X-Forwarded-For` を見る。未設定だとログインの回数制限が**全員を前段 1 つの IP として数える**（起動時に警告が出ます） |
+| `STT_BACKEND` | `openai` | 文字起こしの経路（[#424](https://github.com/gamasenninn/tealus/issues/424)）。`openai`（`WHISPER_MODEL`）／`local`（自ホスト Qwen3-ASR、`QWEN_WORKER_URL`）／`gemini`（`GEMINI_API_KEY` 必須、辞書の語を渡す）。local / gemini が失敗したときは openai に切り替わる |
+| `AGENT_URL` / `RTC_URL` / `MCP_HTTP_URL` | `http://localhost:{AGENT_PORT / RTC_PORT / MCP_HTTP_PORT}` | server が中継する先（[#556](https://github.com/gamasenninn/tealus/issues/556)）。agent-server・rtc-server・MCP を**別のホストやコンテナ**で動かすときに指定（Docker フルデプロイでは compose 側で設定済み） |
 | `VITE_ALLOWED_HOSTS` | — | 外部ホスト経由で vite dev server に access する場合に許可ホストを指定（v0.2.0〜の注意点） |
 | `TRANSCRIPTION_MODE` | — | `organon` を指定すると、自ホスト STT（Qwen3-ASR）の生出力を organon 知識で文脈補正する 2 段構成に切替（v0.5.0、[#326](https://github.com/gamasenninn/tealus/issues/326)） |
 | `LINE_IMAGESET_FLUSH_MS` | **60000** | LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。全枚が揃えば即投稿、揃わなければ**最後の 1 枚から**この時間で届いた分だけ投稿（v0.7.0 [#353](https://github.com/gamasenninn/tealus/issues/353)、既定 15 秒 → 60 秒 [#552](https://github.com/gamasenninn/tealus/issues/552)） |
@@ -278,15 +281,21 @@ npm run dev
 
 ### Nginx設定例
 
+PWA・ダッシュボード・メディアは **server（:3000）が配信**します。agent-server・rtc-server へも server が中継するので、Nginx からの転送先は **すべて :3000** です。
+
 ```nginx
 server {
-    listen 80;
+    listen 443 ssl http2;
     server_name tealus.example.com;
 
-    # React PWA（ビルド済みの静的ファイル）
+    ssl_certificate     /etc/letsencrypt/live/tealus.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/tealus.example.com/privkey.pem;
+
+    # PWA（client/dist は server が配信する）
     location / {
-        root /var/tealus/client/dist;
-        try_files $uri $uri/ /index.html;
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
     }
 
     # REST API
@@ -296,21 +305,67 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    # WebSocket（Socket.IO）
+    # Socket.IO（WebSocket upgrade 必須）
     location /socket.io/ {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
     }
 
-    # メディアファイル配信
+    # cc-queue のストリーム — 別マシンの Claude Code をつなぐ場合だけ必要（#214）
+    # つなぎっぱなしの NDJSON なので buffering off と長い read timeout が要る
+    location /agent-api/cc-queue/ {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_read_timeout 3600s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # agent-server（server が中継）
+    location /agent-api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # rtc-server（通話・トランシーバー、WebSocket upgrade 必須）
+    location /rtc/ {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+
+    # 管理者ダッシュボード
+    location /system/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+    }
+
+    # メディア（server 経由で配信する）
     location /media/ {
-        alias /var/tealus/media/;
-        expires 30d;
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
     }
 }
+
+server {
+    listen 80;
+    server_name tealus.example.com;
+    return 301 https://$host$request_uri;
+}
 ```
+
+!!! danger "★ `/media/` を Nginx から直接配信（`alias`）しないでください"
+    以前この例は `/media/` をディスクから直接配信していました。v0.11.0 から、**削除した投稿・部屋の添付は server が 404 を返します**（[#601](https://github.com/gamasenninn/tealus/issues/601) [#602](https://github.com/gamasenninn/tealus/issues/602)）。Nginx が直接配ると**この判定を通らず、消したはずの添付がリンクで開けてしまいます**。
+
+!!! warning "旧版の例にあった不足"
+    以前の例には `/agent-api/`（cc-queue の `proxy_buffering off` を含む）・`/rtc/`・`/system/` がありませんでした。そのとおりに設定すると、ダッシュボード・通話・別マシンの Claude Code 連携が動きません。プロキシの内側で動かすときは [`TRUST_PROXY`](#all-env) も設定してください。
 
 ### Cloudflare + NAS構成（参考）
 
