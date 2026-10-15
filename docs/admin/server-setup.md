@@ -269,7 +269,7 @@ npm run dev
 | `DEEP_TIMEOUT` | Deep agent のタイムアウト（**default 480000 = 8 分**、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で 5 分から延長） |
 | `QUEUE_TASK_TIMEOUT` | キュー投入タスクのタイムアウト（**default 540000 = 9 分**、同 [#314](https://github.com/gamasenninn/tealus/issues/314)） |
 | `CC_ACK_TTL_MS` | `@cc-<project>` 投入時に出る受付エコーの表示時間（default 5000 = 5 秒、v0.6.0 [#335](https://github.com/gamasenninn/tealus/issues/335)） |
-| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)）。★ 読むのは agent-server ではなく**子の tealus-mcp**（`generate_and_send_image`）。子に渡す許可一覧に入ったのは本体 2026-10-15 の変更からで、**v0.11.1 以前は `.env` に書いても届きません**（[#573](https://github.com/gamasenninn/tealus/issues/573)） |
+| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)）。★ 読むのは agent-server ではなく**子の tealus-mcp**（`generate_and_send_image`）。agent-server の `.env` に書けば tealus-mcp に届きます（本体 `db890c7` 以降、agent-server の再起動後から）。**v0.11.1 以前は子に渡す許可一覧に無く、書いても届きません**（[#573](https://github.com/gamasenninn/tealus/issues/573)） |
 | `TTS_BROADCAST_MEDIASOUP` | `false` | ★ agent-server が読む。TTS を mediasoup 経由で配信（legacy）。`true` で v0.1.0 以前の rtc-server 経由配信に切替（[#189](https://github.com/gamasenninn/tealus/issues/189)） |
 
 !!! danger "★ 以前このページは逆のことを書いていました"
