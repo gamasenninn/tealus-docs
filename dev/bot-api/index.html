@@ -2871,7 +2871,7 @@
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">"room_id=ルームUUID"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">"voice=@/path/to/audio.wav"</span>
 </code></pre></div>
-<p>音声送信時は自動的に文字起こし（v0.2.2〜default <code>gpt-4o-transcribe</code>、env <code>WHISPER_MODEL</code> で切替可）+ AI整形が実行されます。</p>
+<p>音声送信時は自動的に文字起こし（既定 <code>gpt-4o-mini-transcribe</code>、<a href="https://github.com/gamasenninn/tealus/issues/284">#284</a>。env <code>WHISPER_MODEL</code> で切替可）+ AI整形が実行されます。</p>
 <h3 id="_5">メッセージ取得（ポーリング）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>Webhookが使えない環境では、ポーリングでメッセージを取得できます。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span><span class="s2">"http://localhost:3000/api/bot/messages?room_id=UUID&amp;since=2026-04-23T00:00:00Z"</span><span class="w"> </span><span class="se">\</span>
@@ -3017,12 +3017,13 @@
 <p><code>member.left</code> の <code>removed_by</code> は管理者による除外時のみ含まれます。自主退会の場合は含まれません。</p>
 </div>
 <h3 id="_10">リトライポリシー<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<p>配信失敗時は指数バックオフで3回リトライ:</p>
+<p>配信は<strong>最大 3 回試行</strong>します（失敗時の再試行は 2 回、指数バックオフ）:</p>
 <ol>
-<li>5秒後</li>
-<li>15秒後</li>
-<li>45秒後</li>
+<li>初回送信</li>
+<li>5 秒後に再試行</li>
+<li>15 秒後に再試行</li>
 </ol>
+<p>★ <strong>4xx はクライアント側の誤りとして再試行しません</strong>（5xx とネットワークエラーのみ再試行）。以前このページは「3 回リトライ（5 → 15 → 45 秒）」と書いていましたが、実装は試行 3 回で、45 秒の待ちはありません。</p>
 
 
 

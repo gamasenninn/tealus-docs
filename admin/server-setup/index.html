@@ -2988,12 +2988,12 @@
 <tr>
 <td>PostgreSQL</td>
 <td>5432</td>
-<td>開発用DB</td>
+<td>開発用DB（★ <code>127.0.0.1</code> でのみ待ち受け）</td>
 </tr>
 <tr>
 <td>PostgreSQL</td>
 <td>5433</td>
-<td>テスト用DB</td>
+<td>テスト用DB（★ <code>127.0.0.1</code> でのみ待ち受け）</td>
 </tr>
 <tr>
 <td>Redis</td>
@@ -3209,8 +3209,8 @@
 </tr>
 <tr>
 <td><code>VAPID_SUBJECT</code></td>
-<td><code>mailto:admin@example.com</code></td>
-<td>Web Push送信者メール（運用ドメインのアドレスに）</td>
+<td>—</td>
+<td>Web Push の連絡先。★ <strong>実在するメールアドレス（<code>mailto:</code>）か <code>https:</code> の URL</strong> にしてください。実在しないドメインだと <strong>iPhone への通知が 403（BadJwtToken）で断られます</strong>。未設定・形式違いは起動時に警告が出ます</td>
 </tr>
 <tr>
 <td><code>OPENAI_API_KEY</code></td>
@@ -3259,8 +3259,13 @@
 </tr>
 <tr>
 <td><code>LINE_IMAGESET_FLUSH_MS</code></td>
-<td>15000</td>
-<td>LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。total 到達で即 flush、この時間で部分 flush（v0.7.0、<a href="https://github.com/gamasenninn/tealus/issues/353">#353</a>）</td>
+<td><strong>60000</strong></td>
+<td>LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。全枚が揃えば即投稿、揃わなければ<strong>最後の 1 枚から</strong>この時間で届いた分だけ投稿（v0.7.0 <a href="https://github.com/gamasenninn/tealus/issues/353">#353</a>、既定 15 秒 → 60 秒 <a href="https://github.com/gamasenninn/tealus/issues/552">#552</a>）</td>
+</tr>
+<tr>
+<td><code>LINE_IMAGESET_MAX_WAIT_MS</code></td>
+<td>300000</td>
+<td>同じ束ねの<strong>最初の 1 枚から</strong>の上限（5 分）。画像が届き続けても、ここで区切って投稿する（<a href="https://github.com/gamasenninn/tealus/issues/552">#552</a>）</td>
 </tr>
 </tbody>
 </table>
@@ -3478,9 +3483,9 @@
 <td>localhost:3000</td>
 </tr>
 <tr>
-<td><code>system.your-domain.example</code></td>
+<td>（不要）</td>
 <td>ダッシュボード</td>
-<td>localhost:5174</td>
+<td>本番は server が <code>/system</code> で配信（<code>app.…/system</code>）。<code>localhost:5174</code> は開発用の dev server</td>
 </tr>
 <tr>
 <td><code>api.your-domain.example</code></td>

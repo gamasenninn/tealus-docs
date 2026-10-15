@@ -3035,7 +3035,7 @@
 <p><code>agent-server/.env</code> に <code>AIVIS_API_KEY</code> を設定してください。</p>
 <h3 id="_7">ルームごとの音声モデル設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>ダッシュボードのルーム設定（基本設定タブ）から、ルームごとに読み上げの音声モデルを選択できます。設定は <code>room_settings.json</code> の <code>tts_model_uuid</code> フィールドに保存されます。</p>
-<p>選択可能なモデルは10種類（凛音エル、まお、にせ、まい、阿井田 茂、fumifumi、morioki、ろてじん、花音、コハク）です。詳細は <a href="../../guide/advanced/tts/">TTS 読み上げ</a> を参照してください。</p>
+<p>選べる声はエンジンごとに異なり、<strong>Aivis 10 種・OpenAI 13 種・Gemini 30 種</strong>です（v0.10.0 <a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>。一覧は <code>agent-server/src/lib/ttsRoom.mts</code>）。詳細は <a href="../../guide/advanced/tts/">TTS 読み上げ</a> を参照してください。</p>
 <h2 id="_8">コスト目安<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

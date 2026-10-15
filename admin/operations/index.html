@@ -2812,7 +2812,7 @@
 <p>片方だけだと <strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿は普通に成功して見えるため、送った側からは気づけません）。<code>agent-server</code> の <code>npm run doctor</code> でも未設定を検出できます。</p>
 </div>
 <h3 id="_8">リトライ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p>配信失敗時は指数バックオフで3回リトライします（5秒 → 15秒 → 45秒）。</p>
+<p>配信は<strong>最大 3 回試行</strong>します（失敗時に 5 秒後・15 秒後の 2 回再試行）。<strong>4xx は再試行しません</strong>（受け側の設定誤りは繰り返しても直らないため）。</p>
 <h2 id="_9">ヘルスチェック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>GET /api/health
 </code></pre></div>
