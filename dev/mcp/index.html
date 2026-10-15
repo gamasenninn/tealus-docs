@@ -2979,9 +2979,10 @@
 <p class="admonition-title">見えるツール数は pin しているバージョンで変わります</p>
 <p><code>.mcp.json</code> で <strong>タグ pin</strong>（<code>github:gamasenninn/tealus-mcp#v0.14.6</code> のような形）にしている場合、そのタグ時点のツールセットしか見えません。<code>send_form</code> は <strong>v0.14.8 以降</strong>、<code>edit_message</code> は <strong>v0.15.0 以降</strong>です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を**案内文（instructions）**として接続時に渡します。</p>
 </div>
-<div class="admonition danger">
-<p class="admonition-title">★ 本体の AI エージェントが使う版は、最新ではありません</p>
-<p>本体の agent-server（Light v2 / Deep）は tealus-mcp を <strong><code>#v0.14.7</code> に固定</strong>して起動しています（<code>agent-server/src/agents/lightV2.mts</code> / <code>deep.mts</code>）。そのため<strong>本体の AI エージェントからは <code>send_form</code> と <code>edit_message</code> が見えません</strong>。外部の MCP クライアント（Claude Code 等）で最新を使っている場合と、使える道具が違う点に注意してください（本体側で対応を検討中）。</p>
+<div class="admonition note">
+<p class="admonition-title">本体の AI エージェントが使う版</p>
+<p>本体の agent-server（Light v2 / Deep / 会話モード）は tealus-mcp を <strong><code>#v0.16.0</code></strong> に固定して起動します。版は <code>agent-server/src/lib/mcpPackages.mts</code> の <code>TEALUS_MCP_PACKAGE</code> の 1 か所で決まります。</p>
+<p>以前（v0.11.1 まで）は <code>#v0.14.7</code> に固定されていて、<strong>本体のエージェントからは <code>send_form</code> と <code>edit_message</code> が見えませんでした</strong>。本体の 2026-10-15 の変更（<code>2ef45fc</code>）で 19 ツールすべてが使えるようになっています。v0.11.1 以前の本体を動かしている場合は、この差が残っています。</p>
 <p>また、pin を上げたあと <strong>Claude Code をフル再起動</strong>（プロセスごと）しないと反映されません。in-app reload や <code>/mcp</code> 再接続では <strong>stdio 子プロセスが生き残り、<code>npx</code> が再解決されない</strong>ためです。ref 無し（<code>github:gamasenninn/tealus-mcp</code> = HEAD 追従）の場合はフル再起動だけで反映されます。</p>
 </div>
 <table>

@@ -3501,7 +3501,7 @@
 </tr>
 <tr>
 <td>Tealus MCP</td>
-<td>共通（v0.2.0〜、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）。★ 本体は tealus-mcp <code>#v0.14.7</code> 固定のため <code>send_form</code> / <code>edit_message</code> は無し</td>
+<td>共通 19 ツール（v0.2.0〜、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>。本体は tealus-mcp <code>#v0.16.0</code> を使う）</td>
 <td>同左</td>
 </tr>
 <tr>
@@ -3930,7 +3930,7 @@
 <p>Codex Deep / Light v2 の <strong>認証エラー (<code>auth.json</code> 期限切れ / 不正)</strong> を helper が検出し、明示的なエラーメッセージで採用者を guide します（detection only、自動 recovery はしません）。<code>.env</code> 設定誤りや <code>codex login</code> 期限切れ時の troubleshoot を高速化する design。</p>
 <h2 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h2>
 <p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.mts</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、agent-server の <code>.env</code> に <strong><code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code></strong> があれば自動で追加されます（子の tealus-mcp には <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> という名前で渡します。agent-server の <code>.env</code> に書く名前ではありません）。</p>
-<p>利用可能なツール（<a href="../mcp/">MCP Server</a> と同じ一覧。★ ただし本体の agent-server は tealus-mcp を <code>#v0.14.7</code> に固定しているため、下表の <code>send_form</code> は本体のエージェントからは使えません。<code>edit_message</code>（v0.15.0）も同様）:</p>
+<p>利用可能なツール（<a href="../mcp/">MCP Server</a> と同じ一覧。本体の agent-server は tealus-mcp <code>#v0.16.0</code> を使います。v0.11.1 以前の本体は <code>#v0.14.7</code> 固定で、<code>send_form</code> と <code>edit_message</code> が使えませんでした）:</p>
 <table>
 <thead>
 <tr>
@@ -3958,6 +3958,10 @@
 <tr>
 <td><code>send_form</code></td>
 <td>回答フォームを投稿（tealus-mcp v0.14.8、本体 v0.6.0 <a href="https://github.com/gamasenninn/tealus/issues/336">#336</a>）</td>
+</tr>
+<tr>
+<td><code>edit_message</code></td>
+<td>既存メッセージの本文を直す（部分置換・全文差し替え・<code>dry_run</code>。tealus-mcp v0.15.0、<a href="https://github.com/gamasenninn/tealus/issues/394">#394</a>）</td>
 </tr>
 <tr>
 <td><code>get_messages</code></td>
