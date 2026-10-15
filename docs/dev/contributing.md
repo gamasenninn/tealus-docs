@@ -22,8 +22,8 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 - **型検査はテストと別工程**です。PR を出す前に、変更したプロジェクトで `npm run typecheck`（= `tsc --noEmit`）を通してください。**テストを実行しても型検査は行われません**
 - **Node 24 が必要**です（[サーバー構築 > 前提条件](../admin/server-setup.md)）
 
-!!! tip "テストは `.js` のままでも構いません"
-    既存の JS テストは一括変換されておらず、`.test.js` と `.test.mts` が同じ Jest で動く構成になっています。詳細は [テスト](testing.md) を参照してください。
+!!! tip "テストは `.test.mts` で書いてください"
+    テストはすべて `.test.mts` に移行済みです（`.test.js` は 0 本）。新しく書くテストも `.test.mts` にしてください。詳細は [テスト](testing.md) を参照してください。
 
 ### CLAUDE.md
 

@@ -85,7 +85,7 @@ Layer 1 の経験を保持・整理・流通させる substrate。`tealus` 本�
 - **dictionary**: 業務語彙 (Whisper vocab、TTS 読み方、organization-specific terms)
 - **edit history**: 編集 / 訂正の trail (Layer 3 学習素材)
 - **AI agent**: Light v1/v2 / Deep agent、Router 振分
-- **MCP**: 16 MCP tools 経由で外部 system / 内部 DB と接続
+- **MCP**: MCP tools（当時 16、2026-10 時点の最新 tealus-mcp で 19）経由で外部 system / 内部 DB と接続
 - **Socket.IO**: real-time 配信
 - **room context**: room-scoped な `light_prompt.md` 等の per-room tuning
 

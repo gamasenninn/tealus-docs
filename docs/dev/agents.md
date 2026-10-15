@@ -39,7 +39,7 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
 | 得意領域 | 日常会話、軽量 Q&A、定型タスク、自然言語検索、**cross-room 探索（v2 が強い）** | コード生成・分析、長いワークフロー、リファクタリング |
 | ローカルツール | `write_memory` / `read_memory` / `get_current_time` / `list_workspace_files` / `generate_image` / `code_interpreter` | Claude Code 標準ツール（ファイル編集・bash 実行など） |
-| Tealus MCP | 共通 18 ツール（v0.2.0〜、tealus-mcp v0.14.8 以降で 18、[#199](https://github.com/gamasenninn/tealus/issues/199)） | 共通 18 ツール |
+| Tealus MCP | 共通（v0.2.0〜、[#199](https://github.com/gamasenninn/tealus/issues/199)）。★ 本体は tealus-mcp `#v0.14.7` 固定のため `send_form` / `edit_message` は無し | 同左 |
 | タイムアウト | 短め（リアルタイム前提） | **8 分**（`DEEP_TIMEOUT`、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で延長） |
 
 ## 選択基準
@@ -228,7 +228,7 @@ Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)*
 
 両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.mts` の `getOrCreateSharedGlobal()` で programmatic に注入され、環境変数 `TEALUS_USER_ID` / `TEALUS_PASSWORD` の有無で自動切替されます。
 
-利用可能な 18 ツール（[MCP Server](mcp.md) と同一、v0.14.8 以降）:
+利用可能なツール（[MCP Server](mcp.md) と同じ一覧。★ ただし本体の agent-server は tealus-mcp を `#v0.14.7` に固定しているため、下表の `send_form` は本体のエージェントからは使えません。`edit_message`（v0.15.0）も同様）:
 
 | ツール名 | 用途 |
 |---|---|
@@ -407,6 +407,6 @@ v0.3.0 (2026-05-31) で、**[organon](../concepts/organic-ontology.md) の `poly
 ## 関連
 
 - [AI アーキテクチャ](ai-architecture.md): 全体構造、Router の判定ロジック、Webhook Dispatcher、コスト設計
-- [MCP Server](mcp.md): 18 ツールの詳細仕様と外部クライアントからの利用方法
+- [MCP Server](mcp.md): 19 ツール（v0.15.0 以降）の詳細仕様と外部クライアントからの利用方法
 - [AIエージェント設定](../admin/agent.md): 運用者向けの設定手順
 - 関連 issue: [#185](https://github.com/gamasenninn/tealus/issues/185) MCP umbrella、[#194](https://github.com/gamasenninn/tealus/issues/194) search_messages、[#197](https://github.com/gamasenninn/tealus/issues/197) mark_tag_done、[#199](https://github.com/gamasenninn/tealus/issues/199) Light agent MCP 統合、[#200](https://github.com/gamasenninn/tealus/issues/200) create_room、[#207](https://github.com/gamasenninn/tealus/issues/207) delete_room、[#213](https://github.com/gamasenninn/tealus/issues/213) cc-tealus Phase A、[#214](https://github.com/gamasenninn/tealus/issues/214) multi-session lock（Phase B）、[#220](https://github.com/gamasenninn/tealus/issues/220) tealus-agent improvement harness（議論先行）、[#258](https://github.com/gamasenninn/tealus/issues/258) Light v2（codex SDK）、[#260](https://github.com/gamasenninn/tealus/issues/260) Light v2 機能 parity（send_text_as_file / generate_and_send_image）、[#263](https://github.com/gamasenninn/tealus/issues/263) cc-aliases.json

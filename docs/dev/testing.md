@@ -53,13 +53,15 @@ npm run typecheck
 
 | 対象 | フレームワーク | 置き場所 | テストファイル |
 |---|---|---|---|
-| server | Jest + Supertest | `server/__tests__/`（unit / integration / socket） | `*.test.js` と `*.test.mts` が混在 |
-| agent-server | Jest | `agent-server/__tests__/`（unit / integration） | 同上 |
+| server | Jest + Supertest | `server/__tests__/`（unit / integration / socket） | `*.test.mts` |
+| agent-server | Jest | `agent-server/__tests__/`（unit / integration） | `*.test.mts` |
 | client | Vitest + React Testing Library | `client/src` 配下 | `*.test.ts(x)` |
 | CLI | Jest | `scripts/__tests__/` | `*.test.ts` |
 
-!!! note "`.js` と `.mts` のテストが混在している理由"
-    TypeScript 移行は既存の JS テストを一度に書き換えず、**両方を同じ Jest で動かせる形**にして進められました。`server/jest.config.js` では `.mts` を `@swc/jest`、`.js` を `babel-jest` で変換しています。
+!!! note "テストはすべて `.test.mts` です"
+    TypeScript 移行の途中は `.test.js` と `.test.mts` が混在していましたが、**現在 `.test.js` は 0 本**です（server / agent-server 合わせて `.test.mts` が 277 本、2026-10-15 時点）。以前このページは「混在している」と書いていましたが、古くなっていました。
+
+    `server/jest.config.js` には移行期の設定（`.mts` を `@swc/jest`、`.js` を `babel-jest` で変換）が残っています。`jest.setup.js` などの設定ファイルは `.js` のままなので、`babel-jest` の指定は今も意味があります。
 
     `transform` を定義すると Jest の既定（babel-jest）が外れ、**`.js` テストの `jest.mock` 巻き上げが消える**という落とし穴があるため、`babel-jest` を明示的に復元してあります（agent-server で実際に踏んだ問題への予防）。
 

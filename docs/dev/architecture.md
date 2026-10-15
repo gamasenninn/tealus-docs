@@ -165,7 +165,7 @@ POST /api/auth/login { login_id, password }
 JWT発行（ペイロード: user_id, role）
     ↓
 Authorization: Bearer <token>
-    ↓ middleware/auth.js で検証
+    ↓ middleware/auth.mts で検証
 req.user にユーザー情報を設定
 ```
 

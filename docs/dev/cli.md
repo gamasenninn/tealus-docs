@@ -56,8 +56,11 @@ node scripts/tealus-cli.ts send "@山田太郎" --text "こんにちは"
 ディレクトリを監視し、新しい音声ファイルが追加されると自動でTealusに送信します。
 
 ```bash
-node scripts/tealus-cli.ts send "グループ名" --watch /path/to/directory
+node scripts/tealus-cli.ts send "グループ名" --voice --watch /path/to/directory
 ```
+
+!!! warning "`--voice` を省かないでください"
+    監視モードは **`--voice` と組み合わせたときだけ**有効になります。以前このページの例は `--voice` が抜けていて、そのとおりに打つと監視モードに入りません。
 
 ### オプション
 
@@ -78,5 +81,5 @@ node scripts/tealus-cli.ts send "グループ名" --watch /path/to/directory
 
 ```bash
 # トランシーバー音声をTealusに自動投稿
-node scripts/tealus-cli.ts send "現場連絡" --watch /path/to/vox-output --ext .wav
+node scripts/tealus-cli.ts send "現場連絡" --voice --watch /path/to/vox-output --ext .wav
 ```

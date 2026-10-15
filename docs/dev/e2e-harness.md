@@ -68,13 +68,13 @@ LLM 系 E2E は **決定論前提では機能しない** という観察に基�
 
 ```bash
 # 全 scenario run
-node agent-server/tools/e2e/run.js
+node agent-server/tools/e2e/run.mts
 
 # 特定 scenario のみ
-node agent-server/tools/e2e/run.js --filter S1,S2
+node agent-server/tools/e2e/run.mts --filter S1,S2
 
 # dry-run（投下せず schema validation のみ）
-node agent-server/tools/e2e/run.js --dry-run
+node agent-server/tools/e2e/run.mts --dry-run
 ```
 
 出力は markdown report として `report/e2e-runs/YYYY-MM-DD-NNNN.md` に保存（非公開）。

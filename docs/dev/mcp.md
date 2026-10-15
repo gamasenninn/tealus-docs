@@ -4,16 +4,19 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 
 ## 概要
 
-- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（v0.14.8）
+- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（最新 v0.16.0）
 - 配布: npm publish ではなく **GitHub から直接 install**（`npx -y github:gamasenninn/tealus-mcp`）
 - 通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)
 - 技術スタック: `@modelcontextprotocol/sdk`、`zod`、`node-fetch`、`form-data`
-- Tealus 本体（`gamasenninn/tealus`）には移転 stub のみ残存
+- Tealus 本体（`gamasenninn/tealus`）の `mcp-server/` は移転を知らせる README だけの名残です（実装は入っていません）
 
-## 利用可能なツール（v0.14.8 以降で 18個）
+## 利用可能なツール（v0.15.0 以降で 19 個）
 
 !!! warning "見えるツール数は pin しているバージョンで変わります"
-    `.mcp.json` で **タグ pin**（`github:gamasenninn/tealus-mcp#v0.14.6` のような形）にしている場合、そのタグ時点のツールセットしか見えません。`send_form` は **v0.14.8 以降**です。
+    `.mcp.json` で **タグ pin**（`github:gamasenninn/tealus-mcp#v0.14.6` のような形）にしている場合、そのタグ時点のツールセットしか見えません。`send_form` は **v0.14.8 以降**、`edit_message` は **v0.15.0 以降**です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を**案内文（instructions）**として接続時に渡します。
+
+!!! danger "★ 本体の AI エージェントが使う版は、最新ではありません"
+    本体の agent-server（Light v2 / Deep）は tealus-mcp を **`#v0.14.7` に固定**して起動しています（`agent-server/src/agents/lightV2.mts` / `deep.mts`）。そのため**本体の AI エージェントからは `send_form` と `edit_message` が見えません**。外部の MCP クライアント（Claude Code 等）で最新を使っている場合と、使える道具が違う点に注意してください（本体側で対応を検討中）。
 
     また、pin を上げたあと **Claude Code をフル再起動**（プロセスごと）しないと反映されません。in-app reload や `/mcp` 再接続では **stdio 子プロセスが生き残り、`npx` が再解決されない**ためです。ref 無し（`github:gamasenninn/tealus-mcp` = HEAD 追従）の場合はフル再起動だけで反映されます。
 
@@ -24,6 +27,7 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 | `send_text_as_file` | 長文 text を file（.txt / .md 等）として投稿（v0.11.0、Light v2 機能 parity） | `room_id` / `content` / `filename` / `mime_type?` / `caption?` |
 | `generate_and_send_image` | `gpt-image-1` で画像生成 → ルームに投稿（v0.11.0、`OPENAI_API_KEY` env 必須。v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で DALL-E 3 から移行、env `OPENAI_IMAGE_MODEL` で上書き可） | `room_id` / `prompt` / `size?`（`1024x1024` / `1536x1024` / `1024x1536` / `auto`） / `caption?` |
 | `send_form` | **回答フォームを投稿**（v0.14.8、本体 v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)）。radio（単一選択・補足 text 可）/ text（自由記述）を出し、回答者は 1 ボタンで返信。`reply_mention` を付けると回答が `@cc-<project>` を起動する | `room_id` / `title` / `fields[]`（`id` / `type`（`radio` \| `text`） / `label` / `options?` / `required?` / `multiline?`） / `intro?` / `reply_mention?` / `submit_label?` |
+| `edit_message` | **既存メッセージの本文を直す**（v0.15.0、[#394](https://github.com/gamasenninn/tealus/issues/394)）。既定は前後の文字列を指定する部分置換で、置換した箇所数を返す。`content` で全文差し替え（排他）。`expected_count` で件数を検算、`dry_run` で書き込まず確認。編集できるかはルームの「メッセージ編集」設定で決まり、不可なら 403。旧版は編集履歴に残る | `message_id` / `before?` / `after?` / `content?` / `expected_count?` / `dry_run?` |
 | `get_messages` | メッセージ履歴取得 | `room_id` / `limit?`（最大100） / `include_transcription?`（v0.7.0、default true） / `include_raw?`（v0.7.0、default false） |
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和）。**複数添付は `index` で 1 枚ずつ取得**（v0.14.5、[#316](https://github.com/gamasenninn/tealus/issues/316)。返り値の `media_count` を見て `index=0,1,…` で全枚取得） | `message_id` / `index?`（0始まり） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice / video transcription versions を統合返却、v0.14.0、organon daily cycle の edit history 観察用、[#281](https://github.com/gamasenninn/tealus/issues/281) follow-up） | `message_id` |

@@ -27,6 +27,9 @@ Claude Code（または Cursor 等の MCP クライアント）から **Tealus �
 
 Tealus 上で `@cc-{project}` / `@Claude` mention を投げると、採用者の手元の Claude Code session が **sub-second で wake up** して応答します（file beacon + Monitor 経路）。
 
+!!! danger "★ mention は 1 行目の行頭に、飾らずに"
+    文中に置いたり `**@cc-x**` のように飾ったりすると**起こしません**。送った側は気づけません。複数の班へは 1 行目にスペース区切りで（5 班まで）。詳しくは [メンション](../advanced/mention.md) を参照してください。
+
 - 詳細仕様: [Agent ガイド > Claude Code session（cc-tealus）](../../dev/agents.md#claude-code-session-cc-tealus)
 - alias 設定: [`cc-aliases.json`](../../dev/agents.md#cc-aliases-json)（`@Claude` 等の自然な mention 名を routing）
 
@@ -100,7 +103,7 @@ tealus-mcp は **2 つの transport** を提供します（v0.12.0+、[tealus #2
 
 ## 関連
 
-- [MCP Server](../../dev/mcp.md): 18 ツールの詳細仕様 + HTTP transport セクション
+- [MCP Server](../../dev/mcp.md): 19 ツール（v0.15.0 以降）の詳細仕様 + HTTP transport セクション
 - [Agent ガイド](../../dev/agents.md): cc-tealus bridge / Light v1 v2 / Deep / cc-aliases.json
 - [リリースノート](../../releases.md): tealus-mcp v0.12.x group（HTTP transport 4 release）
 - [tealus #264](https://github.com/gamasenninn/tealus/issues/264) HTTP transport Phase 1 alpha

@@ -67,7 +67,7 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 
 | メソッド | パス | 説明 | 認証 |
 |---|---|---|---|
-| POST | `/api/auth/register` | ユーザー登録 | 不要 |
+| POST | `/api/auth/register` | ユーザー登録（★ **人の利用者が 0 人のときだけ**。1 人でもいると 403、[#469](https://github.com/gamasenninn/tealus/issues/469)。2 人目以降は管理 API `/api/admin/users`） | 不要 |
 | POST | `/api/auth/login` | ログイン（JWT発行） | 不要 |
 | GET | `/api/auth/me` | 現在ユーザー取得 | 必要 |
 | PUT | `/api/auth/profile` | プロフィール更新（表示名・ステータス） | 必要 |
