@@ -3608,7 +3608,7 @@
 </ul>
 <h3 id="phase-1-mvp">採用者保護 + ゲストユーザ Phase 1 MVP<a class="headerlink" href="#phase-1-mvp" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>tealus-mcp <code>read_document</code> が <code>text/markdown</code> / <code>text/plain</code> / <code>text/csv</code> 等の text/* mime を扱えない問題を fix</strong>（<a href="https://github.com/gamasenninn/tealus/issues/281">#281</a>、5/18、tealus-mcp <strong>v0.13.1</strong> release <code>aa66826</code>）: Light agent が自作 markdown attachment を読み戻せない self-inflicted blind spot を fix（5/18 朝の朝礼ルームで再現 → ~40 分で release + production verified）</li>
+<li><em><em>tealus-mcp <code>read_document</code> が <code>text/markdown</code> / <code>text/plain</code> / <code>text/csv</code> 等の text/</em> mime を扱えない問題を fix</em>*（<a href="https://github.com/gamasenninn/tealus/issues/281">#281</a>、5/18、tealus-mcp <strong>v0.13.1</strong> release <code>aa66826</code>）: Light agent が自作 markdown attachment を読み戻せない self-inflicted blind spot を fix（5/18 朝の朝礼ルームで再現 → ~40 分で release + production verified）</li>
 <li><strong>ゲストユーザ role 拡張 Phase 1 MVP</strong>（<a href="https://github.com/gamasenninn/tealus/issues/282">#282</a>、5/19、3 commits: <code>b986bad</code> + <code>956fc9e</code> + <code>a7a102a</code>）: Issue 起票 → TDD 実装 → production deploy までを <strong>1 day で完走</strong><ul>
 <li><strong>Phase A</strong>: migration 022 で <code>users.role</code> CHECK constraint 拡張（<code>('admin', 'user')</code> → <code>('admin', 'user', 'guest')</code>）、既存 user data 影響なし</li>
 <li><strong>Phase B</strong>: <code>server/src/utils/permissions.js</code> 新規、<code>isAdmin/isUser/isGuest</code> role-class check + <code>canCreateRoom/canInviteToRoom/canSearchUsers</code> ability check、既存 admin チェック 5 箇所を helper 関数経由に統一</li>

@@ -2847,6 +2847,10 @@
 <p class="admonition-title">Note</p>
 <p>設定の変更は <code>room_settings.json</code> に保存されます。</p>
 </div>
+<div class="admonition danger">
+<p class="admonition-title">★ 道具が使う鍵は <code>env</code> に明示してください（v0.11.0〜）</p>
+<p>道具（MCP サーバー）は agent-server の環境変数を<strong>受け継がなくなりました</strong>（<a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）。以前は書かなくても動いていた API キーや DSN が届かなくなっているので、<code>env</code> に <code>${VAR}</code> で書いてください。npx で起動する道具は<strong>版を固定</strong>してください（<a href="https://github.com/gamasenninn/tealus/issues/577">#577</a>）。詳細は <a href="../agent/#mcp-settings">AIエージェント設定 &gt; MCP設定</a> を参照してください。</p>
+</div>
 <h2 id="_9">技術仕様<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>ダッシュボードは <code>tealus/dashboard/</code> にReact + Viteで実装された独立したSPAです。PC向けの設計で、Tealus Server から <code>/system</code> パスで静的配信されます。</p>
 

@@ -2919,7 +2919,7 @@
 </tr>
 <tr>
 <td><code>read_document</code></td>
-<td>添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/<em> mime 対応）。</em><em>複数添付は <code>index</code> で 1 件ずつ取得</em>*（v0.14.6、<a href="https://github.com/gamasenninn/tealus/issues/317">#317</a>）</td>
+<td>添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/* mime 対応）。<strong>複数添付は <code>index</code> で 1 件ずつ取得</strong>（v0.14.6、<a href="https://github.com/gamasenninn/tealus/issues/317">#317</a>）</td>
 <td><code>message_id</code> / <code>index?</code>（0始まり）</td>
 </tr>
 <tr>
@@ -3004,14 +3004,14 @@
 <h3 id="mcp">MCP 設定ファイル<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
 <p>Claude Code や他の MCP クライアントの設定ファイル（<code>mcp_config.json</code> など）に以下を追加します。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;tealus&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;github:gamasenninn/tealus-mcp&quot;</span><span class="p">],</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nt">&quot;TEALUS_API_URL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nt">&quot;TEALUS_USER_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;your_bot_id&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">&quot;TEALUS_PASSWORD&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;your_bot_password&gt;&quot;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">"tealus"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"-y"</span><span class="p">,</span><span class="w"> </span><span class="s2">"github:gamasenninn/tealus-mcp"</span><span class="p">],</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nt">"TEALUS_API_URL"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000"</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nt">"TEALUS_USER_ID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;your_bot_id&gt;"</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="nt">"TEALUS_PASSWORD"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;your_bot_password&gt;"</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="p">}</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="p">}</span>

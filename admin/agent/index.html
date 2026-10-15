@@ -1881,7 +1881,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mcp" class="md-nav__link">
+  <a href="#mcp-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
         MCP設定
@@ -2691,7 +2691,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mcp" class="md-nav__link">
+  <a href="#mcp-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
         MCP設定
@@ -2835,7 +2835,7 @@
 <td>日常Q&amp;A・翻訳・簡単なタスク（<code>AGENT_LIGHT_BACKEND=v1</code> で選択）</td>
 </tr>
 <tr>
-<td>Light Agent v2（<strong>default</strong>、v0.3.0〜）</td>
+<td>Light Agent v2（<strong>default</strong>、v0.4.0〜）</td>
 <td>codex SDK</td>
 <td>cross-room 探索・多角的な tool orchestration（<code>/light2</code> prefix、<code>LIGHTV2_AUTH=subscription</code> でサブスク認証）</td>
 </tr>
@@ -2854,13 +2854,24 @@
 <td>採用者の手元 Claude Code</td>
 <td><code>@cc-{project}</code> / <code>@{alias}</code> mention でリアルタイム連携（<a href="https://github.com/gamasenninn/tealus/issues/213">#213</a>、詳細は <a href="../../dev/agents/">Agent ガイド</a>）</td>
 </tr>
-<tr>
-<td><strong>LINE Bridge</strong> (Inbound、v0.3.0〜)</td>
-<td>webhook <code>POST /api/line</code></td>
-<td>LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は <a href="../../guide/integration/line-bridge/">LINE Bridge 連携</a>）</td>
-</tr>
 </tbody>
 </table>
+<div class="admonition danger">
+<p class="admonition-title">★ ChatGPT アカウントで Codex を使う環境は、モデルと SDK の両方を更新してください（v0.11.0）</p>
+<p><strong><code>gpt-5.5</code> は 2026-10-14 に ChatGPT アカウントの Codex から外されました。</strong> 既定は <strong><code>gpt-5.6-sol</code></strong> に変わっています（<code>AGENT_DEEP_CODEX_MODEL</code>）。</p>
+<p>★ <strong>モデル名だけ替えても直りません。</strong> 古い codex（0.128）は <code>gpt-5.6-sol</code> を扱えないため、<strong><code>@openai/codex-sdk</code> を <code>^0.162.1</code> に上げる必要があります</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>agent-server
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>npm<span class="w"> </span>install<span class="w">        </span><span class="c1"># codex-sdk 0.162.1 が入る</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># .env で AGENT_DEEP_CODEX_MODEL を指定している場合は gpt-5.6-sol に</span>
+</code></pre></div>
+<p>グローバルに入れた <code>codex</code> CLI を使う場合も、モデルごとに下限があります（<code>gpt-5.6-sol</code> は 0.154 以上、<code>gpt-6.1-sol</code> は 0.162 以上）。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">ChatGPT アカウントでは mini 系のモデルは使えません</p>
+<p>サブスクリプション認証（<code>LIGHTV2_AUTH=subscription</code> / <code>DEEP_CODEX_AUTH=subscription</code>）では、<strong>mini 系は系統ごと使えません</strong>（400 になる）。また「新しい名前なら使える」とも限らず、<strong>名前ごとに可否が違います</strong>。</p>
+<p>★ 失敗したときの表示が <code>auth failed (unauthorized)</code> になることがあり、<strong>再ログインの問題に見えて誤誘導されます</strong>。認証ではなくモデル名を疑ってください。設定の取り違えは agent-server の起動時に警告が出ます（止まりはしません）。</p>
+</div>
+<p>| <strong>LINE Bridge</strong> (Inbound、v0.3.0〜) | webhook <code>POST /api/line</code> | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は <a href="../../guide/integration/line-bridge/">LINE Bridge 連携</a>） |</p>
 <h2 id="role-phase-1-de-v030">ゲストユーザ role — Phase 1 〜 D/E 運用可能化（v0.3.0〜）<a class="headerlink" href="#role-phase-1-de-v030" title="Permanent link">&para;</a></h2>
 <p>v0.3.0 で <strong>ゲストユーザ role</strong> が追加 (<a href="https://github.com/gamasenninn/tealus/issues/282">#282</a> Phase 1 MVP)、v0.3.0 後 (2026-06-16) で <strong>Phase D/E 運用可能化</strong> + 招待ガード fail-closed 修正が反映されました。<code>users.role</code> は <code>admin / user / guest</code> の 3 種類。</p>
 <h3 id="phase-1-v030-3">Phase 1 (v0.3.0) — 3 層構造の基礎<a class="headerlink" href="#phase-1-v030-3" title="Permanent link">&para;</a></h3>
@@ -2969,8 +2980,28 @@
 <li>最大ターン数（<code>maxTurns</code>）</li>
 <li>システムプロンプト（<code>system_prompt</code>）</li>
 </ul>
-<h3 id="mcp">MCP設定<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
+<h3 id="mcp-settings">MCP設定<a class="headerlink" href="#mcp-settings" title="Permanent link">&para;</a></h3>
 <p><code>agent-server/mcp_config.json</code> でMCP接続を設定します。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ 道具（MCP サーバー）は親の環境変数を受け継ぎません（v0.11.0〜）</p>
+<p><a href="https://github.com/gamasenninn/tealus/issues/573">#573</a> から、agent-server が起動する子プロセス（MCP の道具・Deep の CLI）には<strong>許可した環境変数だけ</strong>が渡ります（<code>PATH</code> などは入る）。以前は親の環境変数をすべて渡していたため、<strong><code>agent-server/.env</code> に書いた API キーを道具が暗黙に使えていましたが、今は届きません。</strong></p>
+<p>道具が必要とする資格情報（DB の DSN・API キーなど）は、<strong>設定ファイルの <code>env</code> に明示</strong>してください。<code>${VAR}</code> と書くと agent-server の環境変数から展開されます:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">"dbhub"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx"</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"-y"</span><span class="p">,</span><span class="w"> </span><span class="s2">"&lt;パッケージ名&gt;@&lt;確かめた版&gt;"</span><span class="p">],</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"DSN"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${DBHUB_DSN}"</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</code></pre></div>
+<p>★ ただし <strong><code>JWT_SECRET</code> / <code>WEBHOOK_SECRET</code> / <code>DB_PASSWORD</code> / <code>TEALUS_BOT_PASS</code> など本体の中核の鍵は <code>${VAR}</code> で引けません</strong>。設定ファイルは AI が書ける場所にあるため、AI が自分で書いた設定から署名鍵を道具へ渡せないようにしています。定義されていない変数は空文字にならず <code>${VAR}</code> のまま残ります（壊れているのに正しそうに見える値を作らないため）。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">npx で起動する道具は版を固定してください</p>
+<p><code>@latest</code> や版なしにすると、<strong>起動のたびにその時 registry が返す版が動きます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/577">#577</a>）。DSN などの鍵を渡す子プロセスが、確かめていないコードになります。版を上げるときは書き換えたうえで、先に手で 1 回 <code>npx -y &lt;名前@版&gt; --help</code> を流してキャッシュに入れてください。本体が自分で起動する道具も版を 1 か所で固定しています（例: <code>@modelcontextprotocol/server-filesystem@2026.1.14</code>、<code>agent-server/src/lib/mcpPackages.mts</code>）。</p>
+</div>
 <h2 id="_5">コンテキスト管理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>各エージェントのコンテキストは <code>agent-workspaces/{agent_id}/{room_id}/</code> にファイルベースで保存されます。</p>
 <ul>

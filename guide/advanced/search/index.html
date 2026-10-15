@@ -2665,10 +2665,10 @@
 <p><code>q</code> / <code>room_id</code> / <code>sender_id</code> / <code>since</code> / <code>tag_names</code> / <code>type</code> のうち最低 1 つを指定する設計です。AI も自然言語の文脈からどれか 1 つは導出してくれますが、抽象的すぎる依頼（「全部教えて」など）には narrowing を促し返してきます。</p>
 </div>
 <h3 id="snippet">snippet 索引パターン<a class="headerlink" href="#snippet" title="Permanent link">&para;</a></h3>
-<p><code>search_messages</code> の結果には各メッセージの <strong>snippet（抜粋）</strong>が含まれます。AI はこれを「索引」として扱い、必要な詳細だけ後から取得する 2 段階アクセスが推奨パターンです。</p>
+<p><code>search_messages</code> の結果には各メッセージの **snippet（抜粋）**が含まれます。AI はこれを「索引」として扱い、必要な詳細だけ後から取得する 2 段階アクセスが推奨パターンです。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ユーザー: 「先週の TTS 議論まとめて」
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>     ↓
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>AI: search_messages(q=&quot;TTS&quot;, since=&quot;先週&quot;, limit=10)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>AI: search_messages(q="TTS", since="先週", limit=10)
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>     ↓ snippet を 10 件取得 = 索引
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>AI: 「以下が候補です。詳細が必要なものを指定してください」
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>     ↓ ユーザーが選んだら

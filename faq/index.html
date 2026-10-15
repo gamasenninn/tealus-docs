@@ -2782,8 +2782,13 @@
 <ul>
 <li><strong>データベース</strong>: PostgreSQL の <code>pg_dump</code> で定期バックアップ</li>
 <li><strong>メディアファイル</strong>: <code>media/</code> ディレクトリを rsync 等でバックアップ</li>
+<li><strong>鍵と設定</strong>: <code>.env</code>（<code>JWT_SECRET</code> や VAPID 鍵）。これが無いと、戻しても全員が再ログインになりプッシュが無効になります</li>
 </ul>
-<p>詳しくは <a href="../admin/operations/">運用・監視</a> を参照してください。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ Windows の PowerShell で <code>pg_dump ... &gt; backup.sql</code> を使わないでください</p>
+<p><code>&gt;</code> が文字コードを変えて<strong>ダンプが壊れ、復元しようとするまで気づけません</strong>（<a href="https://github.com/gamasenninn/tealus/issues/566">#566</a>）。コンテナの中でファイルに書いてから <code>docker cp</code> で取り出してください。</p>
+</div>
+<p>詳しい手順は <a href="../admin/operations/">運用・監視</a> を参照してください。</p>
 <h2 id="ai">AI 機能<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h2>
 <h3 id="q-ai">Q: AI を使わないことはできますか？<a class="headerlink" href="#q-ai" title="Permanent link">&para;</a></h3>
 <p>はい。agent-server を起動しなければ AI 機能は無効になります。チャット・通話・トランシーバーは AI なしで問題なく動作します。</p>
@@ -2798,32 +2803,41 @@
 </thead>
 <tbody>
 <tr>
-<td>Light Agent（日常Q&amp;A）</td>
-<td>gpt-5.4-mini</td>
+<td>Light Agent v2（既定）</td>
+<td>codex SDK（ChatGPT アカウントなら <code>gpt-5.6-sol</code> 系）</td>
 <td>OpenAI</td>
 </tr>
 <tr>
-<td>Deep Agent（複雑な分析）</td>
-<td>Claude</td>
-<td>Anthropic</td>
+<td>Light Agent v1</td>
+<td>gpt-5.4-mini（API キー）</td>
+<td>OpenAI</td>
+</tr>
+<tr>
+<td>Deep Agent</td>
+<td>Claude Code CLI（既定）／ Codex CLI（<code>gpt-5.6-sol</code>）</td>
+<td>Anthropic ／ OpenAI</td>
 </tr>
 <tr>
 <td>Router（振り分け判定）</td>
-<td>gpt-5.4-mini</td>
+<td>gpt-5.4-mini（API キー）</td>
 <td>OpenAI</td>
 </tr>
 <tr>
 <td>音声合成（TTS）</td>
-<td>Aivis Cloud API</td>
-<td>Aivis Project</td>
+<td>Aivis Cloud ／ OpenAI ／ Gemini ／ ブラウザ内蔵（<code>TTS_PROVIDER</code> で選択）</td>
+<td>各社</td>
 </tr>
 <tr>
 <td>音声文字起こし</td>
-<td>gpt-4o-transcribe（v0.2.2〜default、env で whisper-1 戻し可）</td>
-<td>OpenAI</td>
+<td><strong>gpt-4o-mini-transcribe</strong>（既定、<code>WHISPER_MODEL</code> で変更可）／自ホスト／ Gemini（<code>STT_BACKEND</code>）</td>
+<td>OpenAI ほか</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">ChatGPT アカウント（サブスクリプション）で Codex を使う場合</p>
+<p><strong>mini 系のモデルは使えません</strong>（400 になります）。<code>gpt-5.5</code> は 2026-10-14 に外され、既定は <code>gpt-5.6-sol</code> です。<strong>モデル名を替えるだけでなく <code>cd agent-server &amp;&amp; npm install</code> が必要</strong>です（codex-sdk 0.162.1）。詳しくは <a href="../admin/agent/">AIエージェント設定</a> を参照してください。</p>
+</div>
 <p>詳しくは <a href="../dev/ai-architecture/">AI アーキテクチャ</a> を参照してください。</p>
 <h3 id="q-ai-api">Q: AI の API 費用はどのくらいですか？<a class="headerlink" href="#q-ai-api" title="Permanent link">&para;</a></h3>
 <p>利用頻度によりますが、目安は以下の通りです。</p>

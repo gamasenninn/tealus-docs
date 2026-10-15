@@ -2806,6 +2806,11 @@
 </table>
 <h3 id="_7">セキュリティ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>Webhookペイロードは <code>X-Tealus-Signature: sha256=HMAC(secret, body)</code> ヘッダで署名されます。受信側で署名を検証することで改ざんを防止できます。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ agent-server を使う場合、secret は両側に同じ値が要ります</p>
+<p><a href="https://github.com/gamasenninn/tealus/issues/478">#478</a> から、agent-server の受け口も署名を検証します。<strong>本体の Webhook 登録に入れた secret と、<code>agent-server/.env</code> の <code>WEBHOOK_SECRET</code> に同じ値</strong>を設定してください。</p>
+<p>片方だけだと <strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿は普通に成功して見えるため、送った側からは気づけません）。<code>agent-server</code> の <code>npm run doctor</code> でも未設定を検出できます。</p>
+</div>
 <h3 id="_8">リトライ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>配信失敗時は指数バックオフで3回リトライします（5秒 → 15秒 → 45秒）。</p>
 <h2 id="_9">ヘルスチェック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -2815,8 +2820,47 @@
 <h2 id="_10">バックアップ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h3 id="_11">データベース<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <p>PostgreSQLの標準的なバックアップ手法を使用します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pg_dump<span class="w"> </span>-U<span class="w"> </span>tealus<span class="w"> </span>-d<span class="w"> </span>tealus<span class="w"> </span>&gt;<span class="w"> </span>backup_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>tealus<span class="w"> </span>tealus<span class="w"> </span>&gt;<span class="w"> </span>backup-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
 </code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">★ Windows の PowerShell 5.1 では上の <code>&gt;</code> を使わないでください</p>
+<p>PowerShell の <code>&gt;</code> が<strong>文字コードを変えてしまい、ダンプが壊れます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/566">#566</a>）。<strong>壊れたことは復元しようとするまで分かりません。</strong></p>
+<p>コンテナの中でファイルに書いてから取り出してください（custom 形式）:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">docker</span> <span class="n">exec</span> <span class="n">tealus_postgres</span> <span class="n">pg_dump</span> <span class="n">-U</span> <span class="n">tealus</span> <span class="n">-Fc</span> <span class="o">-f</span> <span class="p">/</span><span class="n">tmp</span><span class="p">/</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span> <span class="n">tealus</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">docker</span> <span class="nb">cp </span><span class="n">tealus_postgres</span><span class="p">:/</span><span class="n">tmp</span><span class="p">/</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span> <span class="p">.\</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span>
+</code></pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">DB だけでは戻せません</p>
+<p>復元には次の 3 つが揃っている必要があります。1 つでも欠けると、戻したつもりで欠けた状態になります。</p>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>内容</th>
+<th>欠けるとどうなるか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DB のダンプ</td>
+<td><code>pg_dump</code> の出力</td>
+<td>投稿・利用者・部屋がすべて失われる</td>
+</tr>
+<tr>
+<td>メディア</td>
+<td><code>MEDIA_ROOT</code> の中身（画像・動画・音声・ファイル・サムネイル）</td>
+<td>投稿は残るが、添付が開けない</td>
+</tr>
+<tr>
+<td>鍵と設定</td>
+<td><code>.env</code>（<code>JWT_SECRET</code> / VAPID 鍵など）</td>
+<td>全員が再ログイン、プッシュの購読が無効になる</td>
+</tr>
+</tbody>
+</table>
+<p>復元の具体的な手順は、本体リポジトリの <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">upgrade-guide.md</a> の「壊れたときの復元」にあります。</p>
+</div>
 <h3 id="_12">メディアファイル<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <p><code>media/</code> ディレクトリにアップロードされたファイルが保存されています。定期的にバックアップしてください。</p>
 

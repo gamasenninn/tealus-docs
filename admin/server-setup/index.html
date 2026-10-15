@@ -3016,9 +3016,9 @@
 </thead>
 <tbody>
 <tr>
-<td>開発（DB + Redis のみ）</td>
+<td>開発（DB のみ）</td>
 <td><code>docker-compose up -d</code></td>
-<td>postgres / postgres-test / redis</td>
+<td>postgres / postgres-test</td>
 <td>Mac / Windows / Linux</td>
 </tr>
 <tr>
@@ -3035,6 +3035,18 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">★ コードを更新したら <code>--build</code> が要ります</p>
+<p><code>docker-compose ... up -d</code> だけでは<strong>イメージが作り直されず、古いコードのまま起動します</strong>（<a href="https://github.com/gamasenninn/tealus/issues/558">#558</a>）。更新時は <code>up -d --build</code> を使ってください。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">初回起動時の migration</p>
+<p>PostgreSQL の initdb は migration を流しません。<strong>server の起動時に実行されます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/557">#557</a>）ので、初回は server のログで <code>[migration-check]</code> を確認してください。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Redis は使いません</p>
+<p>以前このページには Redis が構成に含まれると書いていましたが、<strong>誤りでした</strong>。Redis は初期設計の名残で<strong>一度もコードから使われておらず</strong>、<a href="https://github.com/gamasenninn/tealus/issues/466">#466</a> で依存ごと削除されています。在席状態は Socket.IO が内部で持ち、LINE の画像の束ね・ログイン試行の制限はいずれもプロセス内のメモリで処理しています（「1 台・1 プロセス」構成が前提）。</p>
+</div>
 <div class="admonition info">
 <p class="admonition-title">TTS のみなら rtc-server は不要</p>
 <p>v0.1.x の default TTS 配信は Socket.IO blob 経由のため、TTS だけ使うなら <strong>+RTC 構成は不要</strong>です。WebRTC 通話機能を使う場合、または <code>TTS_BROADCAST_MEDIASOUP=true</code> で legacy mediasoup TTS を使う場合のみ rtc-server が必要になります。</p>
@@ -3255,29 +3267,43 @@
 <h3 id="db">DBマイグレーション<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate
 </code></pre></div>
-<p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（001〜026）が順に実行されます。<code>021</code> で全文検索高速化用の <code>pg_trgm</code> 拡張と GIN index が追加されます（v0.1.x、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a>）。以降 <code>022</code> ゲスト role、<code>023</code>〜<code>025</code> 辞書テーブル（v0.5.0 <a href="https://github.com/gamasenninn/tealus/issues/327">#327</a>）、<code>026</code> 汎用フォーム（v0.6.0 <a href="https://github.com/gamasenninn/tealus/issues/336">#336</a>）が追加されています。</p>
+<p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（<strong>001〜040</strong>）が順に実行されます。適用済みの記録は DB の <strong><code>schema_migrations</code> テーブル</strong>（台帳）に残ります（<a href="https://github.com/gamasenninn/tealus/issues/406">#406</a>）。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ 更新するときは、必ず migrate を<strong>再起動の前</strong>に</p>
+<p>v0.11.0 以降、<strong><code>034</code> を流さずにサーバーを再起動すると、ログインそのものが失敗します</strong>（認証の問い合わせが新しい列を読むため）。プッシュの送信も止まります。</p>
+<p>更新の正しい順序は「コード取得 → 依存更新 → <strong>migrate</strong> → client 再ビルド → 再起動」です。手順の本文は本体リポジトリの <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">upgrade-guide.md</a> にあります。</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">★ 台帳より前から動かしている DB は、<code>--baseline-through</code> が要ります</p>
+<p>台帳（<code>schema_migrations</code>）が導入される前から動かしている DB には適用済みの記録がないため、<strong>通常の <code>npm run migrate</code> は止まります</strong>。このとき案内に出る <code>--baseline</code>（上限なし）を打つと、<strong>まだ流していない migration まで「適用済み」として記録され、静かに壊れます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/500">#500</a>）。</p>
+<p><strong>どこまで適用済みかを指定して記録し、残りは通常実行で流します。</strong> 例えば v0.9.0 相当（<code>026</code> まで適用済み）の DB では:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">cd</span><span class="w"> </span>server
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate<span class="w"> </span>--<span class="w"> </span>--baseline-through<span class="w"> </span>026_message_form_type.sql<span class="w">   </span><span class="c1"># ここまでを「適用済み」と記録（流さない）</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate<span class="w">                                                   </span><span class="c1"># 027 以降が実際に流れる</span>
+</code></pre></div>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">migrate 忘れは「クラッシュしないが静かに壊れる」</p>
-<p>未適用の migration がある状態でも<strong>サーバーは起動してしまい</strong>、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成タブが 500、自己成長辞書が効かない）。v0.6.0（<a href="https://github.com/gamasenninn/tealus/issues/334">#334</a>）から起動時に loud warn が出るようになったので、<strong>起動ログの <code>[migration-check]</code> / <code>[build-check]</code></strong> を確認してください。既存環境の更新手順は本体リポジトリの <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">upgrade-guide.md</a> にまとまっています。</p>
+<p>未適用の migration がある状態でも<strong>サーバーが起動してしまう</strong>ことがあり、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成画面が 500、自己成長辞書が効かない）。起動時の確認は v0.11.1 で強化され、台帳とファイルを突き合わせて <strong><code>[migration-check] ★ 未適用 N 件: …</code></strong> とファイル名つきで出るようになりました。<strong>起動ログの <code>[migration-check]</code> / <code>[build-check]</code></strong> を必ず確認してください。</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">managed PostgreSQL 環境での注意</p>
 <p>migration 021 は <code>pg_trgm</code> extension を要求します。<code>CREATE EXTENSION</code> 権限がない managed PostgreSQL 環境（一部のクラウド DB）では migration が失敗するため、運用前に extension 作成権限を確認してください。</p>
 </div>
 <h3 id="_5">サーバー起動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w">    </span><span class="c1"># 開発モード（nodemon で自動再起動）</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>npm<span class="w"> </span>start<span class="w">      </span><span class="c1"># 本番モード</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w">    </span><span class="c1"># 開発モード（nodemon で自動再起動）</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>npm<span class="w"> </span>start<span class="w">      </span><span class="c1"># 本番モード</span>
 </code></pre></div>
 <p>サーバーは <code>http://localhost:3000</code> で起動します。</p>
 <h2 id="4">4. クライアントセットアップ<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>client
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>npm<span class="w"> </span>install
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">cd</span><span class="w"> </span>client
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>npm<span class="w"> </span>install
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
 </code></pre></div>
 <p>クライアントは <code>http://localhost:5173</code> で起動します。Viteのプロキシ設定により <code>/api/*</code> と <code>/socket.io</code> は自動的にサーバーに転送されます。</p>
 <h3 id="_6">本番ビルド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">cd</span><span class="w"> </span>client
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>npm<span class="w"> </span>run<span class="w"> </span>build
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>client
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>npm<span class="w"> </span>run<span class="w"> </span>build
 </code></pre></div>
 <p><code>dist/</code> ディレクトリにビルド成果物が生成されます。</p>
 <h2 id="5">5. 初回ユーザー登録<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
@@ -3286,20 +3312,25 @@
 <p class="admonition-title">パスワードについて</p>
 <p>下記の <code>password123</code> は <strong>localhost 検証用のサンプル値</strong> です。本番運用では必ず強固なパスワード（12 文字以上、英数記号混在）に置き換えてください。</p>
 </div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/auth/register<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;login_id&quot;:&quot;admin&quot;,&quot;display_name&quot;:&quot;管理者&quot;,&quot;password&quot;:&quot;password123&quot;}&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/auth/register<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"login_id":"admin","display_name":"管理者","password":"password123"}'</span>
 </code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">最初のユーザーは自動的に admin</p>
-<p>v0.2.1（<a href="https://github.com/gamasenninn/tealus/issues/211">#211</a>）から、<strong>最初の非 Bot ユーザー</strong>（<code>is_bot=false</code> の COUNT が 0 の状態で <code>register</code> を呼んだユーザー）が自動的に <code>admin</code> role で作成されます。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターンです。2 人目以降は通常 <code>user</code> role で作成され、必要に応じて管理者ダッシュボードから昇格させてください。</p>
+<p>v0.2.1（<a href="https://github.com/gamasenninn/tealus/issues/211">#211</a>）から、<strong>最初の非 Bot ユーザー</strong>（<code>is_bot=false</code> の COUNT が 0 の状態で <code>register</code> を呼んだユーザー）が自動的に <code>admin</code> role で作成されます。Mattermost / Rocket.Chat / GitLab 標準の OSS first-user-admin パターンです。</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">★ この curl が通るのは 1 回だけです</p>
+<p><strong>自己登録は「人の利用者が 0 人のとき」しか開いていません</strong>（<a href="https://github.com/gamasenninn/tealus/issues/469">#469</a>）。1 人でも登録済みだと、同じ curl は <strong>403</strong> を返します。以前このページは「2 人目以降もこの方法で」と読める書き方をしていましたが、<strong>その手順では作れません</strong>。</p>
+<p><strong>2 人目以降は、管理者でログインして <code>/admin</code> のユーザー管理から作成</strong>してください。Bot ユーザーも同じ画面で作れます（DB を直接編集する必要はありません）。</p>
 </div>
 <p>以降はログイン画面からユーザーIDとパスワードでログインできます。</p>
 <h2 id="6-ai">6. AIエージェントサーバー（オプション）<a class="headerlink" href="#6-ai" title="Permanent link">&para;</a></h2>
 <p>AI機能を使用する場合は、エージェントサーバーも起動します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">cd</span><span class="w"> </span>agent-server
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>npm<span class="w"> </span>install
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">cd</span><span class="w"> </span>agent-server
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>npm<span class="w"> </span>install
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
 </code></pre></div>
 <p>エージェントサーバーは <code>http://localhost:4000</code> で起動します。</p>
 <h3 id="_7">エージェント環境変数<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
@@ -3317,12 +3348,20 @@
 <td>Tealus本体のURL（例: <code>http://localhost:3000</code>）</td>
 </tr>
 <tr>
-<td><code>TEALUS_USER_ID</code></td>
-<td>BotユーザーのユーザーID</td>
+<td><strong><code>TEALUS_BOT_ID</code></strong></td>
+<td>Bot ユーザーのログイン ID（★ <code>TEALUS_USER_ID</code> ではありません）</td>
 </tr>
 <tr>
-<td><code>TEALUS_PASSWORD</code></td>
-<td>Botユーザーのパスワード</td>
+<td><strong><code>TEALUS_BOT_PASS</code></strong></td>
+<td>Bot ユーザーのパスワード（★ <code>TEALUS_PASSWORD</code> ではありません）</td>
+</tr>
+<tr>
+<td><strong><code>JWT_SECRET</code></strong></td>
+<td><strong>本体と同じ値</strong>。agent-server も同じトークンで認証するため必須</td>
+</tr>
+<tr>
+<td><code>WEBHOOK_SECRET</code></td>
+<td>webhook の署名検証用。<strong>本体の Webhook 登録に入れた secret と同じ値</strong>（<a href="https://github.com/gamasenninn/tealus/issues/478">#478</a>）</td>
 </tr>
 <tr>
 <td><code>OPENAI_API_KEY</code></td>
@@ -3350,7 +3389,7 @@
 </tr>
 <tr>
 <td><code>WHISPER_MODEL</code></td>
-<td>音声文字起こしモデル（v0.2.2〜、default <code>gpt-4o-transcribe</code>、旧モデルに戻すなら <code>whisper-1</code>、半額の選択肢として <code>gpt-4o-mini-transcribe</code>）</td>
+<td>音声文字起こしモデル（default <strong><code>gpt-4o-mini-transcribe</code></strong>、<a href="https://github.com/gamasenninn/tealus/issues/284">#284</a>。<code>gpt-4o-transcribe</code> は無音やノイズで業務無線らしい文を作る幻覚が出たため既定から外した）</td>
 </tr>
 <tr>
 <td><code>ORGANON_INJECT</code></td>
@@ -3382,43 +3421,45 @@
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">旧環境変数名との互換</p>
-<p>旧名 <code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code> も内部で fallback されますが、新規セットアップでは <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> の使用を推奨します（v0.1.x、Tealus MCP との表記統一）。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ 以前このページは逆のことを書いていました</p>
+<p>「<code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> を推奨、旧名 <code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code> は fallback」と書いていましたが、<strong>誤りです</strong>。</p>
+<p><strong>agent-server が読むのは <code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code> だけ</strong>で、<code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> を書いても読まれません（<code>agent-server/src/config.mts</code>）。表のとおりに設定すると <strong>bot がログインできず、エージェントが黙って応答しない</strong>状態になります。</p>
+<p>紛らわしいのは、agent-server が<strong>子プロセス（Deep / Light v2 の CLI や MCP の道具）へ渡すときに <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> という名前に置き換えている</strong>ことです。そちらは MCP クライアント側の名前で、<strong><code>agent-server/.env</code> に書く名前とは別物</strong>です。</p>
 </div>
 <h2 id="7">7. 本番デプロイ<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <h3 id="nginx">Nginx設定例<a class="headerlink" href="#nginx" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="c1"># React PWA（ビルド済みの静的ファイル）</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/tealus/client/dist</span><span class="p">;</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.html</span><span class="p">;</span>
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="c1"># REST API</span>
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/api/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
-<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">    </span><span class="c1"># WebSocket（Socket.IO）</span>
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/socket.io/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
-<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
-<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>
-<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="w">    </span><span class="c1"># メディアファイル配信</span>
-<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/media/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="w">        </span><span class="kn">alias</span><span class="w"> </span><span class="s">/var/tealus/media/</span><span class="p">;</span>
-<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">30d</span><span class="p">;</span>
-<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="c1"># React PWA（ビルド済みの静的ファイル）</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/tealus/client/dist</span><span class="p">;</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.html</span><span class="p">;</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="c1"># REST API</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/api/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="w">    </span><span class="c1"># WebSocket（Socket.IO）</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/socket.io/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">"upgrade"</span><span class="p">;</span>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a><span class="w">    </span><span class="c1"># メディアファイル配信</span>
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/media/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a><span class="w">        </span><span class="kn">alias</span><span class="w"> </span><span class="s">/var/tealus/media/</span><span class="p">;</span>
+<a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a><span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">30d</span><span class="p">;</span>
+<a id="__codelineno-12-30" name="__codelineno-12-30" href="#__codelineno-12-30"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-12-31" name="__codelineno-12-31" href="#__codelineno-12-31"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="cloudflare-nas">Cloudflare + NAS構成（参考）<a class="headerlink" href="#cloudflare-nas" title="Permanent link">&para;</a></h3>
 <p>NAS 上で運用する場合、所有ドメイン（例: <code>your-domain.example</code>）を Cloudflare 経由で NAS に接続する構成が便利です。</p>
