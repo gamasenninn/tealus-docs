@@ -3478,7 +3478,7 @@
 <h3 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h3>
 <p>v0.1.x までは MCP は Deep Agent 専用でしたが、<code>agent-server/src/mcp/roomMcpManager.mts</code> の <code>getOrCreateSharedGlobal()</code> により Light Agent にも programmatic に MCP を注入する仕組みが追加されました。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>agent-server 起動時
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ├─ TEALUS_USER_ID / TEALUS_PASSWORD が config に存在?
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ├─ TEALUS_BOT_ID / TEALUS_BOT_PASS が config に存在?（子の tealus-mcp には TEALUS_USER_ID / TEALUS_PASSWORD として渡す）
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  │    └─ Yes: MCPServerStdio で `npx -y github:gamasenninn/tealus-mcp` を spawn
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  │           → Light/Deep 両 Agent が同じ MCP プロセスを共有
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  └─ No: MCP なしで起動（ローカルツールのみ）
@@ -3564,12 +3564,20 @@
 <td>Router 経由でエージェントに振り分け</td>
 </tr>
 <tr>
+<td><code>message.updated</code></td>
+<td><strong>編集で先頭に mention を新しく付けたとき</strong>だけ起動（呼び忘れを編集で直せる、<a href="https://github.com/gamasenninn/tealus/issues/338">#338</a>）。編集者が元の投稿者のときだけ・付け直しでは再応答しない・bot 自身の編集は無視</td>
+</tr>
+<tr>
 <td><code>voice.transcription_completed</code></td>
 <td>音声文字起こし完了時にエージェント処理</td>
 </tr>
 <tr>
 <td><code>member.joined</code> / <code>member.left</code></td>
 <td>Bot のルーム参加状態を追跡</td>
+</tr>
+<tr>
+<td><code>reaction.added</code></td>
+<td>受け取るのみ（承認フロー用の将来拡張）</td>
 </tr>
 </tbody>
 </table>

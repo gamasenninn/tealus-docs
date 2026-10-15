@@ -2452,6 +2452,61 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v0111-0110-2-20261015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.11.1 — 0.11.0 の更新で踏む穴を 2 つ塞ぐ（2026年10月15日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0110-20261015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.11.0 — 毎日の手間と、見えないところで止まっていたもの（2026年10月15日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0100-2026105" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.10.0 — 「書いていない」を「決めてある」に変える（2026年10月5日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v090-202689" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.9.0 — 停止の予告を、経路の全部の端点から出す（2026年8月9日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v080-ai-202682" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.8.0 — AI セッションを本番から引き剥がす（2026年8月2日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v070-2026731" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3028,6 +3083,61 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v0111-0110-2-20261015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.11.1 — 0.11.0 の更新で踏む穴を 2 つ塞ぐ（2026年10月15日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0110-20261015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.11.0 — 毎日の手間と、見えないところで止まっていたもの（2026年10月15日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0100-2026105" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.10.0 — 「書いていない」を「決めてある」に変える（2026年10月5日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v090-202689" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.9.0 — 停止の予告を、経路の全部の端点から出す（2026年8月9日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v080-ai-202682" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.8.0 — AI セッションを本番から引き剥がす（2026年8月2日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v070-2026731" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3598,8 +3708,100 @@
 <div class="admonition note">
 <p class="admonition-title">このページの形式について</p>
 <p>以前は本体 CHANGELOG とほぼ同じ内容を二重に持っていましたが、<strong>二重管理は必ず片方が腐り、腐ったときに読者がどちらを信じてよいか判断できません</strong>。そのため詳細は CHANGELOG に一元化し、このページは要約とリンクに絞る方針へ切り替えました。</p>
-<p><strong>v0.4.0 以降</strong>がこの新しい形式です。<strong>v0.3.0 以前</strong>は当時の詳細な記述をそのまま残しています。また、新しい機能はガイドページの整備が追いついていないものがあります（<a href="https://github.com/gamasenninn/tealus-docs/issues/17">tealus-docs#17</a> で対応中）。</p>
+<p><strong>v0.4.0 以降</strong>がこの新しい形式です。<strong>v0.3.0 以前</strong>は当時の詳細な記述をそのまま残しています。</p>
 </div>
+<h2 id="v0111-0110-2-20261015">v0.11.1 — 0.11.0 の更新で踏む穴を 2 つ塞ぐ（2026年10月15日）<a class="headerlink" href="#v0111-0110-2-20261015" title="Permanent link">&para;</a></h2>
+<p>修正だけの版です。</p>
+<p><strong>主な変更</strong></p>
+<ul>
+<li>migration 040 を流す前に再起動すると、**どの部屋も削除できなかった（500）**のを直しました（表が無いときは記録を飛ばして削除を通す）</li>
+<li>起動時の確認が 034〜040 の流し忘れを知らせていなかったのを直しました。台帳と migration のファイルを突き合わせ、<code>[migration-check] ★ 未適用 N 件: …</code> と名前つきで警告します</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">★ 更新時の急所</p>
+<ul>
+<li>0.11.0 からは <code>git pull</code> → <strong>server の再起動</strong>だけです（migration・依存・client の変更なし）</li>
+<li><strong>0.10.0 から上げる場合は、下の v0.11.0 の急所が全部当てはまります</strong></li>
+</ul>
+</div>
+<p><a href="https://github.com/gamasenninn/tealus/compare/v0.11.0...v0.11.1">変更履歴 v0.11.0...v0.11.1（2 コミット）</a> ／ <a href="https://github.com/gamasenninn/tealus/releases/tag/v0.11.1">リリースページ</a></p>
+<h2 id="v0110-20261015">v0.11.0 — 毎日の手間と、見えないところで止まっていたもの（2026年10月15日）<a class="headerlink" href="#v0110-20261015" title="Permanent link">&para;</a></h2>
+<p>来るはずのものが来ないときに知らせる<strong>見張り</strong>と、画面の手触り（トークを開いたときに前の中身を先に出す・音声編集のキーボード操作）が入りました。同じだけ、入口の締め直し（AI の道具が読める範囲・子プロセスへ渡す環境変数・削除した投稿や部屋の添付）が入っています。</p>
+<p><strong>主な変更</strong></p>
+<ul>
+<li><strong>見張り</strong>（<a href="https://github.com/gamasenninn/tealus/issues/595">#595</a>）— バックアップ・通話履歴・無線の送り込みが来ないとき、業務メモに 1 回だけ知らせます。詳細は <a href="../admin/automation/">ルームトリガーと見張り</a></li>
+<li><strong>トークを開いたとき前の中身を先に出す</strong>（<a href="https://github.com/gamasenninn/tealus/issues/600">#600</a>）、<strong>送れなかったら文を残して理由を出す</strong>（<a href="https://github.com/gamasenninn/tealus/issues/593">#593</a>）、<strong>ログインの期限切れでログイン画面へ</strong>（<a href="https://github.com/gamasenninn/tealus/issues/539">#539</a>）</li>
+<li><strong>音声の編集画面のキーボード操作（PC）</strong>（<a href="https://github.com/gamasenninn/tealus/issues/604">#604</a>）— <a href="../guide/basic/voice/">音声メッセージ</a></li>
+<li><strong>通知音はアカウントの設定に</strong>（<a href="https://github.com/gamasenninn/tealus/issues/516">#516</a>）、1:1 の部屋にも ≡（<a href="https://github.com/gamasenninn/tealus/issues/517">#517</a>）、通知のタップで部屋へ（<a href="https://github.com/gamasenninn/tealus/issues/544">#544</a>）— <a href="../guide/settings/notification/">通知設定</a></li>
+<li><strong>マルチトーク</strong>の最小化・最大化・すべて最下部へ・ドラッグで並べ替え・入力欄を畳む — <a href="../guide/advanced/multi-talk/">マルチトーク</a></li>
+<li><strong>削除した投稿・部屋の添付は <code>/media</code> で返さない</strong>（<a href="https://github.com/gamasenninn/tealus/issues/601">#601</a> <a href="https://github.com/gamasenninn/tealus/issues/602">#602</a>）、<strong>AI の子プロセスへ渡す環境変数を許可一覧に</strong>（<a href="https://github.com/gamasenninn/tealus/issues/565">#565</a> <a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）、想定外の失敗で中身を返さない（<a href="https://github.com/gamasenninn/tealus/issues/603">#603</a>）</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">★ 更新時の急所（全員に作業があります）</p>
+<ul>
+<li>★★★ <strong>migrate を先に、再起動はあと</strong> — migration が 7 本（<code>034</code>〜<code>040</code>）。<strong>034 を流さずに再起動すると、ログインもできなくなります</strong>。手順は <a href="../admin/server-setup/">サーバー構築 &gt; DBマイグレーション</a></li>
+<li>★★★ <strong>ChatGPT アカウントで Codex を使う環境</strong>（<code>LIGHTV2_AUTH=subscription</code> / <code>DEEP_AGENT_PROVIDER=codex</code>）— <code>gpt-5.5</code> が 2026-10-14 に外されました。<strong><code>cd agent-server &amp;&amp; npm install</code>（codex-sdk 0.162.1）と、モデルを <code>gpt-5.6-sol</code> に替えることの両方</strong>が要ります。モデル名だけ替えても直りません。詳細は <a href="../admin/agent/">AIエージェント設定</a></li>
+<li>★ <strong>client を本番ビルドし直す</strong>（しないと画面は何も変わらず、エラーも出ません）</li>
+<li>★ <strong>MCP の道具は親の環境変数を受け継がなくなりました</strong>。道具が鍵を環境変数から読んでいた場合、<strong>黙って届かなくなります</strong>。設定の <code>env</code> に明示してください（<a href="../admin/agent/#mcp-settings">AIエージェント設定 &gt; MCP設定</a>）。npx で起動する道具は版を固定してください（<a href="https://github.com/gamasenninn/tealus/issues/577">#577</a>）</li>
+<li>（推奨）本番は <code>NODE_ENV=production</code>。記録の既定が info になるので、今までどおり <code>[debug]</code> 行を残すなら <code>LOG_LEVEL=debug</code> も</li>
+<li>Docker の compose は初回起動で migration を流しません（<a href="https://github.com/gamasenninn/tealus/issues/557">#557</a>）。<code>up -d --build</code> で起動します（<a href="https://github.com/gamasenninn/tealus/issues/558">#558</a>）</li>
+</ul>
+</div>
+<p><a href="https://github.com/gamasenninn/tealus/compare/v0.10.0...v0.11.0">変更履歴 v0.10.0...v0.11.0（142 コミット）</a> ／ <a href="https://github.com/gamasenninn/tealus/releases/tag/v0.11.0">リリースページ</a></p>
+<h2 id="v0100-2026105">v0.10.0 — 「書いていない」を「決めてある」に変える（2026年10月5日）<a class="headerlink" href="#v0100-2026105" title="Permanent link">&para;</a></h2>
+<p>新しい入口が 3 つ（<strong>ルームトリガー</strong>・<strong>会話モード</strong>・<strong>読み上げのエンジン選択</strong>）入り、同じだけ入口の締め直し（部屋の外のものを指す口・ゲスト・agent-server の設定 API）が入りました。</p>
+<p><strong>主な変更</strong></p>
+<ul>
+<li><strong>ルームトリガー</strong>（<a href="https://github.com/gamasenninn/tealus/issues/382">#382</a>）— 条件が満たされたら定型メッセージを投稿します（毎朝の議事録など）。<a href="../admin/automation/">ルームトリガーと見張り</a></li>
+<li><strong>会話モード</strong>（<a href="https://github.com/gamasenninn/tealus/issues/389">#389</a>）— AI と押して話す方式で声で往復し、良い答えだけ部屋に残せます。<a href="../guide/advanced/voice-chat/">会話モード</a></li>
+<li><strong>読み上げのエンジンを選べる</strong>（<a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>）— Aivis に加えて OpenAI / Gemini。部屋ごとにエンジンと声（Aivis 10 / OpenAI 13 / Gemini 30）。<a href="../guide/advanced/tts/">TTS 読み上げ</a></li>
+<li><strong>通知</strong>: ルームごとのオン / オフと機械の投稿の通知（<a href="https://github.com/gamasenninn/tealus/issues/463">#463</a>）、見ている部屋には鳴らさない（<a href="https://github.com/gamasenninn/tealus/issues/475">#475</a>）。<strong>日付へ移動</strong>（<a href="https://github.com/gamasenninn/tealus/issues/476">#476</a>）</li>
+<li><strong>cc-bridge</strong>: 1 行目に宛先を並べると同報（<a href="https://github.com/gamasenninn/tealus/issues/386">#386</a>）。行頭にない・飾った mention は起こさない（<a href="../guide/advanced/mention/">メンション</a>）</li>
+<li><strong>tealus-mcp v0.15.0</strong> で <code>edit_message</code>（ツールは 19）、<strong><code>npm run doctor</code></strong>、<strong>LINE の引用返信</strong>（<a href="https://github.com/gamasenninn/tealus/issues/490">#490</a>）、ゲストの制限（<a href="https://github.com/gamasenninn/tealus/issues/491">#491</a> <a href="https://github.com/gamasenninn/tealus/issues/492">#492</a>）</li>
+<li><strong>Redis を外しました</strong>（<a href="https://github.com/gamasenninn/tealus/issues/466">#466</a>。一度も使われていませんでした）</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">★ 更新時の急所（全員に作業があります）</p>
+<ul>
+<li>★★★ <strong>v0.9.0 から上げるときの migrate</strong>（<a href="https://github.com/gamasenninn/tealus/issues/500">#500</a>）— migration の台帳が無いので <code>npm run migrate</code> は一度止まります。<strong>案内に <code>--baseline</code> が出ても打たないでください</strong>（027〜033 が流れないまま「適用済み」になり、静かに壊れます）。<code>--baseline-through 026_message_form_type.sql</code> → <code>npm run migrate</code> の順です（<a href="../admin/server-setup/">サーバー構築 &gt; DBマイグレーション</a>）</li>
+<li>★★ <strong>webhook の鍵は両側に同じ値を</strong>（<a href="https://github.com/gamasenninn/tealus/issues/478">#478</a>）— agent-server の <code>WEBHOOK_SECRET</code> と、本体の Webhook 登録の secret</li>
+<li>★★ <code>DEEP_AGENT_PROVIDER=codex</code> を使ったことがある環境は、<strong>資格情報の置き場の移動</strong>（<a href="https://github.com/gamasenninn/tealus/issues/419">#419</a>）。pull しただけでは終わりません。手順は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">アップグレードガイド</a></li>
+<li>★ <strong>client を本番ビルドし直す</strong></li>
+<li>自己登録は人の利用者が 0 人のときだけ（<a href="https://github.com/gamasenninn/tealus/issues/469">#469</a>）、開発用 DB のポートは <code>127.0.0.1</code> だけ（<a href="https://github.com/gamasenninn/tealus/issues/467">#467</a>）、<code>/api/bot/rooms/:id/join</code> は bot だけ、アップロードした HTML は本体と切り離して開く（CSP sandbox）、リンクプレビューは外の宛先だけ</li>
+</ul>
+</div>
+<p><a href="https://github.com/gamasenninn/tealus/compare/v0.9.0...v0.10.0">変更履歴 v0.9.0...v0.10.0（329 コミット）</a> ／ <a href="https://github.com/gamasenninn/tealus/releases/tag/v0.10.0">リリースページ</a></p>
+<h2 id="v090-202689">v0.9.0 — 停止の予告を、経路の全部の端点から出す（2026年8月9日）<a class="headerlink" href="#v090-202689" title="Permanent link">&para;</a></h2>
+<p><strong>主な変更</strong></p>
+<ul>
+<li><strong>本体サーバの停止も、別マシンの Claude Code に予告する</strong>（<a href="https://github.com/gamasenninn/tealus/issues/368">#368</a>）。55 分の寿命で切るときも理由を伝える（<a href="https://github.com/gamasenninn/tealus/issues/366">#366</a>）</li>
+<li><strong>LINE: bot を招待した時点でグループが catalog に載る</strong>（<a href="https://github.com/gamasenninn/tealus/issues/367">#367</a>）。最初の投稿を取りこぼさなくなりました</li>
+<li><strong>フォームの表示</strong>（<a href="https://github.com/gamasenninn/tealus/issues/370">#370</a>）— 文字サイズ設定に追随・横に広げる・畳む</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">★ 更新時の急所</p>
+<ul>
+<li>DB migration の追加はゼロです</li>
+<li>★ <strong>client を本番ビルドし直す</strong>（フォームの表示が変わらないだけで、エラーは出ません）</li>
+<li>★ cc-bridge を使っている場合は、受け取る側の <code>listen-tealus</code> skill も差し替える（タグを打っても配布物は切り替わりません）</li>
+</ul>
+</div>
+<p><a href="https://github.com/gamasenninn/tealus/compare/v0.8.0...v0.9.0">変更履歴 v0.8.0...v0.9.0（11 コミット）</a> ／ <a href="https://github.com/gamasenninn/tealus/releases/tag/v0.9.0">リリースページ</a></p>
+<h2 id="v080-ai-202682">v0.8.0 — AI セッションを本番から引き剥がす（2026年8月2日）<a class="headerlink" href="#v080-ai-202682" title="Permanent link">&para;</a></h2>
+<p><strong>主な変更</strong></p>
+<ul>
+<li><strong>cc-bridge の HTTP 化</strong>（<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a>）— <code>@cc-…</code> の起こす知らせを <code>/agent-api/cc-queue/stream</code> で別マシンへ届けられます。狙いは利便性ではなく<strong>隔離</strong>（本番 DB・メディア・鍵のあるホストと AI を動かすホストを分ける）。<a href="../guide/integration/claude-code/">Claude Code 連携</a></li>
+<li><strong>サーバが計画的な停止を自分で予告する</strong>（<a href="https://github.com/gamasenninn/tealus/issues/365">#365</a>）。予定どおりの切断では AI を起こさない（<a href="https://github.com/gamasenninn/tealus/issues/363">#363</a>）</li>
+<li>認可は接続時のままにせず、定期的に取り直す（<a href="https://github.com/gamasenninn/tealus/issues/360">#360</a>）</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">★ 更新時の急所</p>
+<ul>
+<li>★ <strong>Node 24 が必須</strong>（<code>engines</code> を <code>&gt;=24.0.0</code> に。実行時の要件は以前から 24 で、宣言を実態に合わせたもの）</li>
+<li>★ cc-bridge を使っている場合は、受け取る側の <code>listen-tealus</code> skill も差し替える</li>
+</ul>
+</div>
+<p><a href="https://github.com/gamasenninn/tealus/compare/v0.7.0...v0.8.0">変更履歴 v0.7.0...v0.8.0（23 コミット）</a> ／ <a href="https://github.com/gamasenninn/tealus/releases/tag/v0.8.0">リリースページ</a></p>
 <h2 id="v070-2026731">v0.7.0 — 出したものが端末に届き、使うほど指示が短くなる（2026年7月31日）<a class="headerlink" href="#v070-2026731" title="Permanent link">&para;</a></h2>
 <p>iOS の PWA に更新が届かない構造的な問題を根治し、あわせてエージェントへの指示を「登録」させず過去の自分の投稿から再利用できるようにしたリリースです。</p>
 <p><strong>主な変更</strong></p>
@@ -3607,7 +3809,7 @@
 <li><strong>PWA 更新検知</strong>（<a href="https://github.com/gamasenninn/tealus/issues/355">#355</a> / <a href="https://github.com/gamasenninn/tealus/issues/356">#356</a>）— 新しいクライアントが自分の陳腐化に気づいて更新バナーを出すようになりました。<strong>プロフィール画面の下部にビルド ID が常時表示</strong>され、実機が新旧どちらかを目視で判定できます</li>
 <li><strong>エージェント指示の履歴ピッカー</strong>（<a href="https://github.com/gamasenninn/tealus/issues/354">#354</a> / <a href="https://github.com/gamasenninn/tealus/issues/357">#357</a> / <a href="https://github.com/gamasenninn/tealus/issues/358">#358</a>）— 🤖 パネルに「最近の指示」が出ます。登録は不要で、過去に自分が送った <code>@アシスタント</code> / <code>@cc-*</code> 宛のメッセージをそのまま再利用できます。PC では <code>/</code> → <code>↑</code> がシェルの履歴と同じ操作です。「直近の画像 N 枚で〜」のように数字だけが変わる指示は 1 件にまとまり、<strong>変わる位置だけが選択状態</strong>で挿入されます（挿入するだけで、送信はしません）</li>
 <li><strong>ルームのタグ削除</strong>（<a href="https://github.com/gamasenninn/tealus/issues/351">#351</a>）— 従来は追加のみでしたが、タグ画面の「管理」トグルから削除できるようになりました</li>
-<li><strong>LINE の複数画像を 1 メッセージにまとめる</strong>（<a href="https://github.com/gamasenninn/tealus/issues/353">#353</a>）— 順不同で別々に届く画像を待ち合わせて 1 件に再構成します（待ち時間は <code>LINE_IMAGESET_FLUSH_MS</code>、既定 15 秒）。詳細は <a href="../guide/integration/line-bridge/">LINE Bridge 連携</a></li>
+<li><strong>LINE の複数画像を 1 メッセージにまとめる</strong>（<a href="https://github.com/gamasenninn/tealus/issues/353">#353</a>）— 順不同で別々に届く画像を待ち合わせて 1 件に再構成します（待ち時間は <code>LINE_IMAGESET_FLUSH_MS</code>。当時の既定は 15 秒、v0.11.0 で 60 秒に）。詳細は <a href="../guide/integration/line-bridge/">LINE Bridge 連携</a></li>
 <li><strong>organon なしでも語彙の正規化が効く</strong>（<a href="https://github.com/gamasenninn/tealus/issues/348">#348</a> / <a href="https://github.com/gamasenninn/tealus/issues/349">#349</a>）— 辞書テーブルから <code>dictionary.local.ttl</code> を発行し、エージェントはこれを優先して読みます。organon を導入していない環境でも別名→正規名の正規化が生き続けます</li>
 </ul>
 <div class="admonition warning">

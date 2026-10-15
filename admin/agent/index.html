@@ -2966,6 +2966,11 @@
 <td>採用者の手元 Claude Code</td>
 <td><code>@cc-{project}</code> / <code>@{alias}</code> mention でリアルタイム連携（<a href="https://github.com/gamasenninn/tealus/issues/213">#213</a>、詳細は <a href="../../dev/agents/">Agent ガイド</a>）</td>
 </tr>
+<tr>
+<td><strong>LINE Bridge</strong> (Inbound、v0.3.0〜)</td>
+<td>webhook <code>POST /api/line/webhook/&lt;LINE_WEBHOOK_SECRET_PATH&gt;</code></td>
+<td>LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は <a href="../../guide/integration/line-bridge/">LINE Bridge 連携</a>）</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition danger">
@@ -2983,7 +2988,6 @@
 <p>サブスクリプション認証（<code>LIGHTV2_AUTH=subscription</code> / <code>DEEP_CODEX_AUTH=subscription</code>）では、<strong>mini 系は系統ごと使えません</strong>（400 になる）。また「新しい名前なら使える」とも限らず、<strong>名前ごとに可否が違います</strong>。</p>
 <p>★ 失敗したときの表示が <code>auth failed (unauthorized)</code> になることがあり、<strong>再ログインの問題に見えて誤誘導されます</strong>。認証ではなくモデル名を疑ってください。設定の取り違えは agent-server の起動時に警告が出ます（止まりはしません）。</p>
 </div>
-<p>| <strong>LINE Bridge</strong> (Inbound、v0.3.0〜) | webhook <code>POST /api/line</code> | LINE Official Account → Tealus ルーム投影（7 type 対応：text / image / audio / video / file / sticker / location、詳細は <a href="../../guide/integration/line-bridge/">LINE Bridge 連携</a>） |</p>
 <h2 id="role-phase-1-de-v030">ゲストユーザ role — Phase 1 〜 D/E 運用可能化（v0.3.0〜）<a class="headerlink" href="#role-phase-1-de-v030" title="Permanent link">&para;</a></h2>
 <p>v0.3.0 で <strong>ゲストユーザ role</strong> が追加 (<a href="https://github.com/gamasenninn/tealus/issues/282">#282</a> Phase 1 MVP)、v0.3.0 後 (2026-06-16) で <strong>Phase D/E 運用可能化</strong> + 招待ガード fail-closed 修正が反映されました。<code>users.role</code> は <code>admin / user / guest</code> の 3 種類。</p>
 <h3 id="phase-1-v030-3">Phase 1 (v0.3.0) — 3 層構造の基礎<a class="headerlink" href="#phase-1-v030-3" title="Permanent link">&para;</a></h3>
@@ -3151,7 +3155,7 @@
 <tr>
 <td><code>gemini</code></td>
 <td>Gemini で合成</td>
-<td><code>GEMINI_API_KEY</code>（★ <strong>有料プラン</strong>で。無料枠は送った文が製品改善に使われます）</td>
+<td><strong><code>GOOGLE_API_KEY</code></strong>（agent-server の <code>.env</code>。★ <strong>有料プラン</strong>で。無料枠は送った文が製品改善に使われます）。★ server 側の文字起こし（<code>STT_BACKEND=gemini</code>）の鍵 <code>GEMINI_API_KEY</code> とは<strong>別の変数</strong>です</td>
 </tr>
 <tr>
 <td><code>browser</code></td>

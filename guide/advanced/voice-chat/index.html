@@ -2611,7 +2611,7 @@
 
 
 <h1 id="ai">会話モード（AI と音声で話す）<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h1>
-<p>AI と<strong>声でそのまま往復する</strong>画面です（v0.10.0、<a href="https://github.com/gamasenninn/tealus/issues/389">#389</a> <a href="https://github.com/gamasenninn/tealus/issues/405">#405</a>）。押して話す → 文字起こし → 返事を待つ、という普段の音声メッセージと違い、<strong>電話のようにやり取り</strong>できます。壁打ち・考えの整理に向いています。</p>
+<p>AI と<strong>声で往復する</strong>画面です（v0.10.0、<a href="https://github.com/gamasenninn/tealus/issues/389">#389</a> <a href="https://github.com/gamasenninn/tealus/issues/405">#405</a>）。録音して送る → 文字起こし → 返事を待つ、という普段の音声メッセージと違い、<strong>トランシーバーのように押して話すと、すぐ声で返事が来ます</strong>。壁打ち・考えの整理に向いています。</p>
 <h2 id="_1">使えるようにする（部屋の管理者）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>会話モードは<strong>部屋ごとに開ける</strong>機能で、<strong>既定では閉じています</strong>。</p>
 <p>部屋の管理者が、トーク画面右上の <strong>≡</strong> → ルーム設定（管理者）の「<strong>AI と音声で話す</strong>」を「<strong>このルームで開く</strong>」にします。開けていない部屋には、ボタンは 1 つも増えません。</p>
@@ -2619,16 +2619,19 @@
 <ol>
 <li>トーク画面のヘッダーの <strong>マイクのアイコン</strong>（「AI と話す」）を押す</li>
 <li>専用の画面が開き、AI につながる</li>
-<li>そのまま話す。画面には今の状態（<strong>聞いています</strong>／<strong>話しています</strong> など）が必ず出ます</li>
-<li>
-<p>AI が話している途中でも、話しかければ割り込めます</p>
-</li>
-<li>
-<p>人名・機種名など、声では通じにくい言葉は、下の欄（「打って送る」）に<strong>文字で打って送れます</strong></p>
-</li>
+<li>画面下の「<strong>押しながら話す</strong>」ボタンを<strong>押している間だけ</strong>、こちらの声が届きます（離すと AI が答えます）。待っている間は「押しながら話してください」と出ます</li>
+<li>画面には今の状態（<strong>聞いています</strong>／<strong>話しています</strong>／<strong>調べています</strong> など）が必ず出ます</li>
+<li>AI が話している途中でボタンを押すと、<strong>AI の声が止まって割り込めます</strong></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">話しかけるだけでは届きません</p>
+<p>会話モードは<strong>押して話す（PTT）方式</strong>です。ボタンを押さずに話しても AI には届きません（以前このページは「そのまま話す」「話しかければ割り込める」と書いていましたが、誤りでした）。</p>
+</div>
+<ul>
+<li>人名・機種名など、声では通じにくい言葉は、下の欄（「打って送る」）に<strong>文字で打って送れます</strong></li>
 <li>切れたときは「<strong>もう一度つなぐ</strong>」が出ます。<strong>自分から押すまでつなぎ直しません</strong>（使っている間だけ費用がかかるため）</li>
 <li>トランシーバーにつないでいる間・通話中は、ボタンは出ません（音が重なるため）</li>
-</ol>
+</ul>
 <h2 id="_3">会話は部屋に残りません — 残したいものだけ「このルームに残す」<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>会話モードのやり取りは、<strong>部屋の投稿にはなりません</strong>（組織の記録に入れずに気軽に話すための入口です）。</p>
 <p>良いと思った AI の答えがあったら、**会話の途中で「このルームに残す」**を押してください。その答えが、いま居る部屋に投稿されます（<code>🎙 会話モードから</code> の印つき）。残せるのは AI の発言です。</p>

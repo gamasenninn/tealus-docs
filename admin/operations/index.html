@@ -2944,7 +2944,8 @@
 <div class="admonition danger">
 <p class="admonition-title">★ agent-server を使う場合、secret は両側に同じ値が要ります</p>
 <p><a href="https://github.com/gamasenninn/tealus/issues/478">#478</a> から、agent-server の受け口も署名を検証します。<strong>本体の Webhook 登録に入れた secret と、<code>agent-server/.env</code> の <code>WEBHOOK_SECRET</code> に同じ値</strong>を設定してください。</p>
-<p>片方だけだと <strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿は普通に成功して見えるため、送った側からは気づけません）。<code>agent-server</code> の <code>npm run doctor</code> でも未設定を検出できます。</p>
+<p><strong>agent-server 側に <code>WEBHOOK_SECRET</code> があり、本体側の secret が無い・違う</strong>と、<strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿は普通に成功して見えるため、送った側からは気づけません）。</p>
+<p>逆に <strong>agent-server 側が未設定</strong>だと、署名を検査せずに受け付けます（起動時に警告が出るだけで動きます）。動くからといって安全ではないので、両側に設定してください。<code>agent-server</code> の <code>npm run doctor</code> でも未設定を検出できます。</p>
 </div>
 <h3 id="_8">リトライ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>配信は<strong>最大 3 回試行</strong>します（失敗時に 5 秒後・15 秒後の 2 回再試行）。<strong>4xx は再試行しません</strong>（受け側の設定誤りは繰り返しても直らないため）。</p>
@@ -2962,14 +2963,20 @@
 <h2 id="_10">バックアップ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h3 id="_11">データベース<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <p>PostgreSQLの標準的なバックアップ手法を使用します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>tealus<span class="w"> </span>tealus<span class="w"> </span>&gt;<span class="w"> </span>backup-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 開発用（docker-compose.yml、コンテナ tealus_postgres）</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker-compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>tealus<span class="w"> </span>tealus<span class="w"> </span>&gt;<span class="w"> </span>backup-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># フル構成（docker-compose.full.yml、コンテナ tealus_postgres_prod）</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.full.yml<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>tealus<span class="w"> </span>tealus<span class="w"> </span>&gt;<span class="w"> </span>backup-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
 </code></pre></div>
+<p>★ コンテナ名は構成で違います。<strong>開発用は <code>tealus_postgres</code>、フル構成は <code>tealus_postgres_prod</code></strong> です（下の PowerShell の例もこれに合わせて置き換えてください）。<code>-f docker-compose.full.yml</code> を付け忘れると、フル構成の DB には届きません。</p>
 <div class="admonition danger">
 <p class="admonition-title">★ Windows の PowerShell 5.1 では上の <code>&gt;</code> を使わないでください</p>
 <p>PowerShell の <code>&gt;</code> が<strong>文字コードを変えてしまい、ダンプが壊れます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/566">#566</a>）。<strong>壊れたことは復元しようとするまで分かりません。</strong></p>
 <p>コンテナの中でファイルに書いてから取り出してください（custom 形式）:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">docker</span> <span class="n">exec</span> <span class="n">tealus_postgres</span> <span class="n">pg_dump</span> <span class="n">-U</span> <span class="n">tealus</span> <span class="n">-Fc</span> <span class="o">-f</span> <span class="p">/</span><span class="n">tmp</span><span class="p">/</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span> <span class="n">tealus</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">docker</span> <span class="nb">cp </span><span class="n">tealus_postgres</span><span class="p">:/</span><span class="n">tmp</span><span class="p">/</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span> <span class="p">.\</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c"># フル構成なら tealus_postgres_prod に置き換える</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">docker</span> <span class="n">exec</span> <span class="n">tealus_postgres</span> <span class="n">pg_dump</span> <span class="n">-U</span> <span class="n">tealus</span> <span class="n">-Fc</span> <span class="o">-f</span> <span class="p">/</span><span class="n">tmp</span><span class="p">/</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span> <span class="n">tealus</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">docker</span> <span class="nb">cp </span><span class="n">tealus_postgres</span><span class="p">:/</span><span class="n">tmp</span><span class="p">/</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span> <span class="p">.\</span><span class="n">backup</span><span class="p">.</span><span class="n">dump</span>
 </code></pre></div>
 </div>
 <div class="admonition warning">

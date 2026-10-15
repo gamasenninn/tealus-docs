@@ -1073,17 +1073,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        メンション履歴
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#ai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2586,17 +2575,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        メンション履歴
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#ai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2658,11 +2636,13 @@
 <p>以前このページには「<code>@all</code>（全員）」「<code>@here</code>（オンラインの人）」の表がありましたが、<strong>誤りでした</strong>。Tealus にはこれらを特別扱いする処理がなく、書いても通常の文字として扱われ、全員に通知は飛びません。</p>
 </div>
 <h2 id="_3">メンションの表示<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>メッセージ内の <code>@名前</code> はハイライト表示されます。メンションされた相手には、通常のメッセージよりも優先度の高いプッシュ通知が送信されます。</p>
-<h2 id="_4">メンション履歴<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>自分がメンションされたメッセージだけをフィルタ表示できます。</p>
+<p>メッセージ内の <code>@名前</code> はハイライト表示されます。プッシュ通知は通常のメッセージと同じ扱いです（メンションだけ優先度を上げる処理はありません）。</p>
+<div class="admonition note">
+<p class="admonition-title">以前の記述の誤り</p>
+<p>以前このページには「メンションされた相手には優先度の高いプッシュ」「自分がメンションされたメッセージだけをフィルタ表示できる」と書いていましたが、<strong>どちらもそのような処理・画面はありません</strong>。</p>
+</div>
 <h2 id="ai">AIアシスタントとの連携<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h2>
-<p><code>@アシスタント名</code> に続けて <code>/</code> を入力すると、スラッシュコマンドの候補が表示されます。AIエージェントに対して特定の操作を指示できます。</p>
+<p>PC で、<strong>アシスタントのいる部屋の入力欄が空のときに <code>/</code> を打つ</strong>と、「最近の指示」のパネルが開きます（スマートフォンは 🤖 ボタン）。詳しくは <a href="../agent-entry/">エージェントの呼び出し口</a> を参照してください。</p>
 <h3 id="cc-proj-v023253"><code>cc-proj</code> 仮想ユーザー（v0.2.3〜、<a href="https://github.com/gamasenninn/tealus/issues/253">#253</a>）<a class="headerlink" href="#cc-proj-v023253" title="Permanent link">&para;</a></h3>
 <p>メンション picker には、Bot メンバー以外に <strong><code>@cc-{project}</code> 形式の仮想ユーザー</strong>が候補として表示されます。Tealus 上のメッセージから採用者の手元 <a href="../../../dev/agents/#claude-code-session-cc-tealus">Claude Code session（cc-tealus）</a> を呼び出すための mention で、実体は agent-server の dispatcher が file beacon に追記して Claude Code 側を sub-second で wake する仕組みです。</p>
 <p><code>agent-server/config/cc-aliases.json</code> で alias を設定すれば、<code>@Claude</code> のような自然な mention 名でも同じ session に routing できます（<a href="https://github.com/gamasenninn/tealus/issues/263">#263</a>、設定方法は <a href="../../../dev/agents/#cc-aliases-json">Agent ガイド</a> を参照）。</p>

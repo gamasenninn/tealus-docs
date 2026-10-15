@@ -3014,7 +3014,7 @@
 <tr>
 <td>文字起こし・読み上げ</td>
 <td>音声・文が OpenAI / Google（<code>STT_BACKEND=gemini</code>・<code>TTS_PROVIDER=gemini</code> のとき）へ</td>
-<td><code>STT_BACKEND=local</code>・<code>TTS_PROVIDER=browser</code></td>
+<td>読み上げは <code>TTS_PROVIDER=browser</code>（または <code>none</code>）。文字起こしは <code>STT_BACKEND=local</code> に加えて <code>STT_LOCAL_STRICT=1</code>（失敗時に OpenAI へ切り替えない）。★ ただし<strong>文字起こしの整形（AI 整形）は経路に関係なく OpenAI に文を送ります</strong>。完全に止めるには音声の文字起こし自体を使わない運用になります</td>
 </tr>
 </tbody>
 </table>

@@ -2884,6 +2884,10 @@
 </tbody>
 </table>
 <p>右上の「グローバル設定」ボタンから、全エージェント共通の設定（<code>settings.json</code>・<code>mcp_config.json</code>）を編集できます。</p>
+<div class="admonition note">
+<p class="admonition-title">今の AI（Light v2）が読まない項目はグレーアウトされます（<a href="https://github.com/gamasenninn/tealus/issues/590">#590</a>）</p>
+<p>グローバルの「エージェント設定」画面（道具の有効/無効・Max Turns など）では、今の AI の経路で読まれない項目が消されずに灰色になり、理由が出ます。保存はすぐに反映され、再起動が要るのはグローバルの MCP 設定だけです。ルーム個別設定の保存は次の投稿から反映されます。</p>
+</div>
 <h3 id="_5">ルーム一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>エージェントごとに、参加しているルームの一覧が表示されます。</p>
 <table>
@@ -2935,13 +2939,12 @@
 <td>応答モード</td>
 <td>自動 / 全応答 / メンションのみ / OFF</td>
 </tr>
+<tr>
+<td>読み上げエンジン ／ 声</td>
+<td>部屋ごとのエンジン（Aivis / OpenAI / Gemini）と声（v0.10.0 <a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>）。鍵が未設定のエンジンは選べず、<code>TTS_PROVIDER</code> が <code>browser</code> / <code>none</code> なら効かない旨が出る。アプリ内の ≡ → ルーム設定でも同じ設定ができる</td>
+</tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">今の AI（Light v2）が読まない項目はグレーアウトされます（<a href="https://github.com/gamasenninn/tealus/issues/590">#590</a>）</p>
-<p>理由が横に表示されます。保存は<strong>次の投稿から反映</strong>され、再起動が要るのはグローバルの MCP 設定だけです。</p>
-</div>
-<p>| 読み上げエンジン ／ 声 | 部屋ごとのエンジン（Aivis / OpenAI / Gemini）と声（v0.10.0 <a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>）。鍵が未設定のエンジンは選べず、<code>TTS_PROVIDER</code> が <code>browser</code> / <code>none</code> なら効かない旨が出る。アプリ内の ≡ → ルーム設定でも同じ設定ができる |</p>
 <h4 id="light">Light プロンプトタブ<a class="headerlink" href="#light" title="Permanent link">&para;</a></h4>
 <p>Light Agent に対する追加指示をテキストエリアで編集します。ルームごとにエージェントの性格や応答スタイルをカスタマイズできます。</p>
 <h4 id="deep">Deep プロンプトタブ<a class="headerlink" href="#deep" title="Permanent link">&para;</a></h4>

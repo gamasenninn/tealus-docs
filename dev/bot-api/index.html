@@ -3035,8 +3035,35 @@
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">★ <code>message.created</code> は socket 経路でのみ発火します（不変条件）</p>
-<p>メッセージ送信には <strong>Socket.IO 経由</strong>と <strong>REST 経由</strong>の 2 つの経路がありますが、<strong><code>message.created</code> webhook が発火するのは socket 経路だけ</strong>です。REST で送ったメッセージでは発火しません（v0.6.0 <a href="https://github.com/gamasenninn/tealus/issues/342">#342</a> で本体の不変条件として明文化）。</p>
+<p class="admonition-title">★ <code>message.created</code> が出る経路と出ない経路があります</p>
+<p><code>message.created</code> webhook（= エージェントが起きる合図）は、<strong>投稿の経路によって出たり出なかったりします</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>出る</th>
+<th>出ない</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面からの投稿（Socket.IO の <code>message:send</code>）</td>
+<td><code>POST /api/rooms/:id/messages</code>（REST の新規投稿・スタンプ）</td>
+</tr>
+<tr>
+<td>Bot API のテキスト投稿（<code>POST /api/bot/push</code>）・ルームトリガー</td>
+<td>Bot API の画像・ファイル（<code>/push-image</code>・<code>/push-file</code>、意図）</td>
+</tr>
+<tr>
+<td>音声メッセージ（<code>POST /api/rooms/:id/voice</code>）</td>
+<td>素のメディアアップロード（<code>POST /api/rooms/:id/media</code>、意図）</td>
+</tr>
+<tr>
+<td>メディアの転送（<code>POST /api/rooms/:id/media/forward</code>）</td>
+<td>LINE からの投稿・システムメッセージ</td>
+</tr>
+</tbody>
+</table>
+<p>経路ごとの一覧（配信・通知・webhook・リンクプレビュー）は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/07_投稿経路と付随処理.md">07_投稿経路と付随処理.md</a> が正です。以前このページは「socket 経路だけ」と書いていましたが、古くなっていました。</p>
 <p>この差は、<strong>メッセージは投稿されているのにエージェントが起動しない</strong>という形で表面化します。実際、汎用フォーム（<a href="https://github.com/gamasenninn/tealus/issues/336">#336</a>）の実装時に同じ事故が起きました。クライアント側の送信経路は <code>sendRoomMessage</code> の 1 関数に集約され、「socket 優先 / REST フォールバック」がそこだけに存在する形になっています。</p>
 </div>
 <p>管理画面の「Webhook」タブから登録するか、APIで登録します。<code>room_id</code> を <code>NULL</code> にすると全ルームのイベントを受信します。</p>
@@ -3044,7 +3071,7 @@
 <p>ペイロードは HMAC-SHA256 で署名されます。</p>
 <div class="admonition danger">
 <p class="admonition-title">★ agent-server も受け側として検証します（<a href="https://github.com/gamasenninn/tealus/issues/478">#478</a>）</p>
-<p>本体の Webhook 登録に入れた secret と、<code>agent-server/.env</code> の <strong><code>WEBHOOK_SECRET</code> に同じ値</strong>を設定してください。片方だけだと <strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿自体は成功して見えます）。自作の受け側でも、下の方法で必ず検証してください。</p>
+<p>本体の Webhook 登録に入れた secret と、<code>agent-server/.env</code> の <strong><code>WEBHOOK_SECRET</code> に同じ値</strong>を設定してください。<strong>agent-server 側にあり、本体側が無い・違う</strong>と <strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿自体は成功して見えます）。agent-server 側が未設定だと検査せずに受け付けます（警告のみ）。自作の受け側でも、下の方法で必ず検証してください。</p>
 </div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>X-Tealus-Signature: sha256=HMAC(secret, body)
 </code></pre></div>

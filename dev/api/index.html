@@ -3487,6 +3487,12 @@
 <td>必要</td>
 </tr>
 <tr>
+<td>GET</td>
+<td><code>/api/rooms/:id/prompts/history?targets=アシスタント,cc-tealus&amp;limit=30</code></td>
+<td>自分がこのルームで送った「宛先 + 本文」の投稿を新しい順に（「最近の指示」パネル、<a href="https://github.com/gamasenninn/tealus/issues/354">#354</a>）</td>
+<td>必要</td>
+</tr>
+<tr>
 <td>PATCH</td>
 <td><code>/api/rooms/:id/messages/:msgId/publish</code></td>
 <td>お知らせに公開/非公開（送信者か部屋の管理者）</td>
@@ -4144,29 +4150,46 @@
 </code></pre></div>
 <h3 id="get-apibotmessagesidmedia"><code>GET /api/bot/messages/:id/media</code> — メッセージのメディア取得<a class="headerlink" href="#get-apibotmessagesidmedia" title="Permanent link">&para;</a></h3>
 <p>画像メッセージ・音声メッセージのメディアデータを取得します。AI エージェントが画像を<strong>直接視認</strong>するためのエンドポイントです（<a href="https://github.com/gamasenninn/tealus/issues/185">#185</a>）。</p>
+<p><strong>JSON</strong> を返します（バイナリではありません）。</p>
 <table>
 <thead>
 <tr>
-<th>メディア種別</th>
-<th>レスポンス</th>
+<th>フィールド</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>画像</td>
-<td>binary stream（Content-Type: <code>image/*</code>）。MCP ツール（<code>get_message_media</code>）経由では MCP 仕様の image content に変換され、AI が画像内容を直接認識可能</td>
+<td><code>media_count</code></td>
+<td>そのメッセージの添付の数。複数あるときは <code>?index=0,1,…</code> で 1 枚ずつ取る（範囲外は 400）</td>
 </tr>
 <tr>
-<td>音声</td>
-<td>文字起こしテキストを優先返却（<code>voice_transcriptions.formatted_text</code>）。生 wav が必要な場合は <code>?raw=1</code></td>
+<td><code>media</code></td>
+<td>全添付のメタ情報（<code>index</code> / <code>mime_type</code> / <code>file_name</code> / <code>file_size</code>、本体なし）</td>
+</tr>
+<tr>
+<td><code>index</code> / <code>mime_type</code> / <code>file_name</code> / <code>file_size</code></td>
+<td>今回取った 1 件</td>
+</tr>
+<tr>
+<td><code>data_base64</code></td>
+<td>中身（base64）。★ <strong>10MB を超えるときは省き</strong>、<code>error</code> に理由が入る</td>
+</tr>
+<tr>
+<td><code>transcription</code></td>
+<td>音声メッセージのときだけ。<code>{ raw_text, formatted_text, status }</code>（最新版）</td>
 </tr>
 </tbody>
 </table>
 <p><strong>curl サンプル</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>curl<span class="w"> </span><span class="s2">"http://localhost:3000/api/bot/messages/</span><span class="nv">$MSG_ID</span><span class="s2">/media"</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>curl<span class="w"> </span><span class="s2">"http://localhost:3000/api/bot/messages/</span><span class="nv">$MSG_ID</span><span class="s2">/media?index=0"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>-o<span class="w"> </span>output.jpg
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.data_base64'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>output.jpg
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">以前の記述の誤り</p>
+<p>以前このページは「画像は binary stream で返る」「音声は <code>?raw=1</code> で生 wav」と書いていましたが、<strong>どちらも誤り</strong>でした。返事は常に JSON で、<code>raw</code> というクエリはありません。</p>
+</div>
 <div class="admonition info">
 <p class="admonition-title">MCP ツールとの関係</p>
 <p><a href="../mcp/">Tealus MCP</a> の <code>get_message_media</code> ツールは、本 HTTP API のラッパーです。AI エージェントから利用する場合は MCP ツール経由が標準で、MCP 側で画像/音声の種別判定と MCP 仕様の返却形式（image content / 文字起こしテキスト）への変換が行われます。HTTP API として直接呼ぶことも可能です。</p>
