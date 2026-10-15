@@ -49,9 +49,9 @@ SVG 図の構造を grep 可能な形で残した詳細 reference (基本 servic
 │  └────┬─────┘ └────┬─────┘ └──────────────────┘ │
 │       │             │                            │
 │  ┌────▼─────────────▼────┐  ┌─────────────────┐ │
-│  │     PostgreSQL 16     │  │    Redis 7       │ │
-│  │      (RLS有効)        │  │  (セッション/    │ │
-│  │     :5432             │  │   在席管理)      │ │
+│  │     PostgreSQL 16     │  │ 在席・見ている部屋 │ │
+│  │      (RLS有効)        │  │ (プロセス内の Map、│ │
+│  │     :5432             │  │  Socket.IO の中)  │ │
 │  └───────────────────────┘  └─────────────────┘ │
 └──────────┬──────────────────────┬────────────────┘
            │ Webhook              │ Proxy（通話 / TTS legacy / /mcp HTTP transport）
@@ -175,19 +175,25 @@ Socket.IO接続時も `handshake.auth.token` でJWTを検証します。
 
 AIエージェントの回答を音声で読み上げる経路には **default（Socket.IO blob）** と **legacy（mediasoup PlainTransport）** の 2 種類があります。default は rtc-server なしで動作するため、Mac / Windows を含む全プラットフォームでセットアップが容易です。
 
-### default 経路: Socket.IO blob 配信
+### default 経路: URL を Socket.IO で配信
 
 環境変数 `TTS_BROADCAST_MEDIASOUP` が未設定または `false` のときの default 経路です（[#189](https://github.com/gamasenninn/tealus/issues/189)）。
 
 ```
 agent-server: speakMessage(roomId, text)
   → テキスト前処理（Markdown除去・URL省略・500文字制限）
-  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
-  → server (HTTP) に WAV をPOST
-      └── Socket.IO emit `tts:audio` (binary blob, room broadcast)
-          → 各 client が <audio> 要素で再生
+  → 部屋の設定でエンジンを決める（Aivis / OpenAI / Gemini、#444）→ 音声バイナリ
+  → server の POST /api/bot/tts-audio に音声を渡す（メモリに 5 分保持）
+      └── Socket.IO emit `tts:audio` { url: /api/bot/tts-audio/:id }（room broadcast）
+          → 各 client が URL から取得して <audio> 要素で再生
               └── Web Audio API GainNode で音量補正（1.0 超のブースト可能）
+
+TTS_PROVIDER=browser: 合成せず POST /api/bot/tts-speak → Socket.IO `tts:speak`
+  → 各 client の Web Speech API が読み上げる（DB に書かない）
 ```
+
+!!! note "以前の記述の誤り"
+    以前この節は「`tts:audio` で WAV を binary blob として配信」と書いていましたが、実装は**音声の URL を配り、各端末が取りに行く**形です。
 
 | メリット | 内容 |
 |---|---|
@@ -244,6 +250,18 @@ ffmpeg -re -i <wavFile> \
 
 | 状況 | 推奨経路 |
 |---|---|
-| 新規導入 / Mac / Windows / Docker で簡素化したい | **default**（Socket.IO blob） |
+| 新規導入 / Mac / Windows / Docker で簡素化したい | **default**（URL を Socket.IO で配る） |
 | 既存の mediasoup 運用と互換性を維持したい | legacy（`TTS_BROADCAST_MEDIASOUP=true`） |
 | 通話機能と音声 mixing を共通インフラで処理したい | legacy |
+
+## 本体の設計書
+
+機能ごとの設計と、その判断の理由（実測・やめたこと・受け入れた穴）は本体リポジトリの `docs/` にあります。新しい機能に手を入れる前に、該当するものを読んでください。
+
+| 設計書 | 内容 |
+|---|---|
+| [05_実装ノート_不変条件と落とし穴.md](https://github.com/gamasenninn/tealus/blob/main/docs/05_実装ノート_不変条件と落とし穴.md) | 壊してはいけない約束（`JWT_SECRET` の必須化・エラーの返し方など） |
+| [06_ルームトリガー設計.md](https://github.com/gamasenninn/tealus/blob/main/docs/06_ルームトリガー設計.md) | 条件で定型メッセージを投稿する（[ルームトリガーと見張り](../admin/automation.md)） |
+| [07_投稿経路と付随処理.md](https://github.com/gamasenninn/tealus/blob/main/docs/07_投稿経路と付随処理.md) | 投稿の経路（socket / REST / bot / voice / LINE）と、投稿のあとに走る処理 |
+| [08_会話モード設計.md](https://github.com/gamasenninn/tealus/blob/main/docs/08_会話モード設計.md) | AI と音声で話す（[会話モード](../guide/advanced/voice-chat.md)） |
+| [09_見張り設計.md](https://github.com/gamasenninn/tealus/blob/main/docs/09_見張り設計.md) | 来るはずのものが来ないときに知らせる |

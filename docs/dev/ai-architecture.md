@@ -58,9 +58,10 @@ Agent Server (port 4000)
 | パターン | 振り分け先 |
 |---|---|
 | `/deep` コマンド | Deep Agent |
-| `/light` コマンド | Light Agent v1（OpenAI Agents SDK） |
+| `/light` コマンド | Light Agent（既定は **v2**、v0.4.0〜。`AGENT_LIGHT_BACKEND=v1` で v1） |
 | `/light2` コマンド（v0.3.0〜、[#258](https://github.com/gamasenninn/tealus/issues/258)） | Light Agent v2（codex SDK backed） |
 | 挨拶パターン（こんにちは、ありがとう等） | Router が直接応答 |
+| ★ **読んでまとめる依頼**（議事録・要約・まとめて・一覧に・整理して） | **Light**（Deep キーワードより先に見る、[#567](https://github.com/gamasenninn/tealus/issues/567)。以前は「動画から議事録」などが Deep に回っていた） |
 | Deep キーワード（コード、リファクタ、デバッグ、実装、PR等） | Deep Agent |
 | 該当なし | 第2段へ |
 
@@ -80,13 +81,12 @@ Agent Server (port 4000)
 
 日常的な質問やタスクを高速に処理する軽量エージェントです。Light は v0.1.0 以来の **OpenAI Agents SDK 実装（v1）** に加え、v0.3.0 で **codex SDK backed の v2**（`/light2` prefix、[#258](https://github.com/gamasenninn/tealus/issues/258)）が並列追加されました。本セクションは主に Light v1 の構造を扱います。Light v1 と v2 の選び分けは [Agent ガイド](agents.md#light-v1-v2) を参照してください。
 
-### セッション管理（TealusSession）
+### 会話の文脈
 
-`TealusSession` クラスが Tealus の会話履歴を OpenAI Agents SDK の形式に変換します。
+Light は、必要な履歴を**自分で `get_messages` / `search_messages` を呼んで取りに行きます**。
 
-- Bot API からチャット履歴を取得
-- 直近 **20件**（`LIGHT_CONTEXT_MESSAGES`）のメッセージをコンテキストとして使用
-- 初回は DB から取得、以降はキャッシュに蓄積
+!!! note "`TealusSession` と `LIGHT_CONTEXT_MESSAGES` は削除されました（[#230](https://github.com/gamasenninn/tealus/issues/230)）"
+    以前は `TealusSession` が直近 20 件（`LIGHT_CONTEXT_MESSAGES`）を毎回渡していましたが、取り除かれました。`LIGHT_CONTEXT_MESSAGES` を設定しても何も起きません。
 
 ### システムプロンプト
 
@@ -250,9 +250,10 @@ speakMessage() → queue に追加
                     ↓
               テキスト前処理
                     ↓
-              Aivis Cloud API (0.3-0.5秒)
+              音声合成（Aivis / OpenAI / Gemini）
                     ↓
-              ffmpeg → RTP 送信
+              server へ渡して URL を配信
+              （legacy: ffmpeg → RTP 送信）
                     ↓
               isProcessing = false
               → キューに次があれば再度 processQueue()

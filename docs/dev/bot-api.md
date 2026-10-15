@@ -48,11 +48,13 @@ curl -X POST http://localhost:3000/api/bot/push-image \
 ### 音声送信
 
 ```bash
-curl -X POST http://localhost:3000/api/bot/voice \
+curl -X POST http://localhost:3000/api/rooms/<ルームUUID>/voice \
   -H "Authorization: Bearer $TOKEN" \
-  -F "room_id=ルームUUID" \
   -F "voice=@/path/to/audio.wav"
 ```
+
+!!! warning "`/api/bot/voice` はありません"
+    以前このページの例は `POST /api/bot/voice` でしたが、**そのような口はありません**（404）。音声は人の利用者と同じ `POST /api/rooms/:id/voice`（フィールド名 `voice`）で送ります。`tealus-cli` の `--voice` もこの口を使っています。画像は `POST /api/bot/push-image`（フィールド名 `image`）です。
 
 音声送信時は自動的に文字起こし（既定 `gpt-4o-mini-transcribe`、[#284](https://github.com/gamasenninn/tealus/issues/284)。env `WHISPER_MODEL` で切替可）+ AI整形が実行されます。
 
@@ -80,6 +82,8 @@ Tealusのイベントを外部HTTPエンドポイントに通知する機能で�
 | `member.joined` | メンバー参加 |
 | `member.left` | メンバー退会 |
 | `reaction.added` | リアクション追加 |
+| `message.updated` | メッセージ編集（ペイロード例は下） |
+| `voice.transcription_completed` | 音声の文字起こし（整形まで）が終わった |
 
 !!! warning "★ `message.created` は socket 経路でのみ発火します（不変条件）"
     メッセージ送信には **Socket.IO 経由**と **REST 経由**の 2 つの経路がありますが、**`message.created` webhook が発火するのは socket 経路だけ**です。REST で送ったメッセージでは発火しません（v0.6.0 [#342](https://github.com/gamasenninn/tealus/issues/342) で本体の不変条件として明文化）。
@@ -91,6 +95,9 @@ Tealusのイベントを外部HTTPエンドポイントに通知する機能で�
 ### 署名検証
 
 ペイロードは HMAC-SHA256 で署名されます。
+
+!!! danger "★ agent-server も受け側として検証します（[#478](https://github.com/gamasenninn/tealus/issues/478)）"
+    本体の Webhook 登録に入れた secret と、`agent-server/.env` の **`WEBHOOK_SECRET` に同じ値**を設定してください。片方だけだと **401 で弾かれ、エージェントが黙って起きません**（投稿自体は成功して見えます）。自作の受け側でも、下の方法で必ず検証してください。
 
 ```
 X-Tealus-Signature: sha256=HMAC(secret, body)

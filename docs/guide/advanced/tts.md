@@ -1,15 +1,19 @@
 # TTS 読み上げ
 
-AIエージェントの回答を音声で読み上げる機能です。Aivis Cloud API による高品質な日本語音声合成で、レイテンシ 0.3〜0.5秒のリアルタイム読み上げを実現しています。
+AIエージェントの回答を音声で読み上げる機能です。音声合成のエンジンは **Aivis Cloud / OpenAI / Gemini** から選べ、サーバー側で合成しない設定（各端末のブラウザ標準音声）もあります（管理者が `TTS_PROVIDER` で選択、[AIエージェント設定](../../admin/agent.md)）。
 
 ## 仕組み
 
 ```
 AIが回答テキストを生成
-  → Aivis Cloud API で音声合成（WAV）
-  → Socket.IO emit (binary blob) でルーム全員に配信
-  → ブラウザの <audio> 要素で再生
+  → agent-server が音声合成（Aivis / OpenAI / Gemini、部屋ごとに選べる）
+  → server に音声を渡す（メモリに 5 分保持）
+  → Socket.IO `tts:audio` で、音声の URL をルーム全員に知らせる
+  → 各端末がその URL から取得し、<audio> 要素で再生
       （Web Audio API GainNode で音量補正）
+
+TTS_PROVIDER=browser のときは合成せず、Socket.IO `tts:speak` で文を送り、
+各端末のブラウザ標準音声（Web Speech API）が読み上げる
 ```
 
 テキストメッセージの送信と音声合成は並行して処理されるため、チャットへのテキスト表示がブロックされることはありません。

@@ -43,6 +43,16 @@ node scripts/tealus-cli.ts send "グループ名" --image /path/to/image.jpg
 node scripts/tealus-cli.ts send "グループ名" --voice /path/to/audio.wav
 ```
 
+### 未読の確認・部屋の一覧
+
+```bash
+node scripts/tealus-cli.ts check                 # 全部屋の未読
+node scripts/tealus-cli.ts check "グループ名"     # その部屋だけ
+node scripts/tealus-cli.ts check --mark-read     # 表示した分を既読にする
+node scripts/tealus-cli.ts check --json          # JSON で出す
+node scripts/tealus-cli.ts rooms                 # 参加している部屋の一覧
+```
+
 ### ダイレクトメッセージ
 
 `@ユーザー名` を宛先に指定するとDMルームが自動作成されます。
@@ -66,8 +76,18 @@ node scripts/tealus-cli.ts send "グループ名" --voice --watch /path/to/direc
 
 | オプション | 説明 |
 |---|---|
-| `--ext .wav,.mp4,.mp3` | 対象ファイル拡張子（カンマ区切り） |
-| `--catch-up` | 未送信ファイルの自動送信 |
+| `--ext .wav,.mp4,.mp3` | 対象ファイル拡張子（カンマ区切り、既定 `.wav`） |
+| `--catch-up` | 起動時に未送信ファイルを自動送信 |
+| `--heartbeat <名前>` | 監視中、**1 分ごとに本体へ鼓動を送る**（[#595](https://github.com/gamasenninn/tealus/issues/595)）。本体の[見張り](../admin/automation.md)が、止まったこと・送り込みの詰まりに気づけます。名前は英数字と `. _ : -` だけ |
+
+### グローバルオプション
+
+| オプション | 説明 |
+|---|---|
+| `--env <file>` | 読み込む env ファイルを指定（例: `--env .env.trx`）。1 台で複数の bot を使い分けるとき |
+| `--bot-id <ID>` / `--bot-pass <PASS>` | bot の認証情報。env ファイルより優先 |
+
+設定が無いと「`--bot-id / --bot-pass を指定するか、scripts/.env に TEALUS_BOT_ID と TEALUS_BOT_PASS を設定してください`」で止まります。
 
 !!! info "ファイル書き込み完了検知"
     watchモードはファイルサイズが2回連続で同一になるまで待機してから送信します。書き込み途中のファイルが送信されることはありません。

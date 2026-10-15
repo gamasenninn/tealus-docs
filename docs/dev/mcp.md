@@ -140,7 +140,7 @@ HTTP transport は **JWT auth** を必須とし、`JWT_SECRET` を **Tealus 本�
 | 項目 | 状態 |
 |---|---|
 | **HTTP tools 呼び出し**（Outbound） | ✅ Phase 1 alpha で動作（Claude Code から `tealus-http · ✔ connected · 15 tools` を verify 済） |
-| **mention 通知 wake-up**（Inbound） | stdio + file beacon 経路に依存。HTTP では **未サポート**（Phase 2 で SSE event broker を予定） |
+| **mention 通知 wake-up**（Inbound） | ★ **v0.8.0 から HTTP でも届く**（`/agent-api/cc-queue/stream`、[#214](https://github.com/gamasenninn/tealus/issues/214)）。受け取りは `listen-tealus` skill の http mode、手順は本体の [setup-cc-remote.md](https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md) |
 | **stdio との関係** | stdio は v0.12.0+ でも維持、既存採用者環境は無変更。HTTP は `--transport=http` flag + JWT_SECRET 設定で opt-in |
 
 cross-machine 構成で **HTTP + cc-tealus stdio bridge 併用** が当面の現実解です。

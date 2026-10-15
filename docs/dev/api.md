@@ -12,6 +12,9 @@
 { "error": "エラーメッセージ" }
 ```
 
+- ★ **想定外の失敗（500）は、決まった文だけを返します**（[#603](https://github.com/gamasenninn/tealus/issues/603)）。中身（スタック・本体の中のパス）は返さず、サーバーの記録にだけ残します。`NODE_ENV` に関係ありません。状態の番号を持つ失敗（本文が大きすぎる 413・JSON が壊れている 400 など）は番号を保ち、本文は「リクエストを受け付けられませんでした」です
+- ★ **ID の形が正しくないと 400** です（[#543](https://github.com/gamasenninn/tealus/issues/543)）。以前は 500 になっていました。本文は「ID「…」の形が正しくありません。ID は省略せずに、36 文字のまま渡してください。」で、**途中で切った ID を渡した AI が自分で気づける**ようにしてあります
+
 ### ステータスコード
 
 | コード | 用途 |
@@ -70,6 +73,7 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | POST | `/api/auth/register` | ユーザー登録（★ **人の利用者が 0 人のときだけ**。1 人でもいると 403、[#469](https://github.com/gamasenninn/tealus/issues/469)。2 人目以降は管理 API `/api/admin/users`） | 不要 |
 | POST | `/api/auth/login` | ログイン（JWT発行） | 不要 |
 | GET | `/api/auth/me` | 現在ユーザー取得 | 必要 |
+| GET | `/api/auth/authz?room_id=` | この人は誰か・このルームでの役割（[#458](https://github.com/gamasenninn/tealus/issues/458)）。agent-server が**利用者自身の鍵で**聞き、設定を触らせてよいかを判断する。返すのは事実だけ | 必要 |
 | PUT | `/api/auth/profile` | プロフィール更新（表示名・ステータス） | 必要 |
 | POST | `/api/auth/avatar` | プロフィール画像アップロード | 必要 |
 | PUT | `/api/auth/password` | パスワード変更 | 必要 |
@@ -89,7 +93,9 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | POST | `/api/rooms` | グループ作成 | 必要 |
 | POST | `/api/rooms/direct` | 1対1ルーム作成 | 必要 |
 | GET | `/api/rooms/:id` | ルーム詳細 | 必要 |
-| PUT | `/api/rooms/:id` | グループ名変更 | 必要 |
+| PUT | `/api/rooms/:id` | ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など。`is_announcement` は admin のみ） | 必要 |
+| PUT | `/api/rooms/:id/notification` | **自分の分だけ**このルームの通知を切り替え（`{ "muted": boolean }`、[#463](https://github.com/gamasenninn/tealus/issues/463)）。通話の着信は止めない | 必要 |
+| DELETE | `/api/rooms/:id` | グループ削除。**作成者で、メンバーが自分だけのとき**。メッセージと添付も消える | 必要 |
 | POST | `/api/rooms/:id/icon` | グループアイコンアップロード | 必要 |
 | GET | `/api/rooms/portal-links` | ポータルリンク一覧 | 必要 |
 | GET | `/api/rooms/announcements` | お知らせ一覧 | 必要 |
@@ -104,7 +110,9 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | GET | `/api/rooms/:id/messages/:msgId/edits` | 編集履歴取得 | 必要 |
 | DELETE | `/api/rooms/:id/messages/:msgId` | メッセージ削除（論理削除） | 必要 |
 | POST | `/api/rooms/:id/messages/:msgId/reactions` | 絵文字リアクション（トグル） | 必要 |
-| PATCH | `/api/rooms/:id/messages/:msgId/publish` | メッセージ公開/非公開 | 必要 |
+| PATCH | `/api/rooms/:id/messages/:msgId/publish` | お知らせに公開/非公開（送信者か部屋の管理者） | 必要 |
+| GET | `/api/rooms/:id/messages/days?month=YYYY-MM&tz_offset=分` | その月で投稿がある日（カレンダーの印、[#476](https://github.com/gamasenninn/tealus/issues/476)） | 必要 |
+| GET | `/api/rooms/:id/messages/first-of-day?date=YYYY-MM-DD&tz_offset=分` | その日の最初の投稿（無ければ `message_id: null`） | 必要 |
 
 ## メディア・音声
 
@@ -112,6 +120,7 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 |---|---|---|---|
 | POST | `/api/rooms/:id/media` | ファイルアップロード（画像・動画・ファイル） | 必要 |
 | GET | `/api/rooms/:id/media/gallery` | メディアギャラリー | 必要 |
+| POST | `/api/rooms/:id/media/forward` | 画像・動画・ファイルの投稿を別のルームへ転送（元のルームのメンバーであること。ファイルの実体は共有） | 必要 |
 | POST | `/api/rooms/:id/voice` | 音声メッセージアップロード（自動文字起こし） | 必要 |
 
 ## 文字起こし
@@ -170,7 +179,19 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | メソッド | パス | 説明 | 認証 |
 |---|---|---|---|
 | POST | `/api/push/subscribe` | Push通知購読登録 | 必要 |
-| DELETE | `/api/push/subscribe` | Push通知購読解除 | 必要 |
+| DELETE | `/api/push/subscribe` | Push通知購読解除。★ **この口だけは、署名が正しければ期限切れのトークンでも受け付けます**（期限切れでログアウトするときに解除できず、宛先が残っていたため） | 必要 |
+
+## その他
+
+| メソッド | パス | 説明 | 認証 |
+|---|---|---|---|
+| GET | `/api/config` | 画面が使う設定（通話・トランシーバーが使えるか等。agent-server の公開設定も中継） | 不要 |
+| GET | `/api/version` | 本体のビルド ID。画面は自分のビルド ID と突き合わせて「更新あり」を判断する | 不要 |
+| POST | `/api/client-errors` | 画面で起きたエラーを本体の記録へ送る（[#525](https://github.com/gamasenninn/tealus/issues/525)） | 不要 |
+
+## 配信 `/media`
+
+アップロードしたファイルは `/media/...` で配信されます。★ **削除した投稿・削除した部屋の添付は 404** を返します（v0.11.0、[#601](https://github.com/gamasenninn/tealus/issues/601) [#602](https://github.com/gamasenninn/tealus/issues/602)）。リバースプロキシでディスクから直接配ると、この判定を通らなくなります（[サーバー構築 > Nginx設定例](../admin/server-setup.md)）。
 
 ## 管理者API
 
@@ -182,11 +203,16 @@ curl "http://localhost:3000/api/rooms/{roomId}/messages?limit=50&before={message
 | POST | `/api/admin/users` | ユーザー作成 |
 | PUT | `/api/admin/users/:id` | ユーザー編集 |
 | PATCH | `/api/admin/users/:id/status` | ユーザー有効化/無効化 |
-| — | `/api/admin/portal-links` | ポータルリンクCRUD |
-| — | `/api/admin/webhooks` | Webhook CRUD |
+| GET / POST / PUT / DELETE | `/api/admin/portal-links`（`/:id`） | ポータルリンク |
+| GET / POST / PUT / DELETE | `/api/admin/webhooks`（`/:id`） | Webhook |
 | POST | `/api/admin/webhooks/:id/test` | Webhookテスト送信 |
+| GET | `/api/admin/rooms` | 全ルーム一覧 |
+| GET | `/api/admin/access-log` | 最終投稿・最終閲覧の集計（[#301](https://github.com/gamasenninn/tealus/issues/301)） |
 | GET | `/api/admin/agent-stats` | エージェント統計 |
 | GET | `/api/admin/agent-logs` | エージェント応答ログ |
+| GET | `/api/admin/agent-logs/:id/context` | 応答ログ 1 件の前後の文脈 |
+| GET / POST | `/api/admin/dictionary/terms` | 業務辞書の語（`PATCH /:id`・`PATCH /:id/reading`・`POST /:id/reject`・`POST /:id/restore`） |
+| GET / POST | `/api/admin/dictionary/aliases` | 別名の候補（`POST /:id/approve`・`POST /:id/reject`） |
 | POST | `/api/admin/transcription/reload-vocab` | **voice transcription の業務語彙辞書 cache を手動 reset**（v0.3.0〜、[#287](https://github.com/gamasenninn/tealus/issues/287)、`transcription_guideline.json` 編集後の即時反映用、server restart 不要）。v0.4.0（[#296](https://github.com/gamasenninn/tealus/issues/296)）で **mtime 自動リロード** が default 動作になり、本 endpoint は手動 reset の fallback として残存 |
 
 ## Bot API
@@ -197,9 +223,11 @@ Bot用ユーザーとしてJWT認証が必要です。
 |---|---|---|
 | POST | `/api/bot/push` | テキストメッセージ送信 |
 | POST | `/api/bot/push-image` | 画像送信 |
-| POST | `/api/bot/voice` | 音声送信（自動文字起こし、default `gpt-4o-mini-transcribe`） |
-| POST | `/api/bot/media` | メディア送信 |
-| POST | `/api/bot/status` | ステータス送信 |
+| POST | `/api/bot/status` | ステータス送信（入力中のような表示。メッセージにはならない） |
+| POST | `/api/bot/heartbeat` | **鼓動**（`{ name, info }`）。[見張り](../admin/automation.md) の `heartbeat` が見る（[#595](https://github.com/gamasenninn/tealus/issues/595)） |
+| POST | `/api/bot/tts-speak` | 各端末のブラウザ標準音声で読ませる（`TTS_PROVIDER=browser` のとき agent-server が使う。DB に書かない） |
+| POST | `/api/bot/tts-audio` | 合成済みの音声（`audio`）を受け取り、ルームに配信（メモリに 5 分保持） |
+| GET | `/api/bot/tts-audio/:id` | 上の音声を取得（期限切れは 404） |
 | GET | `/api/bot/messages` | メッセージ取得（ポーリング、v0.7.0〜 `include_transcription` / `include_raw` query parameter で文字起こし verbosity 制御） |
 | GET | `/api/bot/messages/:id/media` | メッセージのメディア取得（画像/音声、AI 直接視認用、v0.1.x） |
 | GET | `/api/bot/messages/:id/edit-history` | **メッセージ編集履歴の取得**（v0.3.0〜、text edits + voice / video transcription versions を統合返却、[#208](https://github.com/gamasenninn/tealus/issues/208) follow-up、organon daily cycle の edit history 観察用） |
@@ -211,7 +239,7 @@ Bot用ユーザーとしてJWT認証が必要です。
 | POST | `/api/bot/mark-read` | 既読マーク |
 | PATCH | `/api/bot/messages/:id/tags/:tag_name/done` | タグの完了状態（is_done）を更新（v0.1.x） |
 | GET | `/api/bot/rooms` | ルーム一覧 |
-| POST | `/api/bot/rooms` | ルーム作成 |
+| POST | `/api/bot/rooms/:id/join` | bot が自分でルームに入る。★ **bot（`is_bot`）だけ**。人は 403（招待で入る） |
 | POST | `/api/bot/push-file` | text 内容を file（.txt / .md 等）として投稿（v0.2.3〜、tealus-mcp v0.11.0 の `send_text_as_file` の wrapper） |
 
 ## Bot API 拡張（v0.1.x）

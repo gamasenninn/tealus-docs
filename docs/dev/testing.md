@@ -65,6 +65,15 @@ npm run typecheck
 
     `transform` を定義すると Jest の既定（babel-jest）が外れ、**`.js` テストの `jest.mock` 巻き上げが消える**という落とし穴があるため、`babel-jest` を明示的に復元してあります（agent-server で実際に踏んだ問題への予防）。
 
+## テストは本番 DB につながない（[#572](https://github.com/gamasenninn/tealus/issues/572)）
+
+server も agent-server も、テストは**テスト用の DB（`tealus_postgres_test`、5433）**に向きます。
+
+- server は `.env.test` でテスト用 DB に向けます
+- agent-server は `jest.setup.js` で**テスト用の `DATABASE_URL` を先に決めます**（dotenv は既にある変数を上書きしないので、`.env` の本番の設定に負けない）。`unit/testDbGuard.test` が、pool がテスト用 DB を指すことを見張ります
+
+★ 以前の agent-server には同じガードが無く、2026-10-10 に作業中のテストが**本番の DB に問い合わせていました**（アプリ側は try/catch で黙るので、Postgres のログにだけ残った）。テストを書くときに DB の接続先を自分で組み立てないでください。
+
 ## CI
 
 GitHub Actions（`.github/workflows/test.yml`）で **6 ジョブ**が走ります。すべて **Node 24** のみで、22 系以下は matrix に含まれません。

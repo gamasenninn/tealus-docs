@@ -35,7 +35,7 @@ Light は v0.1.0 以来の OpenAI Agents SDK 実装（**Light v1**）に加え�
 | 実装基盤 | OpenAI Agents SDK（v1）/ codex SDK（v2、`/light2`） | Claude Code CLI（default）/ Codex CLI（`DEEP_AGENT_PROVIDER=codex`、v0.3.0〜） |
 | モデル | gpt-5.4-mini | Claude（MAX プラン or API 課金）/ Codex（ChatGPT サブスクリプション or API 課金） |
 | 起動形態 | プロセス常駐（v1）/ ephemeral subprocess via SDK（v2） | コマンド毎に CLI を spawn |
-| コンテキスト | 直近 20 件（`LIGHT_CONTEXT_MESSAGES`） | `--resume tealus-room-{roomId}` で継続セッション |
+| コンテキスト | 必要な履歴を道具（`get_messages` 等）で自分で取る（`LIGHT_CONTEXT_MESSAGES` は [#230](https://github.com/gamasenninn/tealus/issues/230) で削除） | `--resume tealus-room-{roomId}` で継続セッション |
 | 月額目安 | v1 $80〜$280 / v2 はサブスク経路あり（後述） | $100（MAX 固定） / API は変動 |
 | 得意領域 | 日常会話、軽量 Q&A、定型タスク、自然言語検索、**cross-room 探索（v2 が強い）** | コード生成・分析、長いワークフロー、リファクタリング |
 | ローカルツール | `write_memory` / `read_memory` / `get_current_time` / `share_text_as_file` / `list_workspace_files` / `generate_image` / `code_interpreter` | Claude Code 標準ツール（ファイル編集・bash 実行など） |
@@ -50,14 +50,15 @@ Router が以下の優先順位で振り分けます。詳細は [AI アーキ�
 |---|---|---|
 | 1 | `/light` / `/deep` コマンド | 明示指定通り |
 | 2 | 挨拶 / 短文（こんにちは、ありがとう等） | Router が直接応答（Agent を呼ばない） |
-| 3 | Deep キーワード（コード / リファクタ / デバッグ / 実装 / PR 等） | Deep Agent |
-| 4 | 上記すべて該当しない | LLM（gpt-5.4-mini）が `light` / `deep` を判定 |
+| 3 | 読んでまとめる依頼（議事録 / 要約 / まとめて / 一覧に / 整理して、[#567](https://github.com/gamasenninn/tealus/issues/567)） | Light |
+| 4 | Deep キーワード（コード / リファクタ / デバッグ / 実装 / PR 等） | Deep Agent |
+| 5 | 上記すべて該当しない | LLM（gpt-5.4-mini）が `light` / `deep` を判定 |
 
 ### 使い分けの実用指針
 
 | 用途 | 推奨 Agent | 理由 |
 |---|---|---|
-| チャット履歴の検索・要約 | **Light** | レスポンスが速く、コンテキスト 20 件で十分 |
+| チャット履歴の検索・要約・議事録 | **Light** | レスポンスが速く、道具で部屋を読めば足りる（Router も Light に回す、[#567](https://github.com/gamasenninn/tealus/issues/567)） |
 | TODO 管理（完了マーク・一覧） | **Light** | MCP ツール（`mark_tag_done` / `search_messages`）の組み合わせのみで完結 |
 | 画像の内容認識・OCR 的依頼 | **Light** | `get_message_media` で画像視認、コード生成は不要 |
 | ファイル編集・コードレビュー | **Deep** | Claude Code の編集ツール群が必須 |
@@ -70,7 +71,7 @@ v0.3.0 で **Light v2（codex SDK backed）** が `/light2` prefix で並列追�
 
 | 比較軸 | Light v1 | Light v2 |
 |---|---|---|
-| 実装基盤 | OpenAI Agents SDK | codex SDK（`@openai/codex-sdk` v0.128.0+） |
+| 実装基盤 | OpenAI Agents SDK | codex SDK（`@openai/codex-sdk` `^0.162.1`。★ 上げたら `npm install` が必要） |
 | 起動形態 | プロセス常駐 | ephemeral subprocess via SDK（CLI spawn は SDK が hide） |
 | 認証 | API key（`OPENAI_API_KEY`） | API key OR **ChatGPT サブスクリプション**（`LIGHTV2_AUTH=subscription`） |
 | 単純会話 cost | 低（基準） | 約 2x（input token が膨らむ） |
@@ -207,7 +208,7 @@ v0.3.0 (2026-06-01) で Deep agent の **provider 切替** が導入されまし
 
 ### Workspace + AGENTS.md
 
-Codex Deep agent は workspace 配下に `.codex_home/` を動的生成し、`auth.json` copy + `config.toml` を room-specific に組み立てます。Codex CLI は project root の `AGENTS.md`（上限 32 KB）を自動 read するため、`CLAUDE.md` の literal copy として `AGENTS.md` を repo root に配置しています。
+Codex Deep agent は room ごとの `CODEX_HOME` を動的生成し、`auth.json` copy + `config.toml` を room-specific に組み立てます。★ 置き場は **workspace の外**（`<WORKSPACE_ROOT>/_codex-homes/<agentId>/<roomId>`）です（[#419](https://github.com/gamasenninn/tealus/issues/419)）。以前は workspace の中の `.codex_home/` で、AI がファイルとして読める場所に鍵や DB の資格情報が写り込んでいました。既定のモデルは `gpt-5.6-sol`（`AGENT_DEEP_CODEX_MODEL`）です。Codex CLI は project root の `AGENTS.md`（上限 32 KB）を自動 read するため、`CLAUDE.md` の literal copy として `AGENTS.md` を repo root に配置しています。
 
 ### 推奨運用
 
@@ -220,13 +221,23 @@ Codex Deep agent は workspace 配下に `.codex_home/` を動的生成し、`au
 !!! info "5/16 4 round → 0 round transition (Phase 4 organon paradigm operational realization)"
     Codex Deep agent + organon polyseme inject pipeline ([後述](#system-prompt))の組み合わせで、5/16 dogfood の「4 round LLM 訂正 → 1 round 正解」transition が **両 agent path で再現**（N=2 evidence、5/31 dogfood）。Deep agent の **provider 選択肢拡大が organon-driven query precision を Anthropic 環境外にも拡げる** structural change です。
 
+### 子プロセスに渡す環境変数（v0.11.0〜、[#565](https://github.com/gamasenninn/tealus/issues/565) [#570](https://github.com/gamasenninn/tealus/issues/570) [#573](https://github.com/gamasenninn/tealus/issues/573)）
+
+agent-server が起動する子プロセス（codex・Claude Code の CLI、MCP の道具）には、**許可した一覧の環境変数だけ**を渡します（`agent-server/src/lib/childEnv.mts`）。
+
+- 渡るのは実行に要る基本のもの（`PATH`・一時フォルダ・ホーム・言語・プロキシ・codex 自身の置き場など）だけです
+- 以前は agent-server の環境変数をそのまま渡していて、**AI がシェルで動かすコマンドにも `DB_PASSWORD`・`*_PASS` などが届いていました**（codex は名前に KEY / SECRET / TOKEN を含むものは隠しますが、それ以外は隠れません）
+- 道具が要る鍵は**道具の設定で個別に**渡します。tealus-mcp が要る鍵（画像生成の `OPENAI_API_KEY`、文書の読み取りの `GOOGLE_API_KEY` など）は 1 か所の一覧から渡します（[#580](https://github.com/gamasenninn/tealus/issues/580)）
+- 自分で足す MCP の道具の書き方は [AIエージェント設定 > MCP設定](../admin/agent.md#mcp-settings) を参照してください
+- ★ 一覧に足すかどうかは「**AI のシェルに見えてよいか**」で決めます
+
 ### Codex 認証エラー検出 helper（v0.3.0 後、6/8 pre-α）
 
 Codex Deep / Light v2 の **認証エラー (`auth.json` 期限切れ / 不正)** を helper が検出し、明示的なエラーメッセージで採用者を guide します（detection only、自動 recovery はしません）。`.env` 設定誤りや `codex login` 期限切れ時の troubleshoot を高速化する design。
 
 ## Tealus MCP 統合（Light/Deep 共通）
 
-両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.mts` の `getOrCreateSharedGlobal()` で programmatic に注入され、環境変数 `TEALUS_USER_ID` / `TEALUS_PASSWORD` の有無で自動切替されます。
+両 Agent は **同じ Tealus MCP プロセスを共有**します。`agent-server/src/mcp/roomMcpManager.mts` の `getOrCreateSharedGlobal()` で programmatic に注入され、agent-server の `.env` に **`TEALUS_BOT_ID` / `TEALUS_BOT_PASS`** があれば自動で追加されます（子の tealus-mcp には `TEALUS_USER_ID` / `TEALUS_PASSWORD` という名前で渡します。agent-server の `.env` に書く名前ではありません）。
 
 利用可能なツール（[MCP Server](mcp.md) と同じ一覧。★ ただし本体の agent-server は tealus-mcp を `#v0.14.7` に固定しているため、下表の `send_form` は本体のエージェントからは使えません。`edit_message`（v0.15.0）も同様）:
 
@@ -340,17 +351,17 @@ tealus-mcp は v0.12.0+ で **HTTP transport** を opt-in 提供しています�
 | 経路 | Phase 1 alpha での扱い |
 |---|---|
 | **tools 呼び出し**（Claude Code → Tealus、Outbound） | HTTP 単独で動作（JWT auth、`/mcp` proxy 経由） |
-| **mention 通知 wake-up**（Tealus → Claude Code、Inbound） | **stdio + file beacon 経路に依存**、HTTP では未サポート |
+| **mention 通知 wake-up**（Tealus → Claude Code、Inbound） | ★ **v0.8.0 から HTTP でも届く**（`/agent-api/cc-queue/stream`、NDJSON、[#214](https://github.com/gamasenninn/tealus/issues/214)） |
 
-cross-machine 構成では **HTTP + cc-tealus stdio bridge 併用** が当面の現実解です。Phase 2 で SSE event broker（server-push wake-up）が乗ると HTTP 単独で完結する予定です。
+以前このページは「Inbound は HTTP 未サポート、Phase 2 で予定」と書いていましたが、**古くなっていました**。別マシンの Claude Code は、往路も復路も HTTP だけで完結します。受け取りは `listen-tealus` skill の http mode、手順は本体の [setup-cc-remote.md](https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md) です。
 
 - 詳細: [MCP Server > HTTP transport](mcp.md#http-transport)
 - 採用者向け概念紹介: [Claude Code 連携](../guide/integration/claude-code.md)
 
 ### Phase B 展望
 
-- **multi-session lock**（[#214](https://github.com/gamasenninn/tealus/issues/214)）: 別 PC で同 project を動かす場合の排他制御。現状は共有ストレージ（NAS / SMB / Syncthing）で `~/.tealus/cc-queue/` を mount する運用が想定されています
-- **SSE event broker（HTTP transport Phase 2）**: server-push wake-up で HTTP 単独 cross-machine 構成を完結させる構造（[#264](https://github.com/gamasenninn/tealus/issues/264) Phase 2 候補）
+- **multi-session lock**: 同じ project を複数のセッションで同時に受け取るときの排他制御（未実装）
+- 別マシンでの受け取りは v0.8.0 で HTTP stream として実装済み（上記）
 - 他 dispatch 先の追加候補は本体 roadmap で議論中
 
 ## システムプロンプトのフロー {#system-prompt}
