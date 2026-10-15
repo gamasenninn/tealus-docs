@@ -1180,6 +1180,90 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/voice-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    会話モード（AI と音声で話す）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-talk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    マルチトーク（PC）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/announcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    お知らせ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2687,7 +2771,11 @@
 <div class="admonition info">
 <p class="admonition-title">複数画像の同時送信は 1 メッセージにまとまります（v0.7.0、<a href="https://github.com/gamasenninn/tealus/issues/353">#353</a>）</p>
 <p>LINE で複数枚の写真をまとめて送ると、<strong>画像ごとに別々の webhook が順不同で届く</strong>ため、以前は Tealus 側でバラバラのメッセージになっていました。</p>
-<p>v0.7.0 から、同じ送信に属する画像を待ち合わせて <strong>1 メッセージ + 複数メディア</strong>として再構成します。待ち時間は <code>LINE_IMAGESET_FLUSH_MS</code>（既定 15 秒）で、全枚が揃った時点で待たずに投稿されます。揃わなかった場合は待ち時間の経過後に届いた分だけで投稿されます。</p>
+<p>v0.7.0 から、同じ送信に属する画像を待ち合わせて <strong>1 メッセージ + 複数メディア</strong>として再構成します。待ち時間は <code>LINE_IMAGESET_FLUSH_MS</code>（既定 <strong>60 秒</strong>、<a href="https://github.com/gamasenninn/tealus/issues/552">#552</a> で 15 秒から変更）で、全枚が揃った時点で待たずに投稿されます。揃わなかった場合は<strong>最後の 1 枚から</strong>待ち時間の経過後に届いた分だけで投稿されます。画像が届き続けても、**最初の 1 枚から <code>LINE_IMAGESET_MAX_WAIT_MS</code>（既定 5 分）**で区切って投稿します。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">LINE の引用返信は、Tealus でも返信として届きます（<a href="https://github.com/gamasenninn/tealus/issues/490">#490</a>）</p>
+<p>LINE で引用返信した投稿は、Tealus 側でも元の投稿へのリプライとして表示されます（以前は引用元なしで届いていました）。引用元が Tealus に届いていない場合（記録を始める前の投稿など）は、本文に「（LINE の引用返信。引用元はこちらに届いていません）」が添えられます。</p>
 </div>
 <h2 id="2-file-phase-23">設定方式 — 2 file 案（Phase 2.3）<a class="headerlink" href="#2-file-phase-23" title="Permanent link">&para;</a></h2>
 <p>LINE グループから Tealus ルームへの mapping は <strong>2 ファイル</strong> で管理します。<strong>両ファイルとも書き換え後 next webhook で即反映</strong> (server restart 不要)。</p>
@@ -2702,7 +2790,7 @@
 <tbody>
 <tr>
 <td><code>server/config/line-groups.json</code></td>
-<td><strong>catalog file</strong>。webhook 受信時に LINE API で group name を自動取得し atomic write</td>
+<td><strong>catalog file</strong>。webhook 受信時に LINE API で group name を自動取得し atomic write。★ <strong>bot をグループに招待した時点で載ります</strong>（投稿を待たない、<a href="https://github.com/gamasenninn/tealus/issues/367">#367</a>）。対応づけを先に書けるので、最初の投稿を取りこぼしません</td>
 <td>自動（手動編集不要）</td>
 </tr>
 <tr>

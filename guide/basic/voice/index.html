@@ -919,6 +919,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#pc604" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キーボード操作（PC、#604）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1347,6 +1358,90 @@
     
   
     TTS 読み上げ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/voice-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    会話モード（AI と音声で話す）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-talk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    マルチトーク（PC）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/announcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    お知らせ
   
 
     
@@ -2597,6 +2692,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#pc604" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キーボード操作（PC、#604）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2733,7 +2839,11 @@
 <div class="admonition tip">
 <p class="admonition-title">業務辞書 inject による業界用語認識（v0.2.4〜、<a href="https://github.com/gamasenninn/tealus/issues/269">#269</a> Phase 2）</p>
 <p>v0.2.4 で default model が <code>gpt-4o-transcribe</code> → <strong><code>gpt-4o-mini-transcribe</code></strong> に切替、業務辞書（vocabulary）を Whisper prompt に inject する <strong>model-aware vocabulary inject</strong> が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。</p>
-<p>辞書 (vocabulary) は <code>transcription_guideline.json</code> で管理、運用者が業務固有用語を追加できます。AI 整形段階で別途辞書を投入する pipeline は従来通り共存します。</p>
+<p>辞書の語は、**データベースの業務辞書（<code>dictionary</code> テーブル）**から読みます（<a href="https://github.com/gamasenninn/tealus/issues/327">#327</a>。テーブルが空のときだけ <code>transcription_guideline.json</code> の語を使います）。辞書は使われ方から育ちます（<a href="../../../admin/dictionary/">業務辞書</a>）。organon を使う環境では、整形の段で organon の知識も渡します。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">文字起こしの経路は 3 つから選べます（<a href="https://github.com/gamasenninn/tealus/issues/424">#424</a>）</p>
+<p>管理者が <code>STT_BACKEND</code> で選びます: <code>openai</code>（既定）／ <code>local</code>（自ホストの Qwen3-ASR）／ <code>gemini</code>（辞書の語を音声認識の段で渡せる。固有名詞の正答が 50% → 85% に上がった実測あり）。local / gemini が失敗したときは openai に切り替わります。</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">動画/音声 文字起こしツール（v0.2.4〜、<a href="https://github.com/gamasenninn/tealus/issues/271">#271</a>）</p>
@@ -2752,14 +2862,54 @@
 <p>編集 modal 内に<strong>音声再生スライダー</strong>が組み込まれており、原音を聴きながら文字起こしを修正できます。聞き取りにくい箇所のシークがしやすく、特に長尺の voice メッセージで効果的です。</p>
 </div>
 <div class="admonition tip">
-<p class="admonition-title">連続編集 — 前/次ボタンで隣の音声へ送る（v0.3.0 後、<a href="https://github.com/gamasenninn/tealus/issues/302">#302</a>）</p>
-<p>編集 modal に <strong>「前/次」ボタン</strong> が追加され、隣接する voice メッセージへ送って続けて編集できます。朝礼ルーム等で複数の voice 文字起こしを連続して修正する dogfood で効率が大幅向上します。</p>
+<p class="admonition-title">連続編集 — 前/次ボタンで隣の音声へ送る（<a href="https://github.com/gamasenninn/tealus/issues/302">#302</a>）</p>
+<p>編集画面の <strong>「前/次」ボタン</strong> で、隣の音声メッセージへ送って続けて編集できます。直した内容は保存してから移ります（直していなければ保存しません）。</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">時刻タグから音声へ飛ぶ（<a href="https://github.com/gamasenninn/tealus/issues/398">#398</a>）</p>
+<p>通話の録音など、<strong>音声が添付された投稿の編集画面</strong>では、本文に <code>[1:23]</code> のような時刻タグがある場合、テキスト欄の外に<strong>タグがチップとして並び</strong>、押すとその位置へ再生が飛びます。端には <strong>10 秒戻し／10 秒送り</strong>のボタンがあります。</p>
+</div>
+<h3 id="pc604">キーボード操作（PC、<a href="https://github.com/gamasenninn/tealus/issues/604">#604</a>）<a class="headerlink" href="#pc604" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>動き</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Alt + ← / →</strong></td>
+<td>前 / 次の音声へ（保存してから移る）</td>
+</tr>
+<tr>
+<td><strong>Ctrl + Enter</strong></td>
+<td>確定</td>
+</tr>
+<tr>
+<td><strong>Esc</strong></td>
+<td>戻る（閉じる）</td>
+</tr>
+<tr>
+<td><strong>Ctrl + Space</strong></td>
+<td>再生 / 一時停止</td>
+</tr>
+<tr>
+<td><strong>Alt + , / Alt + .</strong></td>
+<td>10 秒戻す / 10 秒送る（日本語入力がオンでも効く）</td>
+</tr>
+<tr>
+<td>← / →、Space</td>
+<td>テキスト欄の外にいるとき: 前 / 次、再生 / 一時停止</td>
+</tr>
+</tbody>
+</table>
+<p>日本語の変換中のキーは拾いません。PC ではボタンにキーの案内が出ます。Ctrl + Space と Alt + , / . は、音声が添付された投稿（通話の録音など）の編集画面でも使えます。</p>
 <h3 id="_5">編集履歴<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>過去の編集内容は「履歴ボタン」からバージョン管理で確認できます。</p>
 <div class="admonition note">
 <p class="admonition-title">編集権限</p>
-<p>デフォルトでは送信者のみ編集可能ですが、ルーム設定で「メンバー全員が編集可」に変更できます。</p>
+<p>文字起こしの編集は、既定では<strong>送信者のみ</strong>です。部屋の管理者がルーム設定の「<strong>文字起こし編集</strong>」を「メンバー全員」にすると、誰でも直せます（本文の「メッセージ編集」とは別の設定です）。</p>
 </div>
 <h2 id="_6">再文字起こし<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>文字起こしが失敗した（<code>status=error</code>）場合や、結果が不適切な場合に、<strong>手動で retry</strong> できます（v0.2.2〜、<a href="https://github.com/gamasenninn/tealus/issues/216">#216</a>）。</p>

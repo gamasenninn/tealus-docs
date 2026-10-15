@@ -1180,6 +1180,90 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/voice-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    会話モード（AI と音声で話す）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-talk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    マルチトーク（PC）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/announcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    お知らせ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1401,8 +1485,52 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知が来ないとき（意図した動き）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知をタップすると
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知が届かない端末
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#463" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルームごとの通知（#463）
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1419,7 +1547,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         動作の概要
@@ -1435,7 +1563,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知音
@@ -2530,8 +2658,52 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知が来ないとき（意図した動き）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知をタップすると
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知が届かない端末
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#463" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルームごとの通知（#463）
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2548,7 +2720,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         動作の概要
@@ -2564,7 +2736,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知音
@@ -2605,7 +2777,36 @@
 <li>メンション（<code>@名前</code>）</li>
 <li>通話の着信</li>
 </ul>
-<p>メンションされた場合は、通常のメッセージよりも優先度の高い通知が送信されます。</p>
+<h3 id="_5">通知が来ないとき（意図した動き）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>場面</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>その部屋をいま開いて見ている</strong></td>
+<td>見ている部屋には鳴らしません（<a href="https://github.com/gamasenninn/tealus/issues/475">#475</a>）。画面が裏に回ると、また届きます</td>
+</tr>
+<tr>
+<td><strong>その部屋の通知をオフにしている</strong></td>
+<td>下記「ルームごとの通知」</td>
+</tr>
+<tr>
+<td><strong>機械（AI・Bot）の投稿</strong></td>
+<td>既定では鳴らしません。部屋の管理者が「機械の投稿の通知」を「鳴らす」にすると届きます（<a href="https://github.com/gamasenninn/tealus/issues/463">#463</a>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">通知をタップすると<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>その部屋が開きます。すでに Tealus を開いている窓があれば、その窓で移ります（<a href="https://github.com/gamasenninn/tealus/issues/544">#544</a>）。</p>
+<h3 id="_7">通知が届かない端末<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>この端末に通知の宛先が無い場合（iPhone で許可をやり直したときなど）、プロフィールに「<strong>この端末で通知を受け取る</strong>」ボタンが出ます。押して登録し直してください（<a href="https://github.com/gamasenninn/tealus/issues/546">#546</a>）。</p>
+<h2 id="463">ルームごとの通知（<a href="https://github.com/gamasenninn/tealus/issues/463">#463</a>）<a class="headerlink" href="#463" title="Permanent link">&para;</a></h2>
+<p>トーク画面右上の <strong>≡</strong> → 「<strong>このルームの通知</strong>」で、部屋ごとにオン / オフできます（自分の分だけ。1:1 のトークにもあります）。オフにすると、プッシュ通知も画面の中の通知音も止まります。</p>
+<p>部屋の管理者は、ルーム設定（管理者）の「<strong>機械の投稿の通知</strong>」で、AI・Bot の投稿でも鳴らすかを選べます（既定は鳴らさない）。各自が「このルームの通知」をオフにしていれば、そちらが優先します。</p>
 <h2 id="pwa-app-badgev024">ホーム画面アイコンの未読バッジ（PWA App Badge、v0.2.4〜）<a class="headerlink" href="#pwa-app-badgev024" title="Permanent link">&para;</a></h2>
 <p>PWA としてホーム画面に追加している場合、<strong>ホーム画面アイコンに未読件数のバッジが表示</strong>されます。Tealus を開かなくても、未読の有無と件数が一目で分かります。</p>
 <div class="admonition info">
@@ -2618,15 +2819,20 @@
 </ul>
 <p>非対応環境では、バッジは表示されませんが他の通知機能（プッシュ通知 / 通知音）は通常通り動作します。</p>
 </div>
-<h3 id="_5">動作の概要<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_8">動作の概要<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Tealus を開いていない時に未読メッセージが届く</li>
 <li>Service Worker が未読件数を OS にレポート</li>
 <li>ホーム画面アイコンの右上に数字バッジが出現</li>
 <li>Tealus を開いて既読化するとバッジは自動で消える</li>
 </ol>
-<h2 id="_6">通知音<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>新しいメッセージを受信すると通知音が鳴ります。プロフィール設定からON/OFFを切り替えられます。</p>
+<h2 id="_9">通知音<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>新しいメッセージを受信すると通知音が鳴ります。プロフィールの「<strong>メッセージ受信時に通知音を鳴らす</strong>」で切り替えます。</p>
+<ul>
+<li><strong>アカウントごとの設定</strong>です。どの端末で切り替えても、<strong>すべての端末に効きます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/516">#516</a>）</li>
+<li>切っても<strong>プッシュ通知は届きます</strong>（音だけ鳴らなくなります）。Android では画面の上に帯が出ず、通知の欄に静かに入ります（<a href="https://github.com/gamasenninn/tealus/issues/518">#518</a>）</li>
+<li><strong>通話の着信は鳴ります</strong></li>
+</ul>
 
 
 

@@ -1180,6 +1180,90 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/voice-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    会話モード（AI と音声で話す）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/multi-talk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    マルチトーク（PC）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/announcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    お知らせ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2750,8 +2834,14 @@
 <li>HTTPS / reverse proxy（nginx 等）で TLS 終端、JWT で auth</li>
 </ul>
 <div class="admonition info">
-<p class="admonition-title">Phase 1 alpha の限界</p>
-<p>Phase 1 alpha は <strong>HTTP request/response（tools 呼び出し）のみ</strong>。Inbound 通知（Tealus → Claude Code の wake-up）は <strong>stdio + file beacon 経路に依存</strong>します。cross-machine 構成では、wake-up 用に <strong>stdio + file beacon は同一マシンが必要</strong>で、HTTP は tools 呼び出し補完として使う構図です。Phase 2 で SSE event broker（server-push wake-up）が乗ると HTTP 単独で完結する予定です。</p>
+<p class="admonition-title">Inbound（起こす知らせ）も HTTP で届きます（v0.8.0〜、<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a>）</p>
+<p>以前このページは「Inbound は同じマシンの file 経由のみ、HTTP 対応は Phase 2 で予定」と書いていましたが、<strong>古くなっていました</strong>。v0.8.0 から、<code>@cc-…</code> の起こす知らせを **<code>/agent-api/cc-queue/stream</code>（NDJSON のストリーム）**で別のマシンへ届けられます。<strong>Tealus サーバと別のマシンだけで、往路（道具の呼び出し）と復路（起こす知らせ）の両方が完結します。</strong></p>
+<ul>
+<li>復路は <code>listen-tealus</code> skill の <strong>http mode</strong>（設定に <code>stream_url</code> を書く）が受け取ります</li>
+<li>設定手順は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md">setup-cc-remote.md</a>（Claude Code 自身が読んで実行する手順書）にあります</li>
+<li>前段に Nginx を置く場合は、cc-queue の口に <code>proxy_buffering off</code> と長い <code>proxy_read_timeout</code> が要ります（<a href="../../../admin/server-setup/">サーバー構築 &gt; Nginx設定例</a>）</li>
+</ul>
+<p>★ 別マシンにする狙いは利便性より<strong>隔離</strong>です。サーバと同じホストで AI を動かすと、本番 DB・メディア・<code>server/.env</code> の鍵に原理的に手が届きます。</p>
 </div>
 <h2 id="_1">どちらを使うべきか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <table>
