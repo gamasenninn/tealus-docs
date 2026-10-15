@@ -1273,29 +1273,7 @@
   <a href="#2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. メッセージを送信する
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. 音声で回答を聞く
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 自動切断
+        2. 音声で回答を聞く
       
     </span>
   </a>
@@ -2634,29 +2612,7 @@
   <a href="#2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. メッセージを送信する
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. 音声で回答を聞く
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 自動切断
+        2. 音声で回答を聞く
       
     </span>
   </a>
@@ -2830,12 +2786,12 @@
 <h2 id="_2">使い方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="1">1. 読み上げを有効にする<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <p>プロフィール設定の「AI回答の読み上げ」をONにします。</p>
-<h3 id="2">2. メッセージを送信する<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
-<p>AIエージェントがいるルームでメッセージを送信すると、トランシーバーが自動接続されます。</p>
-<h3 id="3">3. 音声で回答を聞く<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
-<p>AIの回答がチャットに表示されると同時に、トランシーバーから音声が流れます。</p>
-<h3 id="4">4. 自動切断<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
-<p>30秒間新しい回答がなければ、トランシーバーが自動的に切断されます。読み上げ中は切断されず、完了を待ってから切断されます。</p>
+<h3 id="2">2. 音声で回答を聞く<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p>AI の回答がチャットに表示されると同時に、<strong>その端末のスピーカーから読み上げられます</strong>。サーバー側で音声合成を設定していればその音声、未設定ならブラウザ標準音声（Web Speech API）です。</p>
+<div class="admonition note">
+<p class="admonition-title">トランシーバーには接続しません</p>
+<p>以前このページには「送信するとトランシーバーが自動接続され、30 秒で自動切断される」と書いていましたが、<strong>誤りでした</strong>（このページ冒頭の「Socket.IO で配信」という説明とも食い違っていました）。読み上げはトランシーバーを使いません。</p>
+</div>
 <h2 id="_3">テキストの前処理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>読み上げ前にテキストは以下の前処理が行われます。</p>
 <table>
@@ -2865,7 +2821,8 @@
 </tbody>
 </table>
 <h2 id="_4">音声モデル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>ルームごとに読み上げの音声（声の種類）を選択できます。設定は管理者がダッシュボードのルーム設定から行います。</p>
+<p>ルームごとに、読み上げの<strong>エンジン</strong>と<strong>声</strong>を選べます。設定はトーク画面右上の <strong>≡</strong> → ルーム設定の「<strong>読み上げエンジン</strong>」「<strong>声</strong>」から行います（v0.10.0、<a href="https://github.com/gamasenninn/tealus/issues/444">#444</a>）。</p>
+<p>エンジンは <strong>Aivis Cloud / OpenAI / Gemini</strong> の 3 つで、未設定の部屋は全体の設定（<code>TTS_PROVIDER</code>）に従います。下の表は Aivis の声です（OpenAI・Gemini の声の一覧は今後追記します）。</p>
 <h3 id="_5">選択可能なモデル<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

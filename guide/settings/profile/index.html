@@ -2576,11 +2576,12 @@
 <h2 id="_6">音声再生レベル<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>トランシーバー音声の再生音量をスライダー（0〜100%）で調整できます。デフォルトは80%です。</p>
 <h2 id="ai">AI回答の読み上げ<a class="headerlink" href="#ai" title="Permanent link">&para;</a></h2>
-<p>AIエージェントの回答をトランシーバーで自動読み上げする設定です。</p>
+<p>AIエージェントの回答を、この端末で音声で読み上げる設定です。</p>
 <ul>
-<li><strong>ON</strong>: メッセージ送信時にトランシーバーが自動接続され、AIの回答が音声で読み上げられます。30秒間新しい回答がなければ自動切断されます。</li>
+<li><strong>ON</strong>: AI の回答が届くと読み上げます。サーバー側で音声合成を設定していればその音声で、未設定なら端末のブラウザ標準音声（Web Speech API）で発声します。</li>
 <li><strong>OFF</strong>（デフォルト）: 読み上げは行われません。</li>
 </ul>
+<p>トランシーバーには接続しません（以前このページにあった「自動接続・30 秒で切断」は誤りでした）。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>この設定は端末のローカルストレージに保存されます。別の端末からログインした場合は再設定が必要です。</p>

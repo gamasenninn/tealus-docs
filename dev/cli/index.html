@@ -2674,8 +2674,12 @@
 </code></pre></div>
 <h2 id="watch">watchモード（ディレクトリ監視）<a class="headerlink" href="#watch" title="Permanent link">&para;</a></h2>
 <p>ディレクトリを監視し、新しい音声ファイルが追加されると自動でTealusに送信します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"グループ名"</span><span class="w"> </span>--watch<span class="w"> </span>/path/to/directory
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"グループ名"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>/path/to/directory
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title"><code>--voice</code> を省かないでください</p>
+<p>監視モードは <strong><code>--voice</code> と組み合わせたときだけ</strong>有効になります。以前このページの例は <code>--voice</code> が抜けていて、そのとおりに打つと監視モードに入りません。</p>
+</div>
 <h3 id="_8">オプション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2706,7 +2710,7 @@
 <h2 id="vox">VOX音声連携<a class="headerlink" href="#vox" title="Permanent link">&para;</a></h2>
 <p>トランシーバーのVOX音声出力ディレクトリをwatchモードで監視することで、トランシーバーの音声を自動的にTealusに投稿できます。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># トランシーバー音声をTealusに自動投稿</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"現場連絡"</span><span class="w"> </span>--watch<span class="w"> </span>/path/to/vox-output<span class="w"> </span>--ext<span class="w"> </span>.wav
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"現場連絡"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>/path/to/vox-output<span class="w"> </span>--ext<span class="w"> </span>.wav
 </code></pre></div>
 
 

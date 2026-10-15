@@ -2653,6 +2653,10 @@
 </ul>
 <h3 id="inbound-tealus-claude-codecc-tealus-bridge">Inbound — Tealus → Claude Code（cc-tealus bridge）<a class="headerlink" href="#inbound-tealus-claude-codecc-tealus-bridge" title="Permanent link">&para;</a></h3>
 <p>Tealus 上で <code>@cc-{project}</code> / <code>@Claude</code> mention を投げると、採用者の手元の Claude Code session が <strong>sub-second で wake up</strong> して応答します（file beacon + Monitor 経路）。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ mention は 1 行目の行頭に、飾らずに</p>
+<p>文中に置いたり <code>**@cc-x**</code> のように飾ったりすると<strong>起こしません</strong>。送った側は気づけません。複数の班へは 1 行目にスペース区切りで（5 班まで）。詳しくは <a href="../../advanced/mention/">メンション</a> を参照してください。</p>
+</div>
 <ul>
 <li>詳細仕様: <a href="../../../dev/agents/#claude-code-session-cc-tealus">Agent ガイド &gt; Claude Code session（cc-tealus）</a></li>
 <li>alias 設定: <a href="../../../dev/agents/#cc-aliases-json"><code>cc-aliases.json</code></a>（<code>@Claude</code> 等の自然な mention 名を routing）</li>
@@ -2758,7 +2762,7 @@
 </ul>
 <h2 id="_3">関連<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../../dev/mcp/">MCP Server</a>: 18 ツールの詳細仕様 + HTTP transport セクション</li>
+<li><a href="../../../dev/mcp/">MCP Server</a>: 19 ツール（v0.15.0 以降）の詳細仕様 + HTTP transport セクション</li>
 <li><a href="../../../dev/agents/">Agent ガイド</a>: cc-tealus bridge / Light v1 v2 / Deep / cc-aliases.json</li>
 <li><a href="../../../releases/">リリースノート</a>: tealus-mcp v0.12.x group（HTTP transport 4 release）</li>
 <li><a href="https://github.com/gamasenninn/tealus/issues/264">tealus #264</a> HTTP transport Phase 1 alpha</li>

@@ -3367,8 +3367,8 @@
 </tr>
 <tr>
 <td>Tealus MCP</td>
-<td>共通 18 ツール（v0.2.0〜、tealus-mcp v0.14.8 以降で 18、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）</td>
-<td>共通 18 ツール</td>
+<td>共通（v0.2.0〜、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）。★ 本体は tealus-mcp <code>#v0.14.7</code> 固定のため <code>send_form</code> / <code>edit_message</code> は無し</td>
+<td>同左</td>
 </tr>
 <tr>
 <td>タイムアウト</td>
@@ -3782,7 +3782,7 @@
 <p>Codex Deep / Light v2 の <strong>認証エラー (<code>auth.json</code> 期限切れ / 不正)</strong> を helper が検出し、明示的なエラーメッセージで採用者を guide します（detection only、自動 recovery はしません）。<code>.env</code> 設定誤りや <code>codex login</code> 期限切れ時の troubleshoot を高速化する design。</p>
 <h2 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h2>
 <p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.mts</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、環境変数 <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> の有無で自動切替されます。</p>
-<p>利用可能な 18 ツール（<a href="../mcp/">MCP Server</a> と同一、v0.14.8 以降）:</p>
+<p>利用可能なツール（<a href="../mcp/">MCP Server</a> と同じ一覧。★ ただし本体の agent-server は tealus-mcp を <code>#v0.14.7</code> に固定しているため、下表の <code>send_form</code> は本体のエージェントからは使えません。<code>edit_message</code>（v0.15.0）も同様）:</p>
 <table>
 <thead>
 <tr>
@@ -4050,7 +4050,7 @@
 <h2 id="_9">関連<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../ai-architecture/">AI アーキテクチャ</a>: 全体構造、Router の判定ロジック、Webhook Dispatcher、コスト設計</li>
-<li><a href="../mcp/">MCP Server</a>: 18 ツールの詳細仕様と外部クライアントからの利用方法</li>
+<li><a href="../mcp/">MCP Server</a>: 19 ツール（v0.15.0 以降）の詳細仕様と外部クライアントからの利用方法</li>
 <li><a href="../../admin/agent/">AIエージェント設定</a>: 運用者向けの設定手順</li>
 <li>関連 issue: <a href="https://github.com/gamasenninn/tealus/issues/185">#185</a> MCP umbrella、<a href="https://github.com/gamasenninn/tealus/issues/194">#194</a> search_messages、<a href="https://github.com/gamasenninn/tealus/issues/197">#197</a> mark_tag_done、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a> Light agent MCP 統合、<a href="https://github.com/gamasenninn/tealus/issues/200">#200</a> create_room、<a href="https://github.com/gamasenninn/tealus/issues/207">#207</a> delete_room、<a href="https://github.com/gamasenninn/tealus/issues/213">#213</a> cc-tealus Phase A、<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a> multi-session lock（Phase B）、<a href="https://github.com/gamasenninn/tealus/issues/220">#220</a> tealus-agent improvement harness（議論先行）、<a href="https://github.com/gamasenninn/tealus/issues/258">#258</a> Light v2（codex SDK）、<a href="https://github.com/gamasenninn/tealus/issues/260">#260</a> Light v2 機能 parity（send_text_as_file / generate_and_send_image）、<a href="https://github.com/gamasenninn/tealus/issues/263">#263</a> cc-aliases.json</li>
 </ul>

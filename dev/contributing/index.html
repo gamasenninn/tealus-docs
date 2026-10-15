@@ -2606,8 +2606,8 @@
 <li><strong>Node 24 が必要</strong>です（<a href="../../admin/server-setup/">サーバー構築 &gt; 前提条件</a>）</li>
 </ul>
 <div class="admonition tip">
-<p class="admonition-title">テストは <code>.js</code> のままでも構いません</p>
-<p>既存の JS テストは一括変換されておらず、<code>.test.js</code> と <code>.test.mts</code> が同じ Jest で動く構成になっています。詳細は <a href="../testing/">テスト</a> を参照してください。</p>
+<p class="admonition-title">テストは <code>.test.mts</code> で書いてください</p>
+<p>テストはすべて <code>.test.mts</code> に移行済みです（<code>.test.js</code> は 0 本）。新しく書くテストも <code>.test.mts</code> にしてください。詳細は <a href="../testing/">テスト</a> を参照してください。</p>
 </div>
 <h3 id="claudemd">CLAUDE.md<a class="headerlink" href="#claudemd" title="Permanent link">&para;</a></h3>
 <p>リポジトリルートの <code>CLAUDE.md</code> にAI開発ガイドラインが記載されています。AIツール（Claude Code等）での開発時はこのファイルが自動的に参照されます。Codex CLI 向けには同内容の <code>AGENTS.md</code> が置かれています。</p>

@@ -2093,10 +2093,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#v0148-18" class="md-nav__link">
+  <a href="#v0150-19" class="md-nav__link">
     <span class="md-ellipsis">
       
-        利用可能なツール（v0.14.8 以降で 18個）
+        利用可能なツール（v0.15.0 以降で 19 個）
       
     </span>
   </a>
@@ -2617,10 +2617,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#v0148-18" class="md-nav__link">
+  <a href="#v0150-19" class="md-nav__link">
     <span class="md-ellipsis">
       
-        利用可能なツール（v0.14.8 以降で 18個）
+        利用可能なツール（v0.15.0 以降で 19 個）
       
     </span>
   </a>
@@ -2856,16 +2856,20 @@
 <p>Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラップし、Claude Code や他の MCP クライアントから Tealus をネイティブツールとして操作できます。</p>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（v0.14.8）</li>
+<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（最新 v0.16.0）</li>
 <li>配布: npm publish ではなく <strong>GitHub から直接 install</strong>（<code>npx -y github:gamasenninn/tealus-mcp</code>）</li>
 <li>通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)</li>
 <li>技術スタック: <code>@modelcontextprotocol/sdk</code>、<code>zod</code>、<code>node-fetch</code>、<code>form-data</code></li>
-<li>Tealus 本体（<code>gamasenninn/tealus</code>）には移転 stub のみ残存</li>
+<li>Tealus 本体（<code>gamasenninn/tealus</code>）の <code>mcp-server/</code> は移転を知らせる README だけの名残です（実装は入っていません）</li>
 </ul>
-<h2 id="v0148-18">利用可能なツール（v0.14.8 以降で 18個）<a class="headerlink" href="#v0148-18" title="Permanent link">&para;</a></h2>
+<h2 id="v0150-19">利用可能なツール（v0.15.0 以降で 19 個）<a class="headerlink" href="#v0150-19" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">見えるツール数は pin しているバージョンで変わります</p>
-<p><code>.mcp.json</code> で <strong>タグ pin</strong>（<code>github:gamasenninn/tealus-mcp#v0.14.6</code> のような形）にしている場合、そのタグ時点のツールセットしか見えません。<code>send_form</code> は <strong>v0.14.8 以降</strong>です。</p>
+<p><code>.mcp.json</code> で <strong>タグ pin</strong>（<code>github:gamasenninn/tealus-mcp#v0.14.6</code> のような形）にしている場合、そのタグ時点のツールセットしか見えません。<code>send_form</code> は <strong>v0.14.8 以降</strong>、<code>edit_message</code> は <strong>v0.15.0 以降</strong>です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を**案内文（instructions）**として接続時に渡します。</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">★ 本体の AI エージェントが使う版は、最新ではありません</p>
+<p>本体の agent-server（Light v2 / Deep）は tealus-mcp を <strong><code>#v0.14.7</code> に固定</strong>して起動しています（<code>agent-server/src/agents/lightV2.mts</code> / <code>deep.mts</code>）。そのため<strong>本体の AI エージェントからは <code>send_form</code> と <code>edit_message</code> が見えません</strong>。外部の MCP クライアント（Claude Code 等）で最新を使っている場合と、使える道具が違う点に注意してください（本体側で対応を検討中）。</p>
 <p>また、pin を上げたあと <strong>Claude Code をフル再起動</strong>（プロセスごと）しないと反映されません。in-app reload や <code>/mcp</code> 再接続では <strong>stdio 子プロセスが生き残り、<code>npx</code> が再解決されない</strong>ためです。ref 無し（<code>github:gamasenninn/tealus-mcp</code> = HEAD 追従）の場合はフル再起動だけで反映されます。</p>
 </div>
 <table>
@@ -2901,6 +2905,11 @@
 <td><code>send_form</code></td>
 <td><strong>回答フォームを投稿</strong>（v0.14.8、本体 v0.6.0 <a href="https://github.com/gamasenninn/tealus/issues/336">#336</a>）。radio（単一選択・補足 text 可）/ text（自由記述）を出し、回答者は 1 ボタンで返信。<code>reply_mention</code> を付けると回答が <code>@cc-&lt;project&gt;</code> を起動する</td>
 <td><code>room_id</code> / <code>title</code> / <code>fields[]</code>（<code>id</code> / <code>type</code>（<code>radio</code> | <code>text</code>） / <code>label</code> / <code>options?</code> / <code>required?</code> / <code>multiline?</code>） / <code>intro?</code> / <code>reply_mention?</code> / <code>submit_label?</code></td>
+</tr>
+<tr>
+<td><code>edit_message</code></td>
+<td><strong>既存メッセージの本文を直す</strong>（v0.15.0、<a href="https://github.com/gamasenninn/tealus/issues/394">#394</a>）。既定は前後の文字列を指定する部分置換で、置換した箇所数を返す。<code>content</code> で全文差し替え（排他）。<code>expected_count</code> で件数を検算、<code>dry_run</code> で書き込まず確認。編集できるかはルームの「メッセージ編集」設定で決まり、不可なら 403。旧版は編集履歴に残る</td>
+<td><code>message_id</code> / <code>before?</code> / <code>after?</code> / <code>content?</code> / <code>expected_count?</code> / <code>dry_run?</code></td>
 </tr>
 <tr>
 <td><code>get_messages</code></td>
