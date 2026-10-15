@@ -2602,8 +2602,8 @@
 </tr>
 <tr>
 <td><code>message:send</code></td>
-<td><code>{ room_id, content, type, reply_to }</code></td>
-<td>メッセージ送信</td>
+<td><code>{ room_id, content, type, reply_to, forwarded_from? }</code></td>
+<td>メッセージ送信。★ **受け取りの返事（ack）**を返す: 保存できたら <code>{ ok: true, id }</code>、断ったら <code>{ ok: false, error: 理由 }</code>（<a href="https://github.com/gamasenninn/tealus/issues/593">#593</a>）。画面は断られたら入力欄の文を残して理由を出す。ack 無しの emit（古い画面）も受け付ける</td>
 </tr>
 <tr>
 <td><code>message:read</code></td>
@@ -2619,6 +2619,11 @@
 <td><code>typing:stop</code></td>
 <td><code>room_id</code></td>
 <td>入力中通知の停止</td>
+</tr>
+<tr>
+<td><code>room:viewing</code></td>
+<td><code>{ room_id, viewing: boolean }</code></td>
+<td>その部屋を開いていて<strong>画面が見えている</strong>ことを知らせる。見ている人にはプッシュ通知を送らない（<a href="https://github.com/gamasenninn/tealus/issues/475">#475</a>）</td>
 </tr>
 <tr>
 <td><code>call:start</code></td>
@@ -2737,8 +2742,79 @@
 <td>ルームメンバー</td>
 <td>通話状態（参加人数等）</td>
 </tr>
+<tr>
+<td><code>message:updated</code></td>
+<td>ルームメンバー全員</td>
+<td>メッセージの編集</td>
+</tr>
+<tr>
+<td><code>message:published</code></td>
+<td>ルームメンバー全員</td>
+<td>お知らせへの公開・非公開（<code>{ message_id, is_published }</code>）</td>
+</tr>
+<tr>
+<td><code>message:tags</code></td>
+<td>ルームメンバー全員</td>
+<td>メッセージのタグの更新</td>
+</tr>
+<tr>
+<td><code>room:tag_deleted</code></td>
+<td>ルームメンバー全員</td>
+<td>ルームのタグの削除</td>
+</tr>
+<tr>
+<td><code>room:added</code></td>
+<td>加わった本人（<code>user:{id}</code>）</td>
+<td>部屋に加わった（一覧に足す、<a href="https://github.com/gamasenninn/tealus/issues/486">#486</a>）</td>
+</tr>
+<tr>
+<td><code>room:removed</code></td>
+<td>外れた本人</td>
+<td>部屋から外れた（一覧から消す、<a href="https://github.com/gamasenninn/tealus/issues/533">#533</a>）</td>
+</tr>
+<tr>
+<td><code>room:updated</code></td>
+<td>ルームメンバー全員</td>
+<td>部屋の情報が変わった（取り直す）</td>
+</tr>
+<tr>
+<td><code>user:updated</code></td>
+<td>関係する利用者</td>
+<td>表示名・アイコンの変更（<a href="https://github.com/gamasenninn/tealus/issues/534">#534</a>）</td>
+</tr>
+<tr>
+<td><code>unread:changed</code></td>
+<td>本人</td>
+<td>未読数が変わった（一覧を取り直す）</td>
+</tr>
+<tr>
+<td><code>agent:status</code></td>
+<td>ルームメンバー全員</td>
+<td>エージェントの状態（考え中など、<code>POST /api/bot/status</code> から）</td>
+</tr>
+<tr>
+<td><code>tts:audio</code></td>
+<td>ルームメンバー全員</td>
+<td>読み上げ音声の URL（<code>{ url }</code>。各端末が取りに行く）</td>
+</tr>
+<tr>
+<td><code>tts:speak</code></td>
+<td>ルームメンバー全員</td>
+<td>ブラウザ標準音声で読む文（<code>TTS_PROVIDER=browser</code>）</td>
+</tr>
+<tr>
+<td><code>stamp:generated</code> / <code>stamp:error</code></td>
+<td>生成を頼んだ本人</td>
+<td>スタンプ生成の完了・失敗</td>
+</tr>
+<tr>
+<td><code>capability:changed</code></td>
+<td>全接続</td>
+<td>通話・トランシーバーが使えるか（rtc-server の到達性）が変わった</td>
+</tr>
 </tbody>
 </table>
+<p><code>message:new</code> などで届くメッセージには、転送されたものなら <code>forwarded_from</code>（転送元の要約。元が削除されていれば「元メッセージは削除されました」の扱い）が含まれます。</p>
 
 
 

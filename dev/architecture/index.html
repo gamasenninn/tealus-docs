@@ -2199,10 +2199,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#default-socketio-blob" class="md-nav__link">
+  <a href="#default-url-socketio" class="md-nav__link">
     <span class="md-ellipsis">
       
-        default 経路: Socket.IO blob 配信
+        default 経路: URL を Socket.IO で配信
       
     </span>
   </a>
@@ -2261,6 +2261,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本体の設計書
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2903,10 +2914,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#default-socketio-blob" class="md-nav__link">
+  <a href="#default-url-socketio" class="md-nav__link">
     <span class="md-ellipsis">
       
-        default 経路: Socket.IO blob 配信
+        default 経路: URL を Socket.IO で配信
       
     </span>
   </a>
@@ -2965,6 +2976,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本体の設計書
+      
+    </span>
+  </a>
   
 </li>
       
@@ -3033,9 +3055,9 @@
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│  └────┬─────┘ └────┬─────┘ └──────────────────┘ │
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│       │             │                            │
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>│  ┌────▼─────────────▼────┐  ┌─────────────────┐ │
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│  │     PostgreSQL 16     │  │    Redis 7       │ │
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>│  │      (RLS有効)        │  │  (セッション/    │ │
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│  │     :5432             │  │   在席管理)      │ │
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│  │     PostgreSQL 16     │  │ 在席・見ている部屋 │ │
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>│  │      (RLS有効)        │  │ (プロセス内の Map、│ │
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>│  │     :5432             │  │  Socket.IO の中)  │ │
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>│  └───────────────────────┘  └─────────────────┘ │
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>└──────────┬──────────────────────┬────────────────┘
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>           │ Webhook              │ Proxy（通話 / TTS legacy / /mcp HTTP transport）
@@ -3311,16 +3333,23 @@
 <p>Socket.IO接続時も <code>handshake.auth.token</code> でJWTを検証します。</p>
 <h2 id="tts">TTS 音声合成パイプライン<a class="headerlink" href="#tts" title="Permanent link">&para;</a></h2>
 <p>AIエージェントの回答を音声で読み上げる経路には <strong>default（Socket.IO blob）</strong> と <strong>legacy（mediasoup PlainTransport）</strong> の 2 種類があります。default は rtc-server なしで動作するため、Mac / Windows を含む全プラットフォームでセットアップが容易です。</p>
-<h3 id="default-socketio-blob">default 経路: Socket.IO blob 配信<a class="headerlink" href="#default-socketio-blob" title="Permanent link">&para;</a></h3>
+<h3 id="default-url-socketio">default 経路: URL を Socket.IO で配信<a class="headerlink" href="#default-url-socketio" title="Permanent link">&para;</a></h3>
 <p>環境変数 <code>TTS_BROADCAST_MEDIASOUP</code> が未設定または <code>false</code> のときの default 経路です（<a href="https://github.com/gamasenninn/tealus/issues/189">#189</a>）。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>agent-server: speakMessage(roomId, text)
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → テキスト前処理（Markdown除去・URL省略・500文字制限）
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  → Aivis Cloud API (HTTPS POST) → WAV バイナリ
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → server (HTTP) に WAV をPOST
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      └── Socket.IO emit `tts:audio` (binary blob, room broadcast)
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>          → 各 client が &lt;audio&gt; 要素で再生
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  → 部屋の設定でエンジンを決める（Aivis / OpenAI / Gemini、#444）→ 音声バイナリ
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → server の POST /api/bot/tts-audio に音声を渡す（メモリに 5 分保持）
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      └── Socket.IO emit `tts:audio` { url: /api/bot/tts-audio/:id }（room broadcast）
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>          → 各 client が URL から取得して &lt;audio&gt; 要素で再生
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>              └── Web Audio API GainNode で音量補正（1.0 超のブースト可能）
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>TTS_PROVIDER=browser: 合成せず POST /api/bot/tts-speak → Socket.IO `tts:speak`
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  → 各 client の Web Speech API が読み上げる（DB に書かない）
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">以前の記述の誤り</p>
+<p>以前この節は「<code>tts:audio</code> で WAV を binary blob として配信」と書いていましたが、実装は<strong>音声の URL を配り、各端末が取りに行く</strong>形です。</p>
+</div>
 <table>
 <thead>
 <tr>
@@ -3432,7 +3461,7 @@
 <tbody>
 <tr>
 <td>新規導入 / Mac / Windows / Docker で簡素化したい</td>
-<td><strong>default</strong>（Socket.IO blob）</td>
+<td><strong>default</strong>（URL を Socket.IO で配る）</td>
 </tr>
 <tr>
 <td>既存の mediasoup 運用と互換性を維持したい</td>
@@ -3441,6 +3470,38 @@
 <tr>
 <td>通話機能と音声 mixing を共通インフラで処理したい</td>
 <td>legacy</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">本体の設計書<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>機能ごとの設計と、その判断の理由（実測・やめたこと・受け入れた穴）は本体リポジトリの <code>docs/</code> にあります。新しい機能に手を入れる前に、該当するものを読んでください。</p>
+<table>
+<thead>
+<tr>
+<th>設計書</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/gamasenninn/tealus/blob/main/docs/05_実装ノート_不変条件と落とし穴.md">05_実装ノート_不変条件と落とし穴.md</a></td>
+<td>壊してはいけない約束（<code>JWT_SECRET</code> の必須化・エラーの返し方など）</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gamasenninn/tealus/blob/main/docs/06_ルームトリガー設計.md">06_ルームトリガー設計.md</a></td>
+<td>条件で定型メッセージを投稿する（<a href="../../admin/automation/">ルームトリガーと見張り</a>）</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gamasenninn/tealus/blob/main/docs/07_投稿経路と付随処理.md">07_投稿経路と付随処理.md</a></td>
+<td>投稿の経路（socket / REST / bot / voice / LINE）と、投稿のあとに走る処理</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gamasenninn/tealus/blob/main/docs/08_会話モード設計.md">08_会話モード設計.md</a></td>
+<td>AI と音声で話す（<a href="../../guide/advanced/voice-chat/">会話モード</a>）</td>
+</tr>
+<tr>
+<td><a href="https://github.com/gamasenninn/tealus/blob/main/docs/09_見張り設計.md">09_見張り設計.md</a></td>
+<td>来るはずのものが来ないときに知らせる</td>
 </tr>
 </tbody>
 </table>

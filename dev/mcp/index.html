@@ -3257,7 +3257,7 @@
 </tr>
 <tr>
 <td><strong>mention 通知 wake-up</strong>（Inbound）</td>
-<td>stdio + file beacon 経路に依存。HTTP では <strong>未サポート</strong>（Phase 2 で SSE event broker を予定）</td>
+<td>★ <strong>v0.8.0 から HTTP でも届く</strong>（<code>/agent-api/cc-queue/stream</code>、<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a>）。受け取りは <code>listen-tealus</code> skill の http mode、手順は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md">setup-cc-remote.md</a></td>
 </tr>
 <tr>
 <td><strong>stdio との関係</strong></td>

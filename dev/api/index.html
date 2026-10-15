@@ -2331,6 +2331,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        その他
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#media" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配信 /media
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#api_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2425,7 +2447,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         ヘルスチェック
@@ -3038,6 +3060,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        その他
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#media" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配信 /media
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#api_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3132,7 +3176,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         ヘルスチェック
@@ -3169,6 +3213,10 @@
 <p>エラーレスポンスは以下の JSON 形式で返されます。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"エラーメッセージ"</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
+<ul>
+<li>★ <strong>想定外の失敗（500）は、決まった文だけを返します</strong>（<a href="https://github.com/gamasenninn/tealus/issues/603">#603</a>）。中身（スタック・本体の中のパス）は返さず、サーバーの記録にだけ残します。<code>NODE_ENV</code> に関係ありません。状態の番号を持つ失敗（本文が大きすぎる 413・JSON が壊れている 400 など）は番号を保ち、本文は「リクエストを受け付けられませんでした」です</li>
+<li>★ <strong>ID の形が正しくないと 400</strong> です（<a href="https://github.com/gamasenninn/tealus/issues/543">#543</a>）。以前は 500 になっていました。本文は「ID「…」の形が正しくありません。ID は省略せずに、36 文字のまま渡してください。」で、<strong>途中で切った ID を渡した AI が自分で気づける</strong>ようにしてあります</li>
+</ul>
 <h3 id="_3">ステータスコード<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -3268,6 +3316,12 @@
 <td>必要</td>
 </tr>
 <tr>
+<td>GET</td>
+<td><code>/api/auth/authz?room_id=</code></td>
+<td>この人は誰か・このルームでの役割（<a href="https://github.com/gamasenninn/tealus/issues/458">#458</a>）。agent-server が<strong>利用者自身の鍵で</strong>聞き、設定を触らせてよいかを判断する。返すのは事実だけ</td>
+<td>必要</td>
+</tr>
+<tr>
 <td>PUT</td>
 <td><code>/api/auth/profile</code></td>
 <td>プロフィール更新（表示名・ステータス）</td>
@@ -3350,7 +3404,19 @@
 <tr>
 <td>PUT</td>
 <td><code>/api/rooms/:id</code></td>
-<td>グループ名変更</td>
+<td>ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など。<code>is_announcement</code> は admin のみ）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/api/rooms/:id/notification</code></td>
+<td><strong>自分の分だけ</strong>このルームの通知を切り替え（<code>{ "muted": boolean }</code>、<a href="https://github.com/gamasenninn/tealus/issues/463">#463</a>）。通話の着信は止めない</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/rooms/:id</code></td>
+<td>グループ削除。<strong>作成者で、メンバーが自分だけのとき</strong>。メッセージと添付も消える</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3423,7 +3489,19 @@
 <tr>
 <td>PATCH</td>
 <td><code>/api/rooms/:id/messages/:msgId/publish</code></td>
-<td>メッセージ公開/非公開</td>
+<td>お知らせに公開/非公開（送信者か部屋の管理者）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/rooms/:id/messages/days?month=YYYY-MM&amp;tz_offset=分</code></td>
+<td>その月で投稿がある日（カレンダーの印、<a href="https://github.com/gamasenninn/tealus/issues/476">#476</a>）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/rooms/:id/messages/first-of-day?date=YYYY-MM-DD&amp;tz_offset=分</code></td>
+<td>その日の最初の投稿（無ければ <code>message_id: null</code>）</td>
 <td>必要</td>
 </tr>
 </tbody>
@@ -3449,6 +3527,12 @@
 <td>GET</td>
 <td><code>/api/rooms/:id/media/gallery</code></td>
 <td>メディアギャラリー</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/rooms/:id/media/forward</code></td>
+<td>画像・動画・ファイルの投稿を別のルームへ転送（元のルームのメンバーであること。ファイルの実体は共有）</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3672,11 +3756,44 @@
 <tr>
 <td>DELETE</td>
 <td><code>/api/push/subscribe</code></td>
-<td>Push通知購読解除</td>
+<td>Push通知購読解除。★ <strong>この口だけは、署名が正しければ期限切れのトークンでも受け付けます</strong>（期限切れでログアウトするときに解除できず、宛先が残っていたため）</td>
 <td>必要</td>
 </tr>
 </tbody>
 </table>
+<h2 id="_20">その他<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>メソッド</th>
+<th>パス</th>
+<th>説明</th>
+<th>認証</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/config</code></td>
+<td>画面が使う設定（通話・トランシーバーが使えるか等。agent-server の公開設定も中継）</td>
+<td>不要</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/version</code></td>
+<td>本体のビルド ID。画面は自分のビルド ID と突き合わせて「更新あり」を判断する</td>
+<td>不要</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/client-errors</code></td>
+<td>画面で起きたエラーを本体の記録へ送る（<a href="https://github.com/gamasenninn/tealus/issues/525">#525</a>）</td>
+<td>不要</td>
+</tr>
+</tbody>
+</table>
+<h2 id="media">配信 <code>/media</code><a class="headerlink" href="#media" title="Permanent link">&para;</a></h2>
+<p>アップロードしたファイルは <code>/media/...</code> で配信されます。★ <strong>削除した投稿・削除した部屋の添付は 404</strong> を返します（v0.11.0、<a href="https://github.com/gamasenninn/tealus/issues/601">#601</a> <a href="https://github.com/gamasenninn/tealus/issues/602">#602</a>）。リバースプロキシでディスクから直接配ると、この判定を通らなくなります（<a href="../../admin/server-setup/">サーバー構築 &gt; Nginx設定例</a>）。</p>
 <h2 id="api_1">管理者API<a class="headerlink" href="#api_1" title="Permanent link">&para;</a></h2>
 <p>管理者ロール（<code>admin</code>）が必要です。</p>
 <table>
@@ -3709,19 +3826,29 @@
 <td>ユーザー有効化/無効化</td>
 </tr>
 <tr>
-<td>—</td>
-<td><code>/api/admin/portal-links</code></td>
-<td>ポータルリンクCRUD</td>
+<td>GET / POST / PUT / DELETE</td>
+<td><code>/api/admin/portal-links</code>（<code>/:id</code>）</td>
+<td>ポータルリンク</td>
 </tr>
 <tr>
-<td>—</td>
-<td><code>/api/admin/webhooks</code></td>
-<td>Webhook CRUD</td>
+<td>GET / POST / PUT / DELETE</td>
+<td><code>/api/admin/webhooks</code>（<code>/:id</code>）</td>
+<td>Webhook</td>
 </tr>
 <tr>
 <td>POST</td>
 <td><code>/api/admin/webhooks/:id/test</code></td>
 <td>Webhookテスト送信</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/rooms</code></td>
+<td>全ルーム一覧</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/access-log</code></td>
+<td>最終投稿・最終閲覧の集計（<a href="https://github.com/gamasenninn/tealus/issues/301">#301</a>）</td>
 </tr>
 <tr>
 <td>GET</td>
@@ -3732,6 +3859,21 @@
 <td>GET</td>
 <td><code>/api/admin/agent-logs</code></td>
 <td>エージェント応答ログ</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/agent-logs/:id/context</code></td>
+<td>応答ログ 1 件の前後の文脈</td>
+</tr>
+<tr>
+<td>GET / POST</td>
+<td><code>/api/admin/dictionary/terms</code></td>
+<td>業務辞書の語（<code>PATCH /:id</code>・<code>PATCH /:id/reading</code>・<code>POST /:id/reject</code>・<code>POST /:id/restore</code>）</td>
+</tr>
+<tr>
+<td>GET / POST</td>
+<td><code>/api/admin/dictionary/aliases</code></td>
+<td>別名の候補（<code>POST /:id/approve</code>・<code>POST /:id/reject</code>）</td>
 </tr>
 <tr>
 <td>POST</td>
@@ -3763,18 +3905,28 @@
 </tr>
 <tr>
 <td>POST</td>
-<td><code>/api/bot/voice</code></td>
-<td>音声送信（自動文字起こし、default <code>gpt-4o-mini-transcribe</code>）</td>
-</tr>
-<tr>
-<td>POST</td>
-<td><code>/api/bot/media</code></td>
-<td>メディア送信</td>
-</tr>
-<tr>
-<td>POST</td>
 <td><code>/api/bot/status</code></td>
-<td>ステータス送信</td>
+<td>ステータス送信（入力中のような表示。メッセージにはならない）</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/bot/heartbeat</code></td>
+<td><strong>鼓動</strong>（<code>{ name, info }</code>）。<a href="../../admin/automation/">見張り</a> の <code>heartbeat</code> が見る（<a href="https://github.com/gamasenninn/tealus/issues/595">#595</a>）</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/bot/tts-speak</code></td>
+<td>各端末のブラウザ標準音声で読ませる（<code>TTS_PROVIDER=browser</code> のとき agent-server が使う。DB に書かない）</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/bot/tts-audio</code></td>
+<td>合成済みの音声（<code>audio</code>）を受け取り、ルームに配信（メモリに 5 分保持）</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/bot/tts-audio/:id</code></td>
+<td>上の音声を取得（期限切れは 404）</td>
 </tr>
 <tr>
 <td>GET</td>
@@ -3833,8 +3985,8 @@
 </tr>
 <tr>
 <td>POST</td>
-<td><code>/api/bot/rooms</code></td>
-<td>ルーム作成</td>
+<td><code>/api/bot/rooms/:id/join</code></td>
+<td>bot が自分でルームに入る。★ <strong>bot（<code>is_bot</code>）だけ</strong>。人は 403（招待で入る）</td>
 </tr>
 <tr>
 <td>POST</td>
@@ -4073,7 +4225,7 @@
 <p class="admonition-title">後方互換と improvement</p>
 <p>旧形式 <code>{raw_text, formatted_text, status}</code> から default 振る舞いが変わります（<code>raw_text</code> 省略 + <code>id</code> / <code>version</code> 追加）。本体側 consumer（<code>agent-server/src/media/messageAdapter.mts</code> 等）は <code>formatted_text || raw_text</code> fallback chain で機能するため実害なし、むしろ整形空 voice で raw garbage を LLM に渡さなくなる improvement として動きます。</p>
 </div>
-<h2 id="_20">ヘルスチェック<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<h2 id="_21">ヘルスチェック<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

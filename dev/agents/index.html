@@ -2338,6 +2338,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#v0110565-570-573" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        子プロセスに渡す環境変数（v0.11.0〜、#565 #570 #573）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#codex-helperv030-68-pre-" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3174,6 +3185,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#v0110565-570-573" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        子プロセスに渡す環境変数（v0.11.0〜、#565 #570 #573）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#codex-helperv030-68-pre-" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3459,7 +3481,7 @@
 </tr>
 <tr>
 <td>コンテキスト</td>
-<td>直近 20 件（<code>LIGHT_CONTEXT_MESSAGES</code>）</td>
+<td>必要な履歴を道具（<code>get_messages</code> 等）で自分で取る（<code>LIGHT_CONTEXT_MESSAGES</code> は <a href="https://github.com/gamasenninn/tealus/issues/230">#230</a> で削除）</td>
 <td><code>--resume tealus-room-{roomId}</code> で継続セッション</td>
 </tr>
 <tr>
@@ -3512,11 +3534,16 @@
 </tr>
 <tr>
 <td>3</td>
+<td>読んでまとめる依頼（議事録 / 要約 / まとめて / 一覧に / 整理して、<a href="https://github.com/gamasenninn/tealus/issues/567">#567</a>）</td>
+<td>Light</td>
+</tr>
+<tr>
+<td>4</td>
 <td>Deep キーワード（コード / リファクタ / デバッグ / 実装 / PR 等）</td>
 <td>Deep Agent</td>
 </tr>
 <tr>
-<td>4</td>
+<td>5</td>
 <td>上記すべて該当しない</td>
 <td>LLM（gpt-5.4-mini）が <code>light</code> / <code>deep</code> を判定</td>
 </tr>
@@ -3533,9 +3560,9 @@
 </thead>
 <tbody>
 <tr>
-<td>チャット履歴の検索・要約</td>
+<td>チャット履歴の検索・要約・議事録</td>
 <td><strong>Light</strong></td>
-<td>レスポンスが速く、コンテキスト 20 件で十分</td>
+<td>レスポンスが速く、道具で部屋を読めば足りる（Router も Light に回す、<a href="https://github.com/gamasenninn/tealus/issues/567">#567</a>）</td>
 </tr>
 <tr>
 <td>TODO 管理（完了マーク・一覧）</td>
@@ -3578,7 +3605,7 @@
 <tr>
 <td>実装基盤</td>
 <td>OpenAI Agents SDK</td>
-<td>codex SDK（<code>@openai/codex-sdk</code> v0.128.0+）</td>
+<td>codex SDK（<code>@openai/codex-sdk</code> <code>^0.162.1</code>。★ 上げたら <code>npm install</code> が必要）</td>
 </tr>
 <tr>
 <td>起動形態</td>
@@ -3862,7 +3889,7 @@
 </tbody>
 </table>
 <h3 id="workspace-agentsmd">Workspace + AGENTS.md<a class="headerlink" href="#workspace-agentsmd" title="Permanent link">&para;</a></h3>
-<p>Codex Deep agent は workspace 配下に <code>.codex_home/</code> を動的生成し、<code>auth.json</code> copy + <code>config.toml</code> を room-specific に組み立てます。Codex CLI は project root の <code>AGENTS.md</code>（上限 32 KB）を自動 read するため、<code>CLAUDE.md</code> の literal copy として <code>AGENTS.md</code> を repo root に配置しています。</p>
+<p>Codex Deep agent は room ごとの <code>CODEX_HOME</code> を動的生成し、<code>auth.json</code> copy + <code>config.toml</code> を room-specific に組み立てます。★ 置き場は <strong>workspace の外</strong>（<code>&lt;WORKSPACE_ROOT&gt;/_codex-homes/&lt;agentId&gt;/&lt;roomId&gt;</code>）です（<a href="https://github.com/gamasenninn/tealus/issues/419">#419</a>）。以前は workspace の中の <code>.codex_home/</code> で、AI がファイルとして読める場所に鍵や DB の資格情報が写り込んでいました。既定のモデルは <code>gpt-5.6-sol</code>（<code>AGENT_DEEP_CODEX_MODEL</code>）です。Codex CLI は project root の <code>AGENTS.md</code>（上限 32 KB）を自動 read するため、<code>CLAUDE.md</code> の literal copy として <code>AGENTS.md</code> を repo root に配置しています。</p>
 <h3 id="_7">推奨運用<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -3890,10 +3917,19 @@
 <p class="admonition-title">5/16 4 round → 0 round transition (Phase 4 organon paradigm operational realization)</p>
 <p>Codex Deep agent + organon polyseme inject pipeline (<a href="#system-prompt">後述</a>)の組み合わせで、5/16 dogfood の「4 round LLM 訂正 → 1 round 正解」transition が <strong>両 agent path で再現</strong>（N=2 evidence、5/31 dogfood）。Deep agent の <strong>provider 選択肢拡大が organon-driven query precision を Anthropic 環境外にも拡げる</strong> structural change です。</p>
 </div>
+<h3 id="v0110565-570-573">子プロセスに渡す環境変数（v0.11.0〜、<a href="https://github.com/gamasenninn/tealus/issues/565">#565</a> <a href="https://github.com/gamasenninn/tealus/issues/570">#570</a> <a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）<a class="headerlink" href="#v0110565-570-573" title="Permanent link">&para;</a></h3>
+<p>agent-server が起動する子プロセス（codex・Claude Code の CLI、MCP の道具）には、<strong>許可した一覧の環境変数だけ</strong>を渡します（<code>agent-server/src/lib/childEnv.mts</code>）。</p>
+<ul>
+<li>渡るのは実行に要る基本のもの（<code>PATH</code>・一時フォルダ・ホーム・言語・プロキシ・codex 自身の置き場など）だけです</li>
+<li>以前は agent-server の環境変数をそのまま渡していて、<strong>AI がシェルで動かすコマンドにも <code>DB_PASSWORD</code>・<code>*_PASS</code> などが届いていました</strong>（codex は名前に KEY / SECRET / TOKEN を含むものは隠しますが、それ以外は隠れません）</li>
+<li>道具が要る鍵は<strong>道具の設定で個別に</strong>渡します。tealus-mcp が要る鍵（画像生成の <code>OPENAI_API_KEY</code>、文書の読み取りの <code>GOOGLE_API_KEY</code> など）は 1 か所の一覧から渡します（<a href="https://github.com/gamasenninn/tealus/issues/580">#580</a>）</li>
+<li>自分で足す MCP の道具の書き方は <a href="../../admin/agent/#mcp-settings">AIエージェント設定 &gt; MCP設定</a> を参照してください</li>
+<li>★ 一覧に足すかどうかは「<strong>AI のシェルに見えてよいか</strong>」で決めます</li>
+</ul>
 <h3 id="codex-helperv030-68-pre-">Codex 認証エラー検出 helper（v0.3.0 後、6/8 pre-α）<a class="headerlink" href="#codex-helperv030-68-pre-" title="Permanent link">&para;</a></h3>
 <p>Codex Deep / Light v2 の <strong>認証エラー (<code>auth.json</code> 期限切れ / 不正)</strong> を helper が検出し、明示的なエラーメッセージで採用者を guide します（detection only、自動 recovery はしません）。<code>.env</code> 設定誤りや <code>codex login</code> 期限切れ時の troubleshoot を高速化する design。</p>
 <h2 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h2>
-<p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.mts</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、環境変数 <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> の有無で自動切替されます。</p>
+<p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.mts</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、agent-server の <code>.env</code> に <strong><code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code></strong> があれば自動で追加されます（子の tealus-mcp には <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> という名前で渡します。agent-server の <code>.env</code> に書く名前ではありません）。</p>
 <p>利用可能なツール（<a href="../mcp/">MCP Server</a> と同じ一覧。★ ただし本体の agent-server は tealus-mcp を <code>#v0.14.7</code> に固定しているため、下表の <code>send_form</code> は本体のエージェントからは使えません。<code>edit_message</code>（v0.15.0）も同様）:</p>
 <table>
 <thead>
@@ -4078,19 +4114,19 @@
 </tr>
 <tr>
 <td><strong>mention 通知 wake-up</strong>（Tealus → Claude Code、Inbound）</td>
-<td><strong>stdio + file beacon 経路に依存</strong>、HTTP では未サポート</td>
+<td>★ <strong>v0.8.0 から HTTP でも届く</strong>（<code>/agent-api/cc-queue/stream</code>、NDJSON、<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a>）</td>
 </tr>
 </tbody>
 </table>
-<p>cross-machine 構成では <strong>HTTP + cc-tealus stdio bridge 併用</strong> が当面の現実解です。Phase 2 で SSE event broker（server-push wake-up）が乗ると HTTP 単独で完結する予定です。</p>
+<p>以前このページは「Inbound は HTTP 未サポート、Phase 2 で予定」と書いていましたが、<strong>古くなっていました</strong>。別マシンの Claude Code は、往路も復路も HTTP だけで完結します。受け取りは <code>listen-tealus</code> skill の http mode、手順は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md">setup-cc-remote.md</a> です。</p>
 <ul>
 <li>詳細: <a href="../mcp/#http-transport">MCP Server &gt; HTTP transport</a></li>
 <li>採用者向け概念紹介: <a href="../../guide/integration/claude-code/">Claude Code 連携</a></li>
 </ul>
 <h3 id="phase-b">Phase B 展望<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>multi-session lock</strong>（<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a>）: 別 PC で同 project を動かす場合の排他制御。現状は共有ストレージ（NAS / SMB / Syncthing）で <code>~/.tealus/cc-queue/</code> を mount する運用が想定されています</li>
-<li><strong>SSE event broker（HTTP transport Phase 2）</strong>: server-push wake-up で HTTP 単独 cross-machine 構成を完結させる構造（<a href="https://github.com/gamasenninn/tealus/issues/264">#264</a> Phase 2 候補）</li>
+<li><strong>multi-session lock</strong>: 同じ project を複数のセッションで同時に受け取るときの排他制御（未実装）</li>
+<li>別マシンでの受け取りは v0.8.0 で HTTP stream として実装済み（上記）</li>
 <li>他 dispatch 先の追加候補は本体 roadmap で議論中</li>
 </ul>
 <h2 id="system-prompt">システムプロンプトのフロー<a class="headerlink" href="#system-prompt" title="Permanent link">&para;</a></h2>

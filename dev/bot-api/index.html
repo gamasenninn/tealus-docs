@@ -2978,11 +2978,14 @@
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">"image=@/path/to/image.jpg"</span>
 </code></pre></div>
 <h3 id="_4">音声送信<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/bot/voice<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:3000/api/rooms/&lt;ルームUUID&gt;/voice<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">"room_id=ルームUUID"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">"voice=@/path/to/audio.wav"</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-F<span class="w"> </span><span class="s2">"voice=@/path/to/audio.wav"</span>
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title"><code>/api/bot/voice</code> はありません</p>
+<p>以前このページの例は <code>POST /api/bot/voice</code> でしたが、<strong>そのような口はありません</strong>（404）。音声は人の利用者と同じ <code>POST /api/rooms/:id/voice</code>（フィールド名 <code>voice</code>）で送ります。<code>tealus-cli</code> の <code>--voice</code> もこの口を使っています。画像は <code>POST /api/bot/push-image</code>（フィールド名 <code>image</code>）です。</p>
+</div>
 <p>音声送信時は自動的に文字起こし（既定 <code>gpt-4o-mini-transcribe</code>、<a href="https://github.com/gamasenninn/tealus/issues/284">#284</a>。env <code>WHISPER_MODEL</code> で切替可）+ AI整形が実行されます。</p>
 <h3 id="_5">メッセージ取得（ポーリング）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>Webhookが使えない環境では、ポーリングでメッセージを取得できます。</p>
@@ -3021,6 +3024,14 @@
 <td><code>reaction.added</code></td>
 <td>リアクション追加</td>
 </tr>
+<tr>
+<td><code>message.updated</code></td>
+<td>メッセージ編集（ペイロード例は下）</td>
+</tr>
+<tr>
+<td><code>voice.transcription_completed</code></td>
+<td>音声の文字起こし（整形まで）が終わった</td>
+</tr>
 </tbody>
 </table>
 <div class="admonition warning">
@@ -3031,6 +3042,10 @@
 <p>管理画面の「Webhook」タブから登録するか、APIで登録します。<code>room_id</code> を <code>NULL</code> にすると全ルームのイベントを受信します。</p>
 <h3 id="_8">署名検証<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>ペイロードは HMAC-SHA256 で署名されます。</p>
+<div class="admonition danger">
+<p class="admonition-title">★ agent-server も受け側として検証します（<a href="https://github.com/gamasenninn/tealus/issues/478">#478</a>）</p>
+<p>本体の Webhook 登録に入れた secret と、<code>agent-server/.env</code> の <strong><code>WEBHOOK_SECRET</code> に同じ値</strong>を設定してください。片方だけだと <strong>401 で弾かれ、エージェントが黙って起きません</strong>（投稿自体は成功して見えます）。自作の受け側でも、下の方法で必ず検証してください。</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>X-Tealus-Signature: sha256=HMAC(secret, body)
 </code></pre></div>
 <p>受信側で署名を検証するサンプル（Node.js）:</p>

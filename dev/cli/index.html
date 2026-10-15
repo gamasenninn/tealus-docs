@@ -2320,6 +2320,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        未読の確認・部屋の一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         ダイレクトメッセージ
       
     </span>
@@ -2345,10 +2356,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         オプション
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グローバルオプション
       
     </span>
   </a>
@@ -2683,6 +2705,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        未読の確認・部屋の一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         ダイレクトメッセージ
       
     </span>
@@ -2708,10 +2741,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         オプション
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グローバルオプション
       
     </span>
   </a>
@@ -2780,19 +2824,26 @@
 <h3 id="_6">音声送信<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"グループ名"</span><span class="w"> </span>--voice<span class="w"> </span>/path/to/audio.wav
 </code></pre></div>
-<h3 id="_7">ダイレクトメッセージ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_7">未読の確認・部屋の一覧<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>check<span class="w">                 </span><span class="c1"># 全部屋の未読</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>check<span class="w"> </span><span class="s2">"グループ名"</span><span class="w">     </span><span class="c1"># その部屋だけ</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>check<span class="w"> </span>--mark-read<span class="w">     </span><span class="c1"># 表示した分を既読にする</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>check<span class="w"> </span>--json<span class="w">          </span><span class="c1"># JSON で出す</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>rooms<span class="w">                 </span><span class="c1"># 参加している部屋の一覧</span>
+</code></pre></div>
+<h3 id="_8">ダイレクトメッセージ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p><code>@ユーザー名</code> を宛先に指定するとDMルームが自動作成されます。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"@山田太郎"</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"こんにちは"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"@山田太郎"</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"こんにちは"</span>
 </code></pre></div>
 <h2 id="watch">watchモード（ディレクトリ監視）<a class="headerlink" href="#watch" title="Permanent link">&para;</a></h2>
 <p>ディレクトリを監視し、新しい音声ファイルが追加されると自動でTealusに送信します。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"グループ名"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>/path/to/directory
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"グループ名"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>/path/to/directory
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title"><code>--voice</code> を省かないでください</p>
 <p>監視モードは <strong><code>--voice</code> と組み合わせたときだけ</strong>有効になります。以前このページの例は <code>--voice</code> が抜けていて、そのとおりに打つと監視モードに入りません。</p>
 </div>
-<h3 id="_8">オプション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">オプション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2803,14 +2854,38 @@
 <tbody>
 <tr>
 <td><code>--ext .wav,.mp4,.mp3</code></td>
-<td>対象ファイル拡張子（カンマ区切り）</td>
+<td>対象ファイル拡張子（カンマ区切り、既定 <code>.wav</code>）</td>
 </tr>
 <tr>
 <td><code>--catch-up</code></td>
-<td>未送信ファイルの自動送信</td>
+<td>起動時に未送信ファイルを自動送信</td>
+</tr>
+<tr>
+<td><code>--heartbeat &lt;名前&gt;</code></td>
+<td>監視中、<strong>1 分ごとに本体へ鼓動を送る</strong>（<a href="https://github.com/gamasenninn/tealus/issues/595">#595</a>）。本体の<a href="../../admin/automation/">見張り</a>が、止まったこと・送り込みの詰まりに気づけます。名前は英数字と <code>. _ : -</code> だけ</td>
 </tr>
 </tbody>
 </table>
+<h3 id="_10">グローバルオプション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>オプション</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--env &lt;file&gt;</code></td>
+<td>読み込む env ファイルを指定（例: <code>--env .env.trx</code>）。1 台で複数の bot を使い分けるとき</td>
+</tr>
+<tr>
+<td><code>--bot-id &lt;ID&gt;</code> / <code>--bot-pass &lt;PASS&gt;</code></td>
+<td>bot の認証情報。env ファイルより優先</td>
+</tr>
+</tbody>
+</table>
+<p>設定が無いと「<code>--bot-id / --bot-pass を指定するか、scripts/.env に TEALUS_BOT_ID と TEALUS_BOT_PASS を設定してください</code>」で止まります。</p>
 <div class="admonition info">
 <p class="admonition-title">ファイル書き込み完了検知</p>
 <p>watchモードはファイルサイズが2回連続で同一になるまで待機してから送信します。書き込み途中のファイルが送信されることはありません。</p>
@@ -2821,8 +2896,8 @@
 </div>
 <h2 id="vox">VOX音声連携<a class="headerlink" href="#vox" title="Permanent link">&para;</a></h2>
 <p>トランシーバーのVOX音声出力ディレクトリをwatchモードで監視することで、トランシーバーの音声を自動的にTealusに投稿できます。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># トランシーバー音声をTealusに自動投稿</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"現場連絡"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>/path/to/vox-output<span class="w"> </span>--ext<span class="w"> </span>.wav
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># トランシーバー音声をTealusに自動投稿</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"現場連絡"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>/path/to/vox-output<span class="w"> </span>--ext<span class="w"> </span>.wav
 </code></pre></div>
 
 

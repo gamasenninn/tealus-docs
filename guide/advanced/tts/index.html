@@ -2857,13 +2857,17 @@
 
 
 <h1 id="tts">TTS 読み上げ<a class="headerlink" href="#tts" title="Permanent link">&para;</a></h1>
-<p>AIエージェントの回答を音声で読み上げる機能です。Aivis Cloud API による高品質な日本語音声合成で、レイテンシ 0.3〜0.5秒のリアルタイム読み上げを実現しています。</p>
+<p>AIエージェントの回答を音声で読み上げる機能です。音声合成のエンジンは <strong>Aivis Cloud / OpenAI / Gemini</strong> から選べ、サーバー側で合成しない設定（各端末のブラウザ標準音声）もあります（管理者が <code>TTS_PROVIDER</code> で選択、<a href="../../../admin/agent/">AIエージェント設定</a>）。</p>
 <h2 id="_1">仕組み<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>AIが回答テキストを生成
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  → Aivis Cloud API で音声合成（WAV）
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  → Socket.IO emit (binary blob) でルーム全員に配信
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  → ブラウザの &lt;audio&gt; 要素で再生
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>      （Web Audio API GainNode で音量補正）
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  → agent-server が音声合成（Aivis / OpenAI / Gemini、部屋ごとに選べる）
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  → server に音声を渡す（メモリに 5 分保持）
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  → Socket.IO `tts:audio` で、音声の URL をルーム全員に知らせる
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  → 各端末がその URL から取得し、&lt;audio&gt; 要素で再生
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>      （Web Audio API GainNode で音量補正）
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>TTS_PROVIDER=browser のときは合成せず、Socket.IO `tts:speak` で文を送り、
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>各端末のブラウザ標準音声（Web Speech API）が読み上げる
 </code></pre></div>
 <p>テキストメッセージの送信と音声合成は並行して処理されるため、チャットへのテキスト表示がブロックされることはありません。</p>
 <div class="admonition info">
