@@ -81,13 +81,13 @@ LINE 連携ブリッジは将来計画として検討中です（[gamasenninn/te
 | Light Agent | $80〜$280 |
 | Deep Agent（MAXプラン） | $100（固定） |
 | TTS 読み上げ（Aivis） | ¥1,980（無制限プラン） |
-| 音声文字起こし（gpt-4o-transcribe） | 音声1分あたり約¥0.9（whisper-1 とほぼ同等、`gpt-4o-mini-transcribe` なら半額） |
+| 音声文字起こし（既定 `gpt-4o-mini-transcribe`） | `gpt-4o-transcribe` の約半額（既定を替えた理由は幻覚の抑制で、料金ではありません。[#284](https://github.com/gamasenninn/tealus/issues/284)） |
 
 詳しくは [AIエージェント設定](admin/agent.md) を参照してください。
 
 ### Q: AI の回答を音声で聞くにはどうすればよいですか？
 
-プロフィール設定で「AI回答の読み上げ」をONにしてください。メッセージ送信時にトランシーバーが自動接続され、AIの回答が音声で読み上げられます。
+プロフィール設定で「AI回答の読み上げ」をONにしてください。AI の回答が届くと、その端末で読み上げられます（トランシーバーには接続しません）。
 
 詳しくは [TTS 読み上げ](guide/advanced/tts.md) を参照してください。
 

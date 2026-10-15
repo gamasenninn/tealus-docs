@@ -54,7 +54,7 @@ curl -X POST http://localhost:3000/api/bot/voice \
   -F "voice=@/path/to/audio.wav"
 ```
 
-音声送信時は自動的に文字起こし（v0.2.2〜default `gpt-4o-transcribe`、env `WHISPER_MODEL` で切替可）+ AI整形が実行されます。
+音声送信時は自動的に文字起こし（既定 `gpt-4o-mini-transcribe`、[#284](https://github.com/gamasenninn/tealus/issues/284)。env `WHISPER_MODEL` で切替可）+ AI整形が実行されます。
 
 ### メッセージ取得（ポーリング）
 
@@ -214,8 +214,10 @@ function verifySignature(body, signature, secret) {
 
 ### リトライポリシー
 
-配信失敗時は指数バックオフで3回リトライ:
+配信は**最大 3 回試行**します（失敗時の再試行は 2 回、指数バックオフ）:
 
-1. 5秒後
-2. 15秒後
-3. 45秒後
+1. 初回送信
+2. 5 秒後に再試行
+3. 15 秒後に再試行
+
+★ **4xx はクライアント側の誤りとして再試行しません**（5xx とネットワークエラーのみ再試行）。以前このページは「3 回リトライ（5 → 15 → 45 秒）」と書いていましたが、実装は試行 3 回で、45 秒の待ちはありません。

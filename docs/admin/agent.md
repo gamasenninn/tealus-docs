@@ -162,7 +162,7 @@ AIエージェントの回答を音声で読み上げる機能です。Aivis Clo
 
 ダッシュボードのルーム設定（基本設定タブ）から、ルームごとに読み上げの音声モデルを選択できます。設定は `room_settings.json` の `tts_model_uuid` フィールドに保存されます。
 
-選択可能なモデルは10種類（凛音エル、まお、にせ、まい、阿井田 茂、fumifumi、morioki、ろてじん、花音、コハク）です。詳細は [TTS 読み上げ](../guide/advanced/tts.md) を参照してください。
+選べる声はエンジンごとに異なり、**Aivis 10 種・OpenAI 13 種・Gemini 30 種**です（v0.10.0 [#444](https://github.com/gamasenninn/tealus/issues/444)。一覧は `agent-server/src/lib/ttsRoom.mts`）。詳細は [TTS 読み上げ](../guide/advanced/tts.md) を参照してください。
 
 ## コスト目安
 

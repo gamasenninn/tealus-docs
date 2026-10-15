@@ -27,7 +27,7 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 
 ### CLAUDE.md
 
-リポジトリルートの `CLAUDE.md` にAI開発ガイドラインが記載されています。AIツール（Claude Code等）での開発時はこのファイルが自動的に参照されます。Codex CLI 向けには同内容の `AGENTS.md` が置かれています。
+リポジトリルートの `CLAUDE.md` にAI開発ガイドラインが記載されています。AIツール（Claude Code等）での開発時はこのファイルが自動的に参照されます。Codex CLI 向けには `AGENTS.md` が置かれています（★ 以前は「CLAUDE.md と同内容」と書いていましたが、現在は内容に差があります。それぞれを読んでください）。
 
 ### コード品質
 

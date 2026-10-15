@@ -59,7 +59,10 @@ AI の回答がチャットに表示されると同時に、**その端末のス
 
 ルームごとに、読み上げの**エンジン**と**声**を選べます。設定はトーク画面右上の **≡** → ルーム設定の「**読み上げエンジン**」「**声**」から行います（v0.10.0、[#444](https://github.com/gamasenninn/tealus/issues/444)）。
 
-エンジンは **Aivis Cloud / OpenAI / Gemini** の 3 つで、未設定の部屋は全体の設定（`TTS_PROVIDER`）に従います。下の表は Aivis の声です（OpenAI・Gemini の声の一覧は今後追記します）。
+エンジンは **Aivis Cloud / OpenAI / Gemini** の 3 つで、未設定の部屋は全体の設定（`TTS_PROVIDER`）に従います。下の表は Aivis の声（10 種）です。
+
+- **OpenAI**（13 種）: marin・cedar（おすすめ）、alloy、ash、ballad、coral、echo、fable、nova、onyx、sage、shimmer、verse
+- **Gemini**（30 種）: Kore、Zephyr、Puck、Charon、Fenrir、Leda、Orus、Aoede、Callirrhoe、Autonoe、Enceladus、Iapetus、Umbriel、Algieba、Despina、Erinome、Algenib、Rasalgethi、Laomedeia、Achernar、Alnilam、Schedar、Gacrux、Pulcherrima、Achird、Zubenelgenubi、Vindemiatrix、Sadachbia、Sadaltager、Sulafat
 
 ### 選択可能なモデル
 

@@ -32,8 +32,8 @@ docker-compose up -d
 
 | サービス | ポート | 用途 |
 |---|---|---|
-| PostgreSQL | 5432 | 開発用DB |
-| PostgreSQL | 5433 | テスト用DB |
+| PostgreSQL | 5432 | 開発用DB（★ `127.0.0.1` でのみ待ち受け） |
+| PostgreSQL | 5433 | テスト用DB（★ `127.0.0.1` でのみ待ち受け） |
 | Redis | 6379 | セッション・在席状態管理 |
 
 ## 2.5 Docker フルデプロイ（本番想定）
@@ -135,7 +135,7 @@ npx web-push generate-vapid-keys
 | `JWT_SECRET` | **本番では必ず固有値を生成** （`openssl rand -hex 32` 等）| JWT署名シークレット |
 | `VAPID_PUBLIC_KEY` | — | Web Push公開鍵（`npx web-push generate-vapid-keys` で生成） |
 | `VAPID_PRIVATE_KEY` | — | Web Push秘密鍵（同上） |
-| `VAPID_SUBJECT` | `mailto:admin@example.com` | Web Push送信者メール（運用ドメインのアドレスに） |
+| `VAPID_SUBJECT` | — | Web Push の連絡先。★ **実在するメールアドレス（`mailto:`）か `https:` の URL** にしてください。実在しないドメインだと **iPhone への通知が 403（BadJwtToken）で断られます**。未設定・形式違いは起動時に警告が出ます |
 | `OPENAI_API_KEY` | — | OpenAI APIキー |
 | `MEDIA_ROOT` | ../../media | アップロードファイル保存先 |
 | `AGENT_PORT` | 4000 | エージェントサーバーポート |
@@ -145,7 +145,8 @@ npx web-push generate-vapid-keys
 | `NODE_ENV` | — | `production` 設定時にCORSを制限 |
 | `VITE_ALLOWED_HOSTS` | — | 外部ホスト経由で vite dev server に access する場合に許可ホストを指定（v0.2.0〜の注意点） |
 | `TRANSCRIPTION_MODE` | — | `organon` を指定すると、自ホスト STT（Qwen3-ASR）の生出力を organon 知識で文脈補正する 2 段構成に切替（v0.5.0、[#326](https://github.com/gamasenninn/tealus/issues/326)） |
-| `LINE_IMAGESET_FLUSH_MS` | 15000 | LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。total 到達で即 flush、この時間で部分 flush（v0.7.0、[#353](https://github.com/gamasenninn/tealus/issues/353)） |
+| `LINE_IMAGESET_FLUSH_MS` | **60000** | LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。全枚が揃えば即投稿、揃わなければ**最後の 1 枚から**この時間で届いた分だけ投稿（v0.7.0 [#353](https://github.com/gamasenninn/tealus/issues/353)、既定 15 秒 → 60 秒 [#552](https://github.com/gamasenninn/tealus/issues/552)） |
+| `LINE_IMAGESET_MAX_WAIT_MS` | 300000 | 同じ束ねの**最初の 1 枚から**の上限（5 分）。画像が届き続けても、ここで区切って投稿する（[#552](https://github.com/gamasenninn/tealus/issues/552)） |
 
 ### DBマイグレーション
 
@@ -318,7 +319,7 @@ NAS 上で運用する場合、所有ドメイン（例: `your-domain.example`�
 | サブドメイン例 | 用途 | 転送先 |
 |---|---|---|
 | `app.your-domain.example` | Tealus PWA | localhost:3000 |
-| `system.your-domain.example` | ダッシュボード | localhost:5174 |
+| （不要） | ダッシュボード | 本番は server が `/system` で配信（`app.…/system`）。`localhost:5174` は開発用の dev server |
 | `api.your-domain.example` | Agent Server | localhost:4000 |
 
 Cloudflare Free プランでも SSL 自動発行・基本的な DDoS 緩和・CDN・オリジン IP 隠蔽が利用できますが、**業務利用では帯域・WAF ルール・Bot 対策など要件に応じて Pro / Business プランを検討**してください。

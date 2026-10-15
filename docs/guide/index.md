@@ -23,7 +23,13 @@ Tealus の基本的な使い方を説明します。
     - [TODO機能](advanced/todo.md)
     - [音声・ビデオ通話](advanced/call.md)
     - [TTS 読み上げ](advanced/tts.md)
+    - [フォーム](advanced/form.md)
+    - [エージェントの呼び出し口](advanced/agent-entry.md)
 - **設定**
     - [プロフィール](settings/profile.md)
     - [表示設定](settings/display.md)
     - [通知設定](settings/notification.md)
+    - [アプリの更新](settings/update.md)
+- **連携**
+    - [Claude Code 連携](integration/claude-code.md)
+    - [LINE Bridge 連携](integration/line-bridge.md)

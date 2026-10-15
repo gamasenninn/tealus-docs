@@ -111,11 +111,11 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 
 | ディレクトリ | 役割 |
 |---|---|
-| `routes/` | REST APIルート定義（15ファイル） |
+| `routes/` | REST APIルート定義（19 ファイル ＋ `routes/admin/` 9 ファイル） |
 | `socket/handlers/` | Socket.IOイベントハンドラ（message・read・typing・call） |
 | `middleware/` | JWT認証・ファイルアップロード |
 | `services/` | プッシュ通知・サムネイル生成等のビジネスロジック |
-| `db/` | DB接続・マイグレーション（001〜026） |
+| `db/` | DB接続・マイグレーション（001〜040、台帳 `schema_migrations`） |
 | `utils/` | ユーティリティ |
 
 ### AIエージェント（agent-server/）
@@ -147,7 +147,7 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 
 | テーブル | 役割 |
 |---|---|
-| `voice_transcriptions` | 音声文字起こし（OpenAI 文字起こし API 連携、default `gpt-4o-transcribe`、env `WHISPER_MODEL` で切替可） |
+| `voice_transcriptions` | 音声文字起こし（OpenAI 文字起こし API 連携、default `gpt-4o-mini-transcribe`、env `WHISPER_MODEL` で切替可） |
 | `tags` / `message_tags` | タグ・TODO機能 |
 | `stamp_packs` / `stamps` | AIスタンプ |
 | `webhooks` | Webhook設定 |
