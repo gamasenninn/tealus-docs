@@ -2838,7 +2838,7 @@
 <p>整形された文字起こしテキストは、音声の吹き出しの下に表示されます。</p>
 <div class="admonition tip">
 <p class="admonition-title">業務辞書 inject による業界用語認識（v0.2.4〜、<a href="https://github.com/gamasenninn/tealus/issues/269">#269</a> Phase 2）</p>
-<p>v0.2.4 で default model が <code>gpt-4o-transcribe</code> → <strong><code>gpt-4o-mini-transcribe</code></strong> に切替、業務辞書（vocabulary）を Whisper prompt に inject する <strong>model-aware vocabulary inject</strong> が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。</p>
+<p>v0.2.4 で default model が <code>gpt-4o-transcribe</code> → <strong><code>gpt-4o-mini-transcribe</code></strong> に切替、業務辞書（vocabulary）を文字起こしのプロンプトに渡す <strong>model-aware vocabulary inject</strong> が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。</p>
 <p>辞書の語は、**データベースの業務辞書（<code>dictionary</code> テーブル）**から読みます（<a href="https://github.com/gamasenninn/tealus/issues/327">#327</a>。テーブルが空のときだけ <code>transcription_guideline.json</code> の語を使います）。辞書は使われ方から育ちます（<a href="../../../admin/dictionary/">業務辞書</a>）。organon を使う環境では、整形の段で organon の知識も渡します。</p>
 </div>
 <div class="admonition info">
@@ -2949,7 +2949,7 @@
 </ol>
 <p>停止するには、再生中の一時停止ボタンを押してください。</p>
 <h2 id="aitts">AI回答の読み上げ（TTS）<a class="headerlink" href="#aitts" title="Permanent link">&para;</a></h2>
-<p>AIエージェントの回答を、トランシーバーから音声で自動読み上げできます。</p>
+<p>AIエージェントの回答を、端末のスピーカーから音声で自動読み上げできます。</p>
 <h3 id="_8">有効化<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ol>
 <li>プロフィール設定を開く</li>

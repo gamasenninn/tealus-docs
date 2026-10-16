@@ -2572,7 +2572,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#q_3" class="md-nav__link">
+  <a href="#data-outside" class="md-nav__link">
     <span class="md-ellipsis">
       
         Q: データは社外に出ますか？
@@ -2805,7 +2805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#q_3" class="md-nav__link">
+  <a href="#data-outside" class="md-nav__link">
     <span class="md-ellipsis">
       
         Q: データは社外に出ますか？
@@ -2884,7 +2884,7 @@
 <p>将来的には NAS クラスター構成による水平スケールも計画しています。</p>
 <h3 id="q-line-slack">Q: LINE や Slack から移行できますか？<a class="headerlink" href="#q-line-slack" title="Permanent link">&para;</a></h3>
 <p>現時点ではデータ移行ツールはありません。Bot API 経由でメッセージのインポートは技術的に可能です。</p>
-<p>LINE とは<strong>連携ブリッジがあります</strong>（LINE のグループと Tealus の部屋をつなぐ。過去の履歴の移行ではありません）。詳しくは <a href="../guide/integration/line-bridge/">LINE Bridge 連携</a> を参照してください。</p>
+<p>LINE とは<strong>連携ブリッジがあります</strong>（LINE のグループの投稿を Tealus の部屋に取り込む。<strong>受け取りだけ</strong>で、Tealus から LINE へは送りません。過去の履歴の移行でもありません）。詳しくは <a href="../guide/integration/line-bridge/">LINE Bridge 連携</a> を参照してください。</p>
 <h3 id="q_1">Q: スマホアプリはありますか？<a class="headerlink" href="#q_1" title="Permanent link">&para;</a></h3>
 <p>ネイティブアプリはありません。PWA（Progressive Web App）として対応しています。</p>
 <p>ブラウザからホーム画面に追加するだけで、アプリのように利用できます。プッシュ通知にも対応しています（iOS / Android / PC）。</p>
@@ -2988,7 +2988,7 @@
 <p>プロフィール設定で「AI回答の読み上げ」をONにしてください。AI の回答が届くと、その端末で読み上げられます（トランシーバーには接続しません）。</p>
 <p>詳しくは <a href="../guide/advanced/tts/">TTS 読み上げ</a> を参照してください。</p>
 <h2 id="_2">セキュリティ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="q_3">Q: データは社外に出ますか？<a class="headerlink" href="#q_3" title="Permanent link">&para;</a></h3>
+<h3 id="data-outside">Q: データは社外に出ますか？<a class="headerlink" href="#data-outside" title="Permanent link">&para;</a></h3>
 <p>チャットデータ・メディアファイルは完全にオンプレミスで管理されます。</p>
 <p>AI 機能を使う場合、メッセージ内容が AI API（OpenAI / Anthropic / Aivis / Google Gemini）に送信されます。</p>
 <p>★ <strong>AI を使わなくても、次の外部通信はあります</strong>（以前このページは「外部への通信は一切発生しない」と書いていましたが、誤りでした）:</p>

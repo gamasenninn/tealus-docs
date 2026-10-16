@@ -2622,11 +2622,15 @@
 <h2 id="_2">現場・フィールドワーク<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>端末を手に持てない状況でも、音声とAIで業務を支援します。</p>
 <p><strong>建設現場の音声指示</strong>
-現場監督がトランシーバーで AI に質問し、音声で回答を受け取る。図面の確認や安全基準の問い合わせをハンズフリーで。
-<code>トランシーバー</code> <code>TTS読み上げ</code> <code>AI</code></p>
+現場監督が音声で AI に質問し、音声で回答を受け取る。図面の確認や安全基準の問い合わせを、画面を見ずに。
+<code>音声メッセージ</code> <code>会話モード</code> <code>TTS読み上げ</code> <code>AI</code></p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>トランシーバーはボタンの手動操作が必要です。手を使わずに AI と話したい場合は、トーク画面の「AI と話す」から<strong>会話モード</strong>（音声で双方向にやり取りする機能、v0.10.0）が使えます。</p>
+<p class="admonition-title">声で AI に聞くときの条件</p>
+<ul>
+<li>音声メッセージ（トランシーバー接続中に話した分も含む）は文字起こしされ、その文が AI に渡ります。ただし <strong>3 人以上の部屋では、先頭に <code>@アシスタント</code> が要ります</strong>。声には <code>@</code> が乗らないので、<strong>AI と 1 対 1 の部屋</strong>で使うか、部屋の応答モードを「全応答」にしてください（管理者がダッシュボードのルーム設定で変更、<a href="../admin/dashboard/">ダッシュボード</a>）</li>
+<li>声で往復したいときは、部屋の管理者が開けた部屋で<strong>会話モード</strong>（押しながら話す方式、<a href="../guide/advanced/voice-chat/">会話モード</a>）が使えます</li>
+<li>回答の読み上げは、各端末のスピーカーから流れます（トランシーバーの音声には乗りません）</li>
+</ul>
 </div>
 <p><strong>倉庫の在庫確認</strong>
 「A棚に○○はある？」と音声で聞くと、AI が在庫データを調べて音声で回答。端末を手に持てない状況でも使える。
@@ -2638,7 +2642,7 @@
 畑で音声メモを送信。自動文字起こしで作業記録が残る。手が汚れていてもスマホを触らずに記録可能。
 <code>音声メッセージ</code> <code>文字起こし</code></p>
 <p><strong>配送ドライバーの運行連絡</strong>
-運転中はトランシーバーで報告、事務所はテキストで確認。音声は自動で文字起こしされるので記録も残る。
+運転中はトランシーバーで報告、事務所はテキストで確認。話した分は音声メッセージとしても投稿され、自動で文字起こしされるので記録も残る。
 <code>トランシーバー</code> <code>文字起こし</code></p>
 <h2 id="_3">小規模企業・チーム<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>コスト削減と業務効率化を同時に実現します。</p>
@@ -2675,7 +2679,7 @@ AI に指示して記事を書かせ、TTS で読み上げてもらいながら�
 思いついたらすぐ音声で送信。自動文字起こしで後から全文検索可能。ボイスレコーダーより便利。
 <code>音声メッセージ</code> <code>文字起こし</code> <code>検索</code></p>
 <p><strong>語学学習</strong>
-AI に外国語で話しかけ、TTS で発音を確認。音声モデルを変えれば異なる話者の発音も聞ける。
+AI に外国語で話しかけ、TTS で発音を確認。部屋ごとに読み上げのエンジン（Aivis / OpenAI / Gemini）と声を変えれば、異なる話者の発音も聞ける。
 <code>AI</code> <code>TTS読み上げ</code> <code>音声モデル選択</code></p>
 <h2 id="_5">開発チーム<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>AI と人間が対等に協働する開発体験。</p>
@@ -2683,8 +2687,12 @@ AI に外国語で話しかけ、TTS で発音を確認。音声モデルを変�
 コードの相談をチャットで、AI の回答を音声で聞きながらコーディング。画面を切り替えずに済む。
 <code>AI (Deep Agent)</code> <code>TTS読み上げ</code></p>
 <p><strong>Claude Code との連携で開発体験が変わる</strong>
-Claude Code でのコーディング中に、タスク完了やエラーがトランシーバーから音声で通知される。テストが通った、ビルドが完了した、がリアルタイムに声で届く。AI がチームメイトのように隣で話しかけてくれる感覚。
-<code>Claude hooks</code> <code>TTS読み上げ</code> <code>トランシーバー</code></p>
+Claude Code でのコーディング中に、タスク完了やエラーを hooks から Tealus の部屋へ投稿。テストが通った、ビルドが完了した、がスマホに届く。逆に部屋から <code>@cc-{班}</code> で Claude Code のセッションを起こして作業を頼める。
+<code>Claude hooks</code> <code>プッシュ通知</code> <code>cc-bridge</code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>bot（機械）の投稿は、既定ではプッシュ通知を鳴らしません。部屋の管理者がルーム設定の「機械の投稿の通知」を「鳴らす」にしてください（<a href="../guide/settings/notification/">通知設定</a>）。</p>
+</div>
 <p><strong>障害対応の即時連絡</strong>
 プッシュ通知で障害を検知、グループ通話で対応チームが即座に集合。チャットで状況共有しながら通話で議論。
 <code>プッシュ通知</code> <code>グループ通話</code></p>
@@ -2695,9 +2703,13 @@ TODO タグでタスクを管理。AI に「未完了のタスクは？」と聞
 開発 AI がドキュメント AI に GitHub Issue で作業指示。レビューして承認。人間は最終確認だけ。
 <code>複数エージェント</code> <code>GitHub連携</code></p>
 <h2 id="_6">セキュリティ重視の組織<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>データを社外に出さないセキュアな通信基盤。</p>
+<p><strong>データの置き場所は自社。どの AI に何を渡すかも自社で選べる</strong>通信基盤。</p>
+<div class="admonition warning">
+<p class="admonition-title">「社外に何も出ない」わけではありません</p>
+<p>AI の応答・文字起こし・読み上げを使うと、文や音声が OpenAI / Google（Gemini）/ Aivis に送られます。AI を使わなくても、リンクプレビュー（投稿の URL を取りに行く）やプッシュ通知（Apple / Google の配信サービス経由、中身は暗号化）の通信はあります。詳しくは <a href="../faq/#data-outside">FAQ &gt; データは社外に出ますか？</a> を参照してください。文字起こしは自前の GPU（<code>STT_BACKEND=local</code>）、読み上げは端末の標準音声（<code>TTS_PROVIDER=browser</code>）を選べます。</p>
+</div>
 <p><strong>機密情報を扱うチームの連絡</strong>
-チャットデータは完全にオンプレミス。クラウドに一切依存しない。AI を使わなければ外部通信ゼロ。
+チャットデータ・添付ファイルの置き場所は自社のサーバー。AI に何を渡すかは設定で選べる。
 <code>自前ホスティング</code></p>
 <p><strong>医療機関の院内連絡</strong>
 患者情報をクラウドに出さず、医師・看護師間でセキュアに共有。通話も院内ネットワーク内で完結。
@@ -2706,7 +2718,7 @@ TODO タグでタスクを管理。AI に「未完了のタスクは？」と聞
 クライアント情報をセキュアに管理。案件ごとにルームを分け、AI に判例検索を依頼。
 <code>自前ホスティング</code> <code>検索</code> <code>AI</code></p>
 <p><strong>自治体の内部連絡</strong>
-住民データを扱う部署の安全な通信手段。庁内 NAS で運用し、外部ネットワークに一切接続しない。
+住民データを扱う部署の安全な通信手段。庁内 NAS で運用し、AI・プッシュ通知を使わない構成にすれば、外部への通信を最小限にできる。
 <code>自前ホスティング</code> <code>グループ</code></p>
 
 
