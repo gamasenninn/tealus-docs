@@ -34,7 +34,7 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和）。**複数添付は `index` で 1 枚ずつ取得**（v0.14.5、[#316](https://github.com/gamasenninn/tealus/issues/316)。返り値の `media_count` を見て `index=0,1,…` で全枚取得） | `message_id` / `index?`（0始まり） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice / video transcription versions を統合返却、v0.14.0、organon daily cycle の edit history 観察用、[#281](https://github.com/gamasenninn/tealus/issues/281) follow-up） | `message_id` |
 | `read_document` | 添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/* mime 対応）。**複数添付は `index` で 1 件ずつ取得**（v0.14.6、[#317](https://github.com/gamasenninn/tealus/issues/317)） | `message_id` / `index?`（0始まり） |
-| `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、server-side で ffmpeg audio 抽出 → Whisper → AI 整形。`get_message_media` の 10MB 上限を回避） | `message_id` / `force_retranscribe?` |
+| `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、server-side で ffmpeg audio 抽出 → 文字起こし → AI 整形。`get_message_media` の 10MB 上限を回避） | `message_id` / `force_retranscribe?` |
 | `search_messages` | キーワード/タグ/期間/発言者で全文検索（snippetハイライト付）。**`has_reaction` でリアクション有無を SQL 側で絞れる**（v0.14.7、[#325](https://github.com/gamasenninn/tealus/issues/325)。「✅ が付いていないもの一覧」等） | `q?` / `room_id?` / `sender_id?` / `type?` / `tag_names?` / `is_done?` / `has_reaction?` / `since?` / `until?` / `limit?`（1-50）/ `offset?` |
 | `list_tags` | bot メンバー全 room の tag 一覧を usage 順で返す discovery primitive（v0.10.0） | `limit?`（default 30、max 100） |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 | `message_id` / `tag_name` / `is_done` |

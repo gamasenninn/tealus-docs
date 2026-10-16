@@ -29,7 +29,7 @@
 整形された文字起こしテキストは、音声の吹き出しの下に表示されます。
 
 !!! tip "業務辞書 inject による業界用語認識（v0.2.4〜、[#269](https://github.com/gamasenninn/tealus/issues/269) Phase 2）"
-    v0.2.4 で default model が `gpt-4o-transcribe` → **`gpt-4o-mini-transcribe`** に切替、業務辞書（vocabulary）を Whisper prompt に inject する **model-aware vocabulary inject** が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。
+    v0.2.4 で default model が `gpt-4o-transcribe` → **`gpt-4o-mini-transcribe`** に切替、業務辞書（vocabulary）を文字起こしのプロンプトに渡す **model-aware vocabulary inject** が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。
 
     辞書の語は、**データベースの業務辞書（`dictionary` テーブル）**から読みます（[#327](https://github.com/gamasenninn/tealus/issues/327)。テーブルが空のときだけ `transcription_guideline.json` の語を使います）。辞書は使われ方から育ちます（[業務辞書](../../admin/dictionary.md)）。organon を使う環境では、整形の段で organon の知識も渡します。
 
@@ -106,7 +106,7 @@
 
 ## AI回答の読み上げ（TTS）
 
-AIエージェントの回答を、トランシーバーから音声で自動読み上げできます。
+AIエージェントの回答を、端末のスピーカーから音声で自動読み上げできます。
 
 ### 有効化
 

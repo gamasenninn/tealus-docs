@@ -68,7 +68,7 @@ LINE / Slack / Teams 等の従来 messenger は Layer 1〜2 までで止まる�
 組織の現実活動が Tealus に入る 8 つの入口。すべて同格に扱う設計が原則。
 
 - **chat**: text message、リプライ、リアクション、mention
-- **voice**: 音声メッセージ (Whisper 文字起こし、vocab inject、整形)
+- **voice**: 音声メッセージ (文字起こし = OpenAI / Gemini / 自前 GPU から選択、vocab inject、整形)
 - **無線 (PTT)**: トランシーバー / VOX 連動
 - **edit / 訂正**: メッセージ編集履歴 (これ自体が Layer 3 への学習素材)
 - **会議 / 議論**: room ベースの議論ログ
@@ -82,7 +82,7 @@ Layer 1 の経験を保持・整理・流通させる substrate。`tealus` 本�
 
 - **messages**: PostgreSQL に保存される全 message (検索可能、編集履歴付き)
 - **memory**: room context、user state、conversation memory
-- **dictionary**: 業務語彙 (Whisper vocab、TTS 読み方、organization-specific terms)
+- **dictionary**: 業務語彙 (文字起こしの vocab、TTS 読み方、organization-specific terms)
 - **edit history**: 編集 / 訂正の trail (Layer 3 学習素材)
 - **AI agent**: Light v1/v2 / Deep agent、Router 振分
 - **MCP**: MCP tools（当時 16、2026-10 時点の最新 tealus-mcp で 19）経由で外部 system / 内部 DB と接続
@@ -234,7 +234,7 @@ steepness 自体が **architect (= user) の active co-evolution の structural 
 
 - **本体 repo の `01_要件定義.md`** — 機能要件 / 非機能要件 / Phase 定義。Layer 1〜2 の scope を定義 ([source](https://github.com/gamasenninn/tealus/blob/main/docs/01_要件定義.md))
 - **本体 repo の `02_DB設計.md`** — Layer 2 の persistence 層 schema。messages / edit history / dictionary 等の table 定義 ([source](https://github.com/gamasenninn/tealus/blob/main/docs/02_DB設計.md))
-- **[アーキテクチャ](../dev/architecture.md)** — Layer 2 の技術構成 (services / ports / proxy / Redis / Socket.IO)。本書の補完
+- **[アーキテクチャ](../dev/architecture.md)** — Layer 2 の技術構成 (services / ports / proxy / Socket.IO)。本書の補完
 - **`tealus-organon` repo** — Layer 3 の data 担体。本書はその位置付けを定義
 - **Phase 5 narrative ([本体 Issue #279](https://github.com/gamasenninn/tealus/issues/279))** — Layer 4 の理論的位置付け
 

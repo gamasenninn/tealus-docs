@@ -236,7 +236,7 @@ Agent Server がメッセージを受け取り、エージェントに渡すま�
 
 ## TTS 音声合成パイプライン
 
-AI の回答をリアルタイムで音声に変換し、トランシーバーに送信します。
+AI の回答をリアルタイムで音声に変換し、ルームの各端末に配信します（既定は Socket.IO で URL を配る形。トランシーバーの音声経路は legacy の `TTS_BROADCAST_MEDIASOUP=true` のときだけ）。
 
 !!! info
     PlainTransport・ffmpeg の技術詳細は [アーキテクチャ](architecture.md) の「TTS 音声合成パイプライン（PlainTransport）」セクションを参照してください。
