@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1854,6 +1882,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2745,7 +2801,7 @@
 <p><code>transform</code> を定義すると Jest の既定（babel-jest）が外れ、<strong><code>.js</code> テストの <code>jest.mock</code> 巻き上げが消える</strong>という落とし穴があるため、<code>babel-jest</code> を明示的に復元してあります（agent-server で実際に踏んだ問題への予防）。</p>
 </div>
 <h2 id="db-572">テストは本番 DB につながない（<a href="https://github.com/gamasenninn/tealus/issues/572">#572</a>）<a class="headerlink" href="#db-572" title="Permanent link">&para;</a></h2>
-<p>server も agent-server も、テストは**テスト用の DB（<code>tealus_postgres_test</code>、5433）**に向きます。</p>
+<p>server も agent-server も、テストは<strong>テスト用の DB（<code>tealus_postgres_test</code>、5433）</strong>に向きます。</p>
 <ul>
 <li>server は <code>.env.test</code> でテスト用 DB に向けます</li>
 <li>agent-server は <code>jest.setup.js</code> で<strong>テスト用の <code>DATABASE_URL</code> を先に決めます</strong>（dotenv は既にある変数を上書きしないので、<code>.env</code> の本番の設定に負けない）。<code>unit/testDbGuard.test</code> が、pool がテスト用 DB を指すことを見張ります</li>
@@ -2779,7 +2835,7 @@
 </tr>
 <tr>
 <td><code>rtc-server-typecheck</code></td>
-<td>ライセンス確認 → 型検査（mediasoup の native 依存があるためテストは走らせない）</td>
+<td>ライセンス確認 → 型検査 → 入口の守りのテスト（<code>wsAccess.test.mts</code>。mediasoup の worker は使わない）</td>
 </tr>
 <tr>
 <td><code>cli-test</code></td>

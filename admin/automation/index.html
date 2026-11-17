@@ -18,7 +18,7 @@
         <link rel="prev" href="../operations/">
       
       
-        <link rel="next" href="../../dev/">
+        <link rel="next" href="../app-pass/">
       
       
         
@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1934,6 +1962,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2692,8 +2748,24 @@
 <td>Tealus のバックアップの記録（<code>dir</code> の <code>backup-YYYYMMDD.log</code>）</td>
 <td>最後の記録が成功で終わっていない／26 時間より古い／置き場が読めない</td>
 </tr>
+<tr>
+<td><code>push_reach</code>（v0.12.0）</td>
+<td>人ごとのプッシュ通知の宛先</td>
+<td>有効な宛先が 0 本の人がいる（人ごとに ⚠ を 1 回、登録し直したら ✅）。直近 <code>active_within_days</code> 日（既定 30）に何も読んでいない人は見ない。<code>exclude_user_ids</code> で試験用を外す</td>
+</tr>
+<tr>
+<td><code>disk_free</code>（v0.12.0）</td>
+<td>置き場（<code>path</code>）の空き</td>
+<td>空きが <code>min_free_gb</code> を切った</td>
+</tr>
 </tbody>
 </table>
+<p>どの見方にも <strong><code>alert_after</code></strong>（何回続けて異常なら ⚠ を出すか、既定 1）を付けられます（v0.12.0）。置き場がときどき数分見えなくなる環境では <code>"alert_after": 2</code> にすると、10 分続いたときだけ知らせます。✅ は待ちません。</p>
+<div class="admonition warning">
+<p class="admonition-title">★ 見本の <code>disk_free</code> は <code>enabled: true</code> です</p>
+<p><code>server/config/watchdogs.example.json</code> を写すとき、<code>disk_free</code> の <code>path</code> は仮の値（<code>&lt;MEDIA_ROOT …&gt;</code>）のままです。自分のメディアの置き場に書き換えてください。</p>
+</div>
+<p><strong>agent-server の鼓動</strong>（v0.12.0）— agent-server は 1 分ごとに鼓動 <code>agent-server</code> を本体へ送ります。<code>kind: "heartbeat"</code>・<code>"heartbeat": "agent-server"</code>・<code>from_user_id</code> に AI の利用者 ID の 1 行を足すと、agent-server が止まったときと、tealus の道具が欠けて「動いてはいますが、…」のとき（生きているのに AI が答えない）に知らせます。</p>
 <p>鼓動は CLI の監視モードから送れます:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>node<span class="w"> </span>scripts/tealus-cli.ts<span class="w"> </span>send<span class="w"> </span><span class="s2">"&lt;部屋&gt;"</span><span class="w"> </span>--voice<span class="w"> </span>--watch<span class="w"> </span>&lt;dir&gt;<span class="w"> </span>--heartbeat<span class="w"> </span>radio-sender
 </code></pre></div>

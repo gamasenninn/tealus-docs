@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1854,6 +1882,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -3501,7 +3557,7 @@
 </tr>
 <tr>
 <td>Tealus MCP</td>
-<td>共通 19 ツール（v0.2.0〜、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>。本体は tealus-mcp <code>#v0.16.0</code> を使う）</td>
+<td>共通 19 ツール（v0.2.0〜、<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>。本体は tealus-mcp <code>#v0.17.0</code> を使う）</td>
 <td>同左</td>
 </tr>
 <tr>
@@ -3930,7 +3986,16 @@
 <p>Codex Deep / Light v2 の <strong>認証エラー (<code>auth.json</code> 期限切れ / 不正)</strong> を helper が検出し、明示的なエラーメッセージで採用者を guide します（detection only、自動 recovery はしません）。<code>.env</code> 設定誤りや <code>codex login</code> 期限切れ時の troubleshoot を高速化する design。</p>
 <h2 id="tealus-mcp-lightdeep">Tealus MCP 統合（Light/Deep 共通）<a class="headerlink" href="#tealus-mcp-lightdeep" title="Permanent link">&para;</a></h2>
 <p>両 Agent は <strong>同じ Tealus MCP プロセスを共有</strong>します。<code>agent-server/src/mcp/roomMcpManager.mts</code> の <code>getOrCreateSharedGlobal()</code> で programmatic に注入され、agent-server の <code>.env</code> に <strong><code>TEALUS_BOT_ID</code> / <code>TEALUS_BOT_PASS</code></strong> があれば自動で追加されます（子の tealus-mcp には <code>TEALUS_USER_ID</code> / <code>TEALUS_PASSWORD</code> という名前で渡します。agent-server の <code>.env</code> に書く名前ではありません）。</p>
-<p>利用可能なツール（<a href="../mcp/">MCP Server</a> と同じ一覧。本体の agent-server は tealus-mcp <code>#v0.16.0</code> を使います。v0.11.1 以前の本体は <code>#v0.14.7</code> 固定で、<code>send_form</code> と <code>edit_message</code> が使えませんでした）:</p>
+<div class="admonition warning">
+<p class="admonition-title">★ v0.12.0 からの違い</p>
+<ul>
+<li>Light v2 / Deep（claude・codex）の tealus の道具は、依頼ごとの中継（<code>/tealus-scoped/&lt;鍵&gt;</code>、<code>X-Tealus-Requester</code>）を通り、読み書き（投稿・画像・ファイル・読み上げ・TODO の完了・編集・部屋に入る）が<strong>依頼した人の入っている部屋に絞られます</strong>。「同じ MCP プロセスを共有」は Light v1 にだけ当てはまります</li>
+<li>Light v2 / Deep（codex）は tealus の道具を必須にし、付くまで 60 秒待ちます（<a href="https://github.com/gamasenninn/tealus/issues/606">#606</a>）</li>
+<li>部屋の <code>mcp_config.json</code> に <code>tealus</code> を書いても使いません（本体の組み立てを優先し、warn に残す）。部屋の MCP 設定の書き込み（<code>PUT/POST/DELETE /config/room/:id/mcp</code>）はシステム管理者だけ</li>
+<li>会話モードでは <code>edit_message</code> を既定で外します（部屋の設定で戻せる）</li>
+</ul>
+</div>
+<p>利用可能なツール（<a href="../mcp/">MCP Server</a> と同じ一覧。本体の agent-server は tealus-mcp <code>#v0.17.0</code> を使います。v0.11.1 以前の本体は <code>#v0.14.7</code> 固定で、<code>send_form</code> と <code>edit_message</code> が使えませんでした）:</p>
 <table>
 <thead>
 <tr>
@@ -4001,7 +4066,7 @@
 </tr>
 <tr>
 <td><code>delete_room</code></td>
-<td>グループルームをアーカイブ（v0.2.0、creator + solo member のみ）</td>
+<td>グループルームをアーカイブ（v0.2.0、自分しかいないグループのみ）</td>
 </tr>
 <tr>
 <td><code>list_rooms</code></td>
@@ -4139,21 +4204,21 @@
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>        ↓ 上書き（任意）
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>system_prompt.md                 (.gitignored、user カスタム枠)
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>        ↓ ルーム個別の上書き（任意）
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>{workspace}/light_prompt.md      (Light Agent 用)
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>{workspace}/deep_prompt.md       (Deep Agent 用)
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/light_prompt.md  (Light v1 / v2 用)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/CLAUDE.md        (Deep 用。claude は --append-system-prompt-file、codex は依頼文の先頭)
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        ↓ メモリ追加
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>{workspace}/memory/MEMORY.md     (Agent の記憶、長期保存)
 </code></pre></div>
 <ul>
 <li><strong><code>default_system_prompt.md</code></strong>: リポジトリにコミットされる共通プロンプト。Tealus MCP の使い方ガイダンスを含む</li>
 <li><strong><code>system_prompt.md</code></strong>: <code>.gitignore</code> 対象。運用者ごとに自由カスタマイズする枠</li>
-<li><strong>ルーム別プロンプト</strong>: ワークスペース配下に置くと、そのルーム内では追加コンテキストとして合成される</li>
+<li><strong>ルーム別プロンプト</strong>: <code>&lt;AGENT_WORKSPACE_ROOT&gt;/_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/</code> に置くと、そのルーム内では追加コンテキストとして合成される。★ v0.12.0 で部屋の設定 4 つ（<code>room_settings.json</code> / <code>light_prompt.md</code> / <code>mcp_config.json</code> / <code>CLAUDE.md</code>）は AI が書ける作業場所の外へ移りました。起動のとき 1 度だけ自動で移し、そのあと作業場所に置いたものは読みません。Deep (codex) にも部屋の <code>CLAUDE.md</code> を渡します（以前は claude だけ）</li>
 <li><strong>メモリ</strong>: Agent が <code>write_memory</code> ツールで自分宛に書き込む長期記憶</li>
 </ul>
 <p>ルーム単位でエージェントの性格・口調を切り替える運用が可能です（声と合わせた管理は <a href="../ai-architecture/">AI アーキテクチャ</a> の「声は人格の一部」セクションを参照）。</p>
 <div class="admonition info">
 <p class="admonition-title">Light v1 / Light v2 で <code>light_prompt.md</code> parity（v0.2.4〜、<a href="https://github.com/gamasenninn/tealus/issues/258">#258</a> follow-up）</p>
-<p><code>{workspace}/light_prompt.md</code> は <strong>Light v1 / Light v2 の両方で呼び出し毎に読み込まれ</strong>ます（Light v1 と v2 の parity）。v0.2.4 以前の Light v2 は読み込んでおらず <code>/light2</code> 経由で system prompt が thin になる非対称がありましたが、v0.2.4 で fix されました。per-room MCP + per-room prompt の組み合わせで Light v2 でも query 精度を 1 室単位で tune 可能です。</p>
+<p>部屋の <code>light_prompt.md</code>（v0.12.0〜 <code>_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/</code>）は <strong>Light v1 / Light v2 の両方で呼び出し毎に読み込まれ</strong>ます（Light v1 と v2 の parity）。v0.2.4 以前の Light v2 は読み込んでおらず <code>/light2</code> 経由で system prompt が thin になる非対称がありましたが、v0.2.4 で fix されました。per-room MCP + per-room prompt の組み合わせで Light v2 でも query 精度を 1 室単位で tune 可能です。</p>
 </div>
 <h3 id="organon-polyseme-inject">organon polyseme.sql_mapping auto inject pipeline（v0.3.0〜、<a href="https://github.com/gamasenninn/tealus/issues/276">#276</a> follow-up）<a class="headerlink" href="#organon-polyseme-inject" title="Permanent link">&para;</a></h3>
 <p>v0.3.0 (2026-05-31) で、<strong><a href="../../concepts/organic-ontology/">organon</a> の <code>polyseme</code> data 層</strong> から <code>sql_mapping</code> を持つ entries を抽出し、<strong>全 agent (Light v1 / v2 / Deep / Codex Deep) の system prompt に自動 inject</strong> する pipeline が追加されました。</p>

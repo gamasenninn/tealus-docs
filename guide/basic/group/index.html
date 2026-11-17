@@ -840,6 +840,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#room-tabs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トーク一覧のタブ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1392,6 +1403,34 @@
     
   
     お知らせ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
   
 
     
@@ -2023,6 +2062,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2619,6 +2686,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#room-tabs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トーク一覧のタブ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2732,10 +2810,19 @@
 <li>メンバーを選択</li>
 <li>「作成」をタップ</li>
 </ol>
+<p>同じ名前のグループがほかにあるときは、作ったあとに「同じ名前のグループがほかに N つあります」と知らせます（作ることはできます。v0.12.0）。</p>
+<h2 id="room-tabs">トーク一覧のタブ<a class="headerlink" href="#room-tabs" title="Permanent link">&para;</a></h2>
+<p>トーク一覧は「すべて」「1:1 ルーム」「グループ」のタブで絞り込めます。お客様の部屋がある人には「<strong>お客様</strong>」のタブも出ます（v0.12.0）。</p>
+<ul>
+<li>お客様の部屋とは、管理者が「社外の窓口」の印を付けた口座が作った部屋と、ゲストがいる部屋です（<a href="../../../admin/user-management/#external-contact">ユーザー管理 &gt; 社外の窓口</a>）</li>
+<li>窓口の部屋は「お客様」のタブにだけ出ます。ゲストのいる部屋は、ほかのタブにも出ます</li>
+<li>タブの数字は、未読のある部屋の数です</li>
+<li>選んだタブは端末ごとに覚えます</li>
+</ul>
 <h2 id="_3">単独グループ（メモ機能）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>自分だけのグループを作成すると、個人メモとして活用できます。メンバーを選択せずにグループを作成してください。</p>
 <h2 id="_4">グループ名・アイコンの変更<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>グループ管理者は、グループ名やアイコン画像を変更できます。</p>
+<p>グループ管理者は、グループ名やアイコン画像を変更できます（システム管理者も、どのグループでも同じ操作ができます。v0.12.0）。</p>
 <ol>
 <li>トーク画面<strong>右上の ≡</strong> をタップしてルーム設定を開く（1:1 のトークにも ≡ があり、通知などの個人設定を変えられます）</li>
 <li>グループ名を編集、またはアイコン画像をアップロード</li>
@@ -2774,7 +2861,7 @@
 <h3 id="_7">退会の制限<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>グループに管理者が1人しかいない場合、他のメンバーが残っている状態ではその管理者は退会できません。退会する前に、他のメンバーに管理者権限を移譲してください。</p>
 <h2 id="_8">グループの削除<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p><strong>グループの作成者で、メンバーが自分 1 人だけになったとき</strong>に削除できます。</p>
+<p><strong>メンバーが自分 1 人だけになったとき</strong>に削除できます（作成者でなくても構いません。v0.12.0、<a href="https://github.com/gamasenninn/tealus/issues/643">#643</a>）。システム管理者は、メンバーが残っていても削除できます（確認で残っている人数が出ます）。</p>
 <ol>
 <li>トーク画面右上の <strong>≡</strong> → メンバー一覧を開く</li>
 <li>「<strong>このグループを削除</strong>」をタップ</li>
@@ -2786,7 +2873,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>以前このページには「グループの削除機能はありません」と書いていましたが、<strong>誤りでした</strong>。他のメンバーが残っている間は削除ボタンは出ません（全員が退会したあとに作成者が削除する、という順番になります）。</p>
+<p>以前このページには「グループの削除機能はありません」と書いていましたが、<strong>誤りでした</strong>。他のメンバーが残っている間は削除ボタンは出ません（システム管理者を除く）。全員が退会したあとに、残った 1 人が削除する順番になります。</p>
 </div>
 
 

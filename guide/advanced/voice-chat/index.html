@@ -1355,6 +1355,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1960,6 +1988,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2638,14 +2694,14 @@
 <p class="admonition-title">逐語の記録は 1 週間残ります</p>
 <p>部屋には残りませんが、応答の速さなどを測り直すため、<strong>会話の文字起こしは agent-server の計測記録（<code>&lt;WORKSPACE_ROOT&gt;/_voice-chat-logs/</code>）に 7 日間</strong>残り、その後自動で消えます（<a href="https://github.com/gamasenninn/tealus/issues/407">#407</a>）。サーバー管理者は読める場所です。</p>
 </div>
-<p>良いと思った AI の答えがあったら、**会話の途中で「このルームに残す」**を押してください。その答えが、いま居る部屋に投稿されます（<code>🎙 会話モードから</code> の印つき）。残せるのは AI の発言です。</p>
+<p>良いと思った AI の答えがあったら、<strong>会話の途中で「このルームに残す」</strong>を押してください。その答えが、いま居る部屋に投稿されます（<code>🎙 会話モードから</code> の印つき）。残せるのは AI の発言です。</p>
 <h2 id="_4">知っておくこと<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">音声は OpenAI の音声対話 API に送られます</p>
 <p>会話モードは OpenAI の Realtime API（既定 <code>gpt-realtime-2.1-mini</code>、管理者が <code>REALTIME_MODEL</code> で変更可）を使います。<strong>話した音声そのものが OpenAI に送られます</strong>。普段の音声メッセージ（文字起こしだけを外部に頼む）より外に出るものが多いので、データの扱いに決まりがある組織では、開ける部屋を選んでください。</p>
 </div>
 <ul>
-<li>AI は、その部屋の指示・業務辞書を踏まえて答えます。部屋ごとに使える道具も管理者が選べます</li>
+<li>AI は、その部屋の指示・業務辞書を踏まえて答えます。部屋ごとに使える道具も管理者が選べます。★ メッセージを編集する道具は、既定で外れています（声の聞き違いで他人の本文を書き換えないため。v0.12.0）</li>
 <li>設計と、成立の判断（応答の速さ・割り込みなどの実測）は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/08_会話モード設計.md">08_会話モード設計.md</a> にあります</li>
 </ul>
 

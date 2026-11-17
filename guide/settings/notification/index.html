@@ -1264,6 +1264,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2051,6 +2079,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2770,7 +2826,11 @@
 <h2 id="_2">プッシュ通知<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>Tealus はPWAのService Workerを利用したプッシュ通知に対応しています。</p>
 <h3 id="_3">通知の有効化<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>初回利用時にブラウザから通知許可を求められます。「許可」を選択するとプッシュ通知が有効になります。</p>
+<p>初めて開くと、画面の上に案内の帯が出ます（v0.12.0）。「<strong>通知を受け取る</strong>」を押すと確認が出るので「許可」を選んでください。「あとで」で閉じても、プロフィールの「この端末で通知を受け取る」からいつでも登録できます。</p>
+<div class="admonition warning">
+<p class="admonition-title">iPhone / iPad は、先にホーム画面に追加してください</p>
+<p>Safari のままでは通知が届きません。共有ボタン（□↑）→「<strong>ホーム画面に追加</strong>」で追加し、ホーム画面から Tealus を開いてから登録してください。案内の帯もそう表示します。</p>
+</div>
 <h3 id="_4">通知されるイベント<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>新着メッセージ</li>
@@ -2803,7 +2863,8 @@
 <h3 id="_6">通知をタップすると<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>その部屋が開きます。すでに Tealus を開いている窓があれば、その窓で移ります（<a href="https://github.com/gamasenninn/tealus/issues/544">#544</a>）。</p>
 <h3 id="_7">通知が届かない端末<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p>この端末に通知の宛先が無い場合（iPhone で許可をやり直したときなど）、プロフィールに「<strong>この端末で通知を受け取る</strong>」ボタンが出ます。押して登録し直してください（<a href="https://github.com/gamasenninn/tealus/issues/546">#546</a>）。</p>
+<p>この端末に通知の宛先が無い場合（iPhone で許可をやり直したときなど）、プロフィールに「<strong>この端末で通知を受け取る</strong>」ボタンが出ます。押して登録し直してください（<a href="https://github.com/gamasenninn/tealus/issues/546">#546</a>）。v0.12.0 からは、宛先が 0 本になると画面の上の帯でも案内します（許可の状態に関係なく）。</p>
+<p>宛先があるのに届かないときは、プロフィールの「<strong>登録し直す</strong>」を押してください。</p>
 <h2 id="463">ルームごとの通知（<a href="https://github.com/gamasenninn/tealus/issues/463">#463</a>）<a class="headerlink" href="#463" title="Permanent link">&para;</a></h2>
 <p>トーク画面右上の <strong>≡</strong> → 「<strong>このルームの通知</strong>」で、部屋ごとにオン / オフできます（自分の分だけ。1:1 のトークにもあります）。オフにすると、プッシュ通知も画面の中の通知音も止まります。</p>
 <p>部屋の管理者は、ルーム設定（管理者）の「<strong>機械の投稿の通知</strong>」で、AI・Bot の投稿でも鳴らすかを選べます（既定は鳴らさない）。各自が「このルームの通知」をオフにしていれば、そちらが優先します。</p>

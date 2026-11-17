@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1970,6 +1998,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2730,7 +2786,7 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">辞書タブが 500 になるときは migration 忘れです</p>
-<p>辞書テーブル（<code>023</code>〜<code>025</code>）が未適用のまま起動すると、<strong>サーバーはクラッシュせず起動してしまい、辞書タブだけが 500 になります</strong>。<code>cd server &amp;&amp; npm run migrate</code> を実行してください。v0.6.0 以降は起動ログに <code>[migration-check]</code> の警告が出ます（<a href="https://github.com/gamasenninn/tealus/issues/334">#334</a>）。</p>
+<p>v0.12.0 からは、未適用の migration があると本体が起動しません（起動ログの <code>[migration-check]</code> に名前が出ます）。台帳（<code>schema_migrations</code>）が無い古い DB では起動してしまい、<strong>辞書タブだけが 500 になります</strong>。どちらも <code>cd server &amp;&amp; npm run migrate</code> で直ります（<a href="https://github.com/gamasenninn/tealus/issues/334">#334</a>）。</p>
 </div>
 <h2 id="_4">どこに効くか<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>

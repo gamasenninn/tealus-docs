@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1854,6 +1882,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2968,7 +3024,7 @@
 <p>Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラップし、Claude Code や他の MCP クライアントから Tealus をネイティブツールとして操作できます。</p>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（最新 v0.16.0）</li>
+<li>リポジトリ: <strong>独立 repo <a href="https://github.com/gamasenninn/tealus-mcp"><code>gamasenninn/tealus-mcp</code></a></strong>（最新 v0.17.0）</li>
 <li>配布: npm publish ではなく <strong>GitHub から直接 install</strong>（<code>npx -y github:gamasenninn/tealus-mcp</code>）</li>
 <li>通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)</li>
 <li>技術スタック: <code>@modelcontextprotocol/sdk</code>、<code>zod</code>、<code>node-fetch</code>、<code>form-data</code></li>
@@ -2977,12 +3033,12 @@
 <h2 id="v0150-19">利用可能なツール（v0.15.0 以降で 19 個）<a class="headerlink" href="#v0150-19" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">見えるツール数は pin しているバージョンで変わります</p>
-<p><code>.mcp.json</code> で <strong>タグ pin</strong>（<code>github:gamasenninn/tealus-mcp#v0.14.6</code> のような形）にしている場合、そのタグ時点のツールセットしか見えません。<code>send_form</code> は <strong>v0.14.8 以降</strong>、<code>edit_message</code> は <strong>v0.15.0 以降</strong>です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を**案内文（instructions）**として接続時に渡します。</p>
+<p><code>.mcp.json</code> で <strong>タグ pin</strong>（<code>github:gamasenninn/tealus-mcp#v0.14.6</code> のような形）にしている場合、そのタグ時点のツールセットしか見えません。<code>send_form</code> は <strong>v0.14.8 以降</strong>、<code>edit_message</code> は <strong>v0.15.0 以降</strong>です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を<strong>案内文（instructions）</strong>として接続時に渡します。</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">本体の AI エージェントが使う版</p>
-<p>本体の agent-server（Light v2 / Deep / 会話モード）は tealus-mcp を <strong><code>#v0.16.0</code></strong> に固定して起動します。版は <code>agent-server/src/lib/mcpPackages.mts</code> の <code>TEALUS_MCP_PACKAGE</code> の 1 か所で決まります。</p>
-<p>以前（v0.11.1 まで）は <code>#v0.14.7</code> に固定されていて、<strong>本体のエージェントからは <code>send_form</code> と <code>edit_message</code> が見えませんでした</strong>。本体の 2026-10-15 の変更（<code>2ef45fc</code>）で 19 ツールすべてが使えるようになっています。v0.11.1 以前の本体を動かしている場合は、この差が残っています。</p>
+<p>本体の agent-server（Light v2 / Deep / 会話モード）は tealus-mcp を <strong><code>#v0.17.0</code></strong> に固定して起動します（本体 v0.12.0〜）。版は <code>agent-server/src/lib/mcpPackages.mts</code> の <code>TEALUS_MCP_PACKAGE</code> の 1 か所で決まります。版が上がったあとの最初の起動は npx の取得で遅いので、先に <code>npx -y github:gamasenninn/tealus-mcp#v0.17.0 &lt; /dev/null</code> を<strong>最後まで</strong> 1 回流してください（途中で打ち切るとキャッシュが欠けたまま残り、道具が全部つながりません）。</p>
+<p>以前（本体 v0.11.1 まで）は <code>#v0.14.7</code> に固定されていて、<strong>本体のエージェントからは <code>send_form</code> と <code>edit_message</code> が見えませんでした</strong>。v0.16.1 は検索の <code>since</code> / <code>until</code> の時間帯の説明を、v0.17.0 は道具の説明（見つけた投稿の全文の取り方・<code>get_messages</code> の 100 件の上限）と <code>search_messages</code> の <code>type</code> の <code>file</code> / <code>form</code> を足した版です。道具の数は 19 のままです。</p>
 <p>また、pin を上げたあと <strong>Claude Code をフル再起動</strong>（プロセスごと）しないと反映されません。in-app reload や <code>/mcp</code> 再接続では <strong>stdio 子プロセスが生き残り、<code>npx</code> が再解決されない</strong>ためです。ref 無し（<code>github:gamasenninn/tealus-mcp</code> = HEAD 追従）の場合はフル再起動だけで反映されます。</p>
 </div>
 <table>
@@ -3026,7 +3082,7 @@
 </tr>
 <tr>
 <td><code>get_messages</code></td>
-<td>メッセージ履歴取得</td>
+<td>メッセージ履歴取得（100 を超える <code>limit</code> は黙って 100）</td>
 <td><code>room_id</code> / <code>limit?</code>（最大100） / <code>include_transcription?</code>（v0.7.0、default true） / <code>include_raw?</code>（v0.7.0、default false）</td>
 </tr>
 <tr>
@@ -3051,7 +3107,7 @@
 </tr>
 <tr>
 <td><code>search_messages</code></td>
-<td>キーワード/タグ/期間/発言者で全文検索（snippetハイライト付）。<strong><code>has_reaction</code> でリアクション有無を SQL 側で絞れる</strong>（v0.14.7、<a href="https://github.com/gamasenninn/tealus/issues/325">#325</a>。「✅ が付いていないもの一覧」等）</td>
+<td>キーワード/タグ/期間/発言者で全文検索（snippetハイライト付）。<strong><code>has_reaction</code> でリアクション有無を SQL 側で絞れる</strong>（v0.14.7、<a href="https://github.com/gamasenninn/tealus/issues/325">#325</a>。「✅ が付いていないもの一覧」等）。<code>type</code> は <code>text</code>/<code>image</code>/<code>voice</code>/<code>video</code>/<code>file</code>/<code>stamp</code>/<code>system</code>/<code>form</code>（<code>file</code>・<code>form</code> は v0.17.0）。★ 見つけた投稿の全文は <code>get_message_edit_history</code> の <code>current_content</code> で取る。<code>since</code>/<code>until</code> に時間帯が無ければサーバーの時間帯で読む</td>
 <td><code>q?</code> / <code>room_id?</code> / <code>sender_id?</code> / <code>type?</code> / <code>tag_names?</code> / <code>is_done?</code> / <code>has_reaction?</code> / <code>since?</code> / <code>until?</code> / <code>limit?</code>（1-50）/ <code>offset?</code></td>
 </tr>
 <tr>
@@ -3071,7 +3127,7 @@
 </tr>
 <tr>
 <td><code>delete_room</code></td>
-<td>グループルームをアーカイブ（v0.2.0、creator + solo member のみ、破壊的・CASCADE 削除）</td>
+<td>グループルームをアーカイブ（v0.2.0、自分しかいないグループのみ。本体 v0.12.0 から作成者でなくてよい。破壊的・CASCADE 削除）</td>
 <td><code>room_id</code></td>
 </tr>
 <tr>
@@ -3289,7 +3345,7 @@
 <p><code>mark_tag_done</code> でメッセージのタグの完了状態を切り替えられます。voice メモから自動抽出した TODO を AI が完了化する、といったワークフローに活用できます。</p>
 <h3 id="ai-v020">AI による能動的なルーム編成（v0.2.0）<a class="headerlink" href="#ai-v020" title="Permanent link">&para;</a></h3>
 <p><code>create_room</code> / <code>delete_room</code> により、AI が<strong>読む</strong>だけでなく<strong>ルーム編成にも参加</strong>できるようになりました（v0.2.0、<a href="https://github.com/gamasenninn/tealus/issues/200">#200</a> / <a href="https://github.com/gamasenninn/tealus/issues/207">#207</a>）。「議題ごとに新しいルームを作って整理して」「役目を終えたルームをアーカイブして」のような依頼を AI が直接実行できます。</p>
-<p><code>delete_room</code> には安全制約として <strong>creator のみ + solo member のみ + グループルーム限定</strong> が課されています（破壊的操作のため）。</p>
+<p><code>delete_room</code> には安全制約として <strong>solo member のみ + グループルーム限定</strong> が課されています（破壊的操作のため。本体 v0.11.1 までは作成者のみ、という条件もありました <a href="https://github.com/gamasenninn/tealus/issues/643">#643</a>）。</p>
 <h3 id="light-agent-deep-agent">Light agent / Deep agent 共有<a class="headerlink" href="#light-agent-deep-agent" title="Permanent link">&para;</a></h3>
 <p>Tealus の AI エージェント（Light/Deep の 2 層）はいずれもこの同一 MCP を共有します。Claude Code のような外部クライアントと、Tealus 内蔵 AI が<strong>同じツールセット</strong>で動作するため、開発者と本番 AI の体験が乖離しません。</p>
 <h2 id="issuetealus">関連 issue（tealus 本体）<a class="headerlink" href="#issuetealus" title="Permanent link">&para;</a></h2>

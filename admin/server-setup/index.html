@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2182,6 +2210,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -3210,6 +3266,15 @@
 <li><strong><code>network_mode: host</code> 必須</strong>: WebRTC の UDP ポート 10000-10100 を NAT 越えなしに公開する必要があり、Docker の host network mode が利用できる Linux 限定</li>
 </ol>
 <p>Mac / Windows ホストで通話機能を使いたい場合は、別途 Linux ホストに rtc-server を立てる構成（または開発時は <code>npm run dev</code> でホストに直接起動）を検討してください。</p>
+<div class="admonition warning">
+<p class="admonition-title">★ 通話・トランシーバーの入口は、ログインした部屋のメンバーだけ（v0.12.0）</p>
+<p>rtc-server は、接続してきた人の鍵で本体に「この部屋のメンバーか」を聞き、メンバーだけを通します。更新したら <strong>rtc-server も再起動</strong>してください。</p>
+<ul>
+<li><code>JWT_SECRET</code> は本体と同じ値にします（ホストで動かすときは <code>server/.env</code> を読みます。Docker では <code>rtc-server/.env</code>）</li>
+<li>rtc-server を<strong>別のマシンやコンテナ</strong>で動かすときは、<code>TEALUS_API_URL</code> に本体の URL を入れます。<strong>本体に届かないと、メンバーも全員断られます</strong></li>
+<li>本体の <code>/rtc</code> 中継を通さず rtc-server を直接外へ出している構成は、接続が断られないか確かめてください</li>
+</ul>
+</div>
 <h2 id="3_1">3. サーバーセットアップ<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">cd</span><span class="w"> </span>server
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>npm<span class="w"> </span>install
@@ -3382,6 +3447,26 @@
 <td>LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。全枚が揃えば即投稿、揃わなければ<strong>最後の 1 枚から</strong>この時間で届いた分だけ投稿（v0.7.0 <a href="https://github.com/gamasenninn/tealus/issues/353">#353</a>、既定 15 秒 → 60 秒 <a href="https://github.com/gamasenninn/tealus/issues/552">#552</a>）</td>
 </tr>
 <tr>
+<td><code>APP_PASS_KEY_DIR</code></td>
+<td><code>~/.tealus/app-pass</code></td>
+<td>アプリの通行証と「Tealus でログイン」の鍵 <code>&lt;ホスト名&gt;.key</code>（16 進 1 行、32 バイト以上）の置き場。鍵を置かなければどちらも出ません（v0.12.0、<a href="../app-pass/#key-file">アプリの通行証</a>）</td>
+</tr>
+<tr>
+<td><code>APP_LOGIN_TARGETS</code></td>
+<td>空（だれにも出さない）</td>
+<td>「Tealus でログイン」を出してよい相手と戻り先。相手の origin と戻り先のパスを縦棒でつなぎ、カンマで並べる（書き方は <a href="../app-pass/#login-targets">アプリの通行証 &gt; 相手と戻り先</a>）。崩れた行は黙って捨てる。変えたら再起動（<a href="https://github.com/gamasenninn/tealus/issues/648">#648</a>）</td>
+</tr>
+<tr>
+<td><code>PUSH_STALE_DAYS</code></td>
+<td>30</td>
+<td>この日数のあいだ端末から登録し直されないプッシュの宛先を、1 日ごとに外す（印だけ。開き直せば戻る。その人のいちばん新しい有効な宛先は外さない。v0.12.0）</td>
+</tr>
+<tr>
+<td><code>PUSH_INACTIVE_DELETE_DAYS</code></td>
+<td>90</td>
+<td>無効になってからこの日数たったプッシュの宛先の行を、毎日消す（<code>.env.example</code> には載っていません。v0.12.0）</td>
+</tr>
+<tr>
 <td><code>LINE_IMAGESET_MAX_WAIT_MS</code></td>
 <td>300000</td>
 <td>同じ束ねの<strong>最初の 1 枚から</strong>の上限（5 分）。画像が届き続けても、ここで区切って投稿する（<a href="https://github.com/gamasenninn/tealus/issues/552">#552</a>）</td>
@@ -3391,11 +3476,11 @@
 <h3 id="db">DBマイグレーション<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>npm<span class="w"> </span>run<span class="w"> </span>migrate
 </code></pre></div>
-<p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（<strong>001〜040</strong>）が順に実行されます。適用済みの記録は DB の <strong><code>schema_migrations</code> テーブル</strong>（台帳）に残ります（<a href="https://github.com/gamasenninn/tealus/issues/406">#406</a>）。</p>
+<p>マイグレーションは <code>server/src/db/migrations/</code> 内の連番SQLファイル（<strong>001〜045</strong>）が順に実行されます。適用済みの記録は DB の <strong><code>schema_migrations</code> テーブル</strong>（台帳）に残ります（<a href="https://github.com/gamasenninn/tealus/issues/406">#406</a>）。</p>
 <div class="admonition danger">
 <p class="admonition-title">★ 更新するときは、必ず migrate を<strong>再起動の前</strong>に</p>
-<p>v0.11.0 以降、<strong><code>034</code> を流さずにサーバーを再起動すると、ログインそのものが失敗します</strong>（認証の問い合わせが新しい列を読むため）。プッシュの送信も止まります。</p>
-<p>更新の正しい順序は「コード取得 → 依存更新 → <strong>migrate</strong> → client 再ビルド → 再起動」です。手順の本文は本体リポジトリの <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">upgrade-guide.md</a> にあります。</p>
+<p>v0.11.0 以降、<strong><code>034</code> を流さずにサーバーを再起動すると、ログインそのものが失敗します</strong>（認証の問い合わせが新しい列を読むため）。プッシュの送信も止まります。v0.12.0 の <code>042</code>（パスワードの変更の印）も、認証が読む列です。</p>
+<p>更新の正しい順序は「コード取得 → 各パッケージで <code>npm install</code>（server・agent-server・rtc-server・client・dashboard。client と dashboard はこれで本番ビルドされます）→ <strong>migrate</strong> → 再起動」です。★ <code>npm run dev</code>（nodemon）で動かしていると、<code>git pull</code> の時点で再起動がかかり、migrate の前なので止まります。migrate のあと、手で起動し直してください。手順の本文は本体リポジトリの <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">upgrade-guide.md</a> にあります。</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">★ 台帳より前から動かしている DB は、<code>--baseline-through</code> が要ります</p>
@@ -3407,8 +3492,9 @@
 </code></pre></div>
 </div>
 <div class="admonition warning">
-<p class="admonition-title">migrate 忘れは「クラッシュしないが静かに壊れる」</p>
-<p>未適用の migration がある状態でも<strong>サーバーが起動してしまう</strong>ことがあり、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成画面が 500、自己成長辞書が効かない）。起動時の確認は v0.11.1 で強化され、台帳とファイルを突き合わせて <strong><code>[migration-check] ★ 未適用 N 件: …</code></strong> とファイル名つきで出るようになりました。<strong>起動ログの <code>[migration-check]</code> / <code>[build-check]</code></strong> を必ず確認してください。</p>
+<p class="admonition-title">★ v0.12.0 から、未適用の migration があると本体は起動しません</p>
+<p>起動ログに <code>[migration-check] ★ 未適用の migration が N 件あるので起動しません: &lt;ファイル名&gt;</code> と <code>cd server &amp;&amp; npm run migrate を実行してから、もう一度起動してください</code> が出て終わります。migrate を流してから起動し直してください。正常なら <code>[migration-check] 未適用の migration は 0 件</code> が出ます。</p>
+<p>ただし、台帳（<code>schema_migrations</code>）が無い DB や、DB に届かないときは確かめられないので、<code>[migration-check] 未適用かどうかを確かめられないまま起動します</code> を出して起動します。このときは以前と同じく<strong>起動はするが機能だけが欠けます</strong>（例: 辞書テーブルが無いと辞書育成画面が 500）。<strong>起動ログの <code>[migration-check]</code> / <code>[build-check]</code></strong> を必ず確認してください。</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">managed PostgreSQL 環境での注意</p>
@@ -3457,6 +3543,12 @@
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
 </code></pre></div>
 <p>エージェントサーバーは <code>http://localhost:4000</code> で起動します。</p>
+<div class="admonition warning">
+<p class="admonition-title">★ 更新のあと最初の起動は、tealus-mcp の取得で遅くなります</p>
+<p>本体の agent-server は tealus-mcp を <strong>v0.17.0</strong> に固定して起動します（v0.12.0〜）。版が上がったあとの最初の起動は npx のダウンロードで遅いので、先に次を<strong>最後まで</strong> 1 回流してください。途中で止めるとキャッシュが欠けたまま残り、<strong>AI の道具が全部つながりません</strong>。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>npx<span class="w"> </span>-y<span class="w"> </span>github:gamasenninn/tealus-mcp#v0.17.0<span class="w"> </span>&lt;<span class="w"> </span>/dev/null<span class="w">   </span><span class="c1"># Git Bash / Linux / Mac</span>
+</code></pre></div>
+</div>
 <h3 id="_6">エージェント環境変数<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p><code>agent-server/.env</code> に以下を設定します。</p>
 <table>
@@ -3537,7 +3629,15 @@
 </tr>
 <tr>
 <td><code>OPENAI_IMAGE_MODEL</code></td>
-<td>画像生成モデルの上書き（default <code>gpt-image-1</code>、v0.5.0 <a href="https://github.com/gamasenninn/tealus/issues/313">#313</a>）。★ 読むのは agent-server ではなく<strong>子の tealus-mcp</strong>（<code>generate_and_send_image</code>）。agent-server の <code>.env</code> に書けば tealus-mcp に届きます（本体 <code>db890c7</code> 以降、agent-server の再起動後から）。<strong>v0.11.1 以前は子に渡す許可一覧に無く、書いても届きません</strong>（<a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）</td>
+<td>画像生成モデルの上書き（default <code>gpt-image-1</code>、v0.5.0 <a href="https://github.com/gamasenninn/tealus/issues/313">#313</a>）。★ 読むのは agent-server ではなく<strong>子の tealus-mcp</strong>（<code>generate_and_send_image</code>）。agent-server の <code>.env</code> に書けば tealus-mcp に届きます（本体 <code>db890c7</code> 以降、agent-server の再起動後から）。<strong>v0.12.0 から届きます</strong>（v0.11.1 以前は子に渡す許可一覧に無く、書いても届きません。<a href="https://github.com/gamasenninn/tealus/issues/573">#573</a>）</td>
+</tr>
+<tr>
+<td><code>TAVILY_API_KEY</code></td>
+<td>Web 検索の道具（Tavily）の鍵。<code>.env</code> に置き、部屋の <code>mcp_config.json</code> の <code>env</code> で <code>${TAVILY_API_KEY}</code> と引きます（<a href="https://github.com/gamasenninn/tealus/issues/573">#573</a> 以後）</td>
+</tr>
+<tr>
+<td><code>ENABLE_CROSS_ROOM_DELEGATION</code></td>
+<td><code>true</code> で、部屋をまたいで仕事を頼める（先頭が <code>%&lt;部屋&gt; &lt;頼みごと&gt;</code> の投稿、<a href="https://github.com/gamasenninn/tealus/issues/292">#292</a>）。既定はオフ</td>
 </tr>
 <tr>
 <td><code>TTS_BROADCAST_MEDIASOUP</code></td>
@@ -3554,81 +3654,81 @@
 <h2 id="7">7. 本番デプロイ<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <h3 id="nginx">Nginx設定例<a class="headerlink" href="#nginx" title="Permanent link">&para;</a></h3>
 <p>PWA・ダッシュボード・メディアは <strong>server（:3000）が配信</strong>します。agent-server・rtc-server へも server が中継するので、Nginx からの転送先は <strong>すべて :3000</strong> です。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/letsencrypt/live/tealus.example.com/fullchain.pem</span><span class="p">;</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/tealus.example.com/privkey.pem</span><span class="p">;</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span><span class="c1"># PWA（client/dist は server が配信する）</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>
-<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">    </span><span class="c1"># REST API</span>
-<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/api/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>
-<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="w">    </span><span class="c1"># Socket.IO（WebSocket upgrade 必須）</span>
-<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/socket.io/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
-<a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">"upgrade"</span><span class="p">;</span>
-<a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a>
-<a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a><span class="w">    </span><span class="c1"># cc-queue のストリーム — 別マシンの Claude Code をつなぐ場合だけ必要（#214）</span>
-<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a><span class="w">    </span><span class="c1"># つなぎっぱなしの NDJSON なので buffering off と長い read timeout が要る</span>
-<a id="__codelineno-13-33" name="__codelineno-13-33" href="#__codelineno-13-33"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/agent-api/cc-queue/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-<a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a><span class="w">        </span><span class="kn">proxy_buffering</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
-<a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a><span class="w">        </span><span class="kn">proxy_read_timeout</span><span class="w"> </span><span class="s">3600s</span><span class="p">;</span>
-<a id="__codelineno-13-38" name="__codelineno-13-38" href="#__codelineno-13-38"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-39" name="__codelineno-13-39" href="#__codelineno-13-39"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-13-40" name="__codelineno-13-40" href="#__codelineno-13-40"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-41" name="__codelineno-13-41" href="#__codelineno-13-41"></a>
-<a id="__codelineno-13-42" name="__codelineno-13-42" href="#__codelineno-13-42"></a><span class="w">    </span><span class="c1"># agent-server（server が中継）</span>
-<a id="__codelineno-13-43" name="__codelineno-13-43" href="#__codelineno-13-43"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/agent-api/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-44" name="__codelineno-13-44" href="#__codelineno-13-44"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-45" name="__codelineno-13-45" href="#__codelineno-13-45"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-46" name="__codelineno-13-46" href="#__codelineno-13-46"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-13-47" name="__codelineno-13-47" href="#__codelineno-13-47"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-48" name="__codelineno-13-48" href="#__codelineno-13-48"></a>
-<a id="__codelineno-13-49" name="__codelineno-13-49" href="#__codelineno-13-49"></a><span class="w">    </span><span class="c1"># rtc-server（通話・トランシーバー、WebSocket upgrade 必須）</span>
-<a id="__codelineno-13-50" name="__codelineno-13-50" href="#__codelineno-13-50"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/rtc/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-51" name="__codelineno-13-51" href="#__codelineno-13-51"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-52" name="__codelineno-13-52" href="#__codelineno-13-52"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-<a id="__codelineno-13-53" name="__codelineno-13-53" href="#__codelineno-13-53"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
-<a id="__codelineno-13-54" name="__codelineno-13-54" href="#__codelineno-13-54"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">"upgrade"</span><span class="p">;</span>
-<a id="__codelineno-13-55" name="__codelineno-13-55" href="#__codelineno-13-55"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-56" name="__codelineno-13-56" href="#__codelineno-13-56"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-57" name="__codelineno-13-57" href="#__codelineno-13-57"></a>
-<a id="__codelineno-13-58" name="__codelineno-13-58" href="#__codelineno-13-58"></a><span class="w">    </span><span class="c1"># 管理者ダッシュボード</span>
-<a id="__codelineno-13-59" name="__codelineno-13-59" href="#__codelineno-13-59"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/system/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-60" name="__codelineno-13-60" href="#__codelineno-13-60"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-61" name="__codelineno-13-61" href="#__codelineno-13-61"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-62" name="__codelineno-13-62" href="#__codelineno-13-62"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-63" name="__codelineno-13-63" href="#__codelineno-13-63"></a>
-<a id="__codelineno-13-64" name="__codelineno-13-64" href="#__codelineno-13-64"></a><span class="w">    </span><span class="c1"># メディア（server 経由で配信する）</span>
-<a id="__codelineno-13-65" name="__codelineno-13-65" href="#__codelineno-13-65"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/media/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-66" name="__codelineno-13-66" href="#__codelineno-13-66"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
-<a id="__codelineno-13-67" name="__codelineno-13-67" href="#__codelineno-13-67"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-13-68" name="__codelineno-13-68" href="#__codelineno-13-68"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-13-69" name="__codelineno-13-69" href="#__codelineno-13-69"></a><span class="p">}</span>
-<a id="__codelineno-13-70" name="__codelineno-13-70" href="#__codelineno-13-70"></a>
-<a id="__codelineno-13-71" name="__codelineno-13-71" href="#__codelineno-13-71"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-72" name="__codelineno-13-72" href="#__codelineno-13-72"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
-<a id="__codelineno-13-73" name="__codelineno-13-73" href="#__codelineno-13-73"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
-<a id="__codelineno-13-74" name="__codelineno-13-74" href="#__codelineno-13-74"></a><span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
-<a id="__codelineno-13-75" name="__codelineno-13-75" href="#__codelineno-13-75"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/letsencrypt/live/tealus.example.com/fullchain.pem</span><span class="p">;</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/tealus.example.com/privkey.pem</span><span class="p">;</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">    </span><span class="c1"># PWA（client/dist は server が配信する）</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">    </span><span class="c1"># REST API</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/api/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="w">    </span><span class="c1"># Socket.IO（WebSocket upgrade 必須）</span>
+<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/socket.io/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">"upgrade"</span><span class="p">;</span>
+<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a>
+<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a><span class="w">    </span><span class="c1"># cc-queue のストリーム — 別マシンの Claude Code をつなぐ場合だけ必要（#214）</span>
+<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a><span class="w">    </span><span class="c1"># つなぎっぱなしの NDJSON なので buffering off と長い read timeout が要る</span>
+<a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/agent-api/cc-queue/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a><span class="w">        </span><span class="kn">proxy_buffering</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+<a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a><span class="w">        </span><span class="kn">proxy_read_timeout</span><span class="w"> </span><span class="s">3600s</span><span class="p">;</span>
+<a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a>
+<a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a><span class="w">    </span><span class="c1"># agent-server（server が中継）</span>
+<a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/agent-api/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-45" name="__codelineno-14-45" href="#__codelineno-14-45"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-46" name="__codelineno-14-46" href="#__codelineno-14-46"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<a id="__codelineno-14-47" name="__codelineno-14-47" href="#__codelineno-14-47"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-48" name="__codelineno-14-48" href="#__codelineno-14-48"></a>
+<a id="__codelineno-14-49" name="__codelineno-14-49" href="#__codelineno-14-49"></a><span class="w">    </span><span class="c1"># rtc-server（通話・トランシーバー、WebSocket upgrade 必須）</span>
+<a id="__codelineno-14-50" name="__codelineno-14-50" href="#__codelineno-14-50"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/rtc/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-51" name="__codelineno-14-51" href="#__codelineno-14-51"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-52" name="__codelineno-14-52" href="#__codelineno-14-52"></a><span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<a id="__codelineno-14-53" name="__codelineno-14-53" href="#__codelineno-14-53"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<a id="__codelineno-14-54" name="__codelineno-14-54" href="#__codelineno-14-54"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">"upgrade"</span><span class="p">;</span>
+<a id="__codelineno-14-55" name="__codelineno-14-55" href="#__codelineno-14-55"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-56" name="__codelineno-14-56" href="#__codelineno-14-56"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-57" name="__codelineno-14-57" href="#__codelineno-14-57"></a>
+<a id="__codelineno-14-58" name="__codelineno-14-58" href="#__codelineno-14-58"></a><span class="w">    </span><span class="c1"># 管理者ダッシュボード</span>
+<a id="__codelineno-14-59" name="__codelineno-14-59" href="#__codelineno-14-59"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/system/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-60" name="__codelineno-14-60" href="#__codelineno-14-60"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-61" name="__codelineno-14-61" href="#__codelineno-14-61"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-62" name="__codelineno-14-62" href="#__codelineno-14-62"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-63" name="__codelineno-14-63" href="#__codelineno-14-63"></a>
+<a id="__codelineno-14-64" name="__codelineno-14-64" href="#__codelineno-14-64"></a><span class="w">    </span><span class="c1"># メディア（server 経由で配信する）</span>
+<a id="__codelineno-14-65" name="__codelineno-14-65" href="#__codelineno-14-65"></a><span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/media/</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-66" name="__codelineno-14-66" href="#__codelineno-14-66"></a><span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:3000</span><span class="p">;</span>
+<a id="__codelineno-14-67" name="__codelineno-14-67" href="#__codelineno-14-67"></a><span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<a id="__codelineno-14-68" name="__codelineno-14-68" href="#__codelineno-14-68"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-14-69" name="__codelineno-14-69" href="#__codelineno-14-69"></a><span class="p">}</span>
+<a id="__codelineno-14-70" name="__codelineno-14-70" href="#__codelineno-14-70"></a>
+<a id="__codelineno-14-71" name="__codelineno-14-71" href="#__codelineno-14-71"></a><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-72" name="__codelineno-14-72" href="#__codelineno-14-72"></a><span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<a id="__codelineno-14-73" name="__codelineno-14-73" href="#__codelineno-14-73"></a><span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">tealus.example.com</span><span class="p">;</span>
+<a id="__codelineno-14-74" name="__codelineno-14-74" href="#__codelineno-14-74"></a><span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
+<a id="__codelineno-14-75" name="__codelineno-14-75" href="#__codelineno-14-75"></a><span class="p">}</span>
 </code></pre></div>
 <div class="admonition danger">
 <p class="admonition-title">★ <code>/media/</code> を Nginx から直接配信（<code>alias</code>）しないでください</p>

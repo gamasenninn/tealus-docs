@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2067,6 +2095,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2839,7 +2895,7 @@
 <tr>
 <td><strong>管理ダッシュボード</strong>（<code>/admin</code>）</td>
 <td>アプリの <strong>プロフィール → 「管理ダッシュボード」</strong></td>
-<td>ユーザー ／ Webhook ／ ポータル（ホームのリンク） ／ <strong>アクセスログ</strong> ／ <strong>辞書育成</strong></td>
+<td>ユーザー ／ Webhook ／ ポータル（ホームのリンク） ／ <strong>アクセスログ</strong> ／ <strong>辞書育成</strong> ／ <strong>削除された投稿</strong>（v0.12.0）</td>
 </tr>
 </tbody>
 </table>
@@ -2950,10 +3006,10 @@
 <h4 id="deep">Deep プロンプトタブ<a class="headerlink" href="#deep" title="Permanent link">&para;</a></h4>
 <p>Deep Agent（Claude Code）のシステムプロンプト（<code>CLAUDE.md</code>）を編集します。</p>
 <h4 id="mcp">MCP設定タブ<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h4>
-<p>ルーム固有の MCP サーバー設定を JSON で直接入力します。</p>
+<p>ルーム固有の MCP サーバー設定を JSON で直接入力します。★ <strong>書き込めるのはシステム管理者だけ</strong>です（v0.12.0。設定に起動するコマンドを書けるため）。部屋の管理者は読むことだけできます。部屋の設定に <code>tealus</code> を書いても、本体が組み立てた tealus の道具が優先されます。</p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>設定の変更は <code>room_settings.json</code> に保存されます。</p>
+<p class="admonition-title">設定の置き場（v0.12.0〜）</p>
+<p>タブごとの保存先は <code>&lt;AGENT_WORKSPACE_ROOT&gt;/_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/</code> の中の、基本設定 = <code>room_settings.json</code>・Light プロンプト = <code>light_prompt.md</code>・Deep プロンプト = <code>CLAUDE.md</code>・MCP設定 = <code>mcp_config.json</code> です（AI が書ける作業場所の外）。古い置き場（作業場所の中）のファイルは、agent-server の起動のときに 1 度だけ移ります。</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">★ 道具が使う鍵は <code>env</code> に明示してください（v0.11.0〜）</p>

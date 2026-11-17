@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1854,6 +1882,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -3189,7 +3245,7 @@
 <tbody>
 <tr>
 <td><code>routes/</code></td>
-<td>REST APIルート定義（19 ファイル ＋ <code>routes/admin/</code> 9 ファイル）</td>
+<td>REST APIルート定義（21 ファイル ＋ <code>routes/admin/</code> 10 ファイル）</td>
 </tr>
 <tr>
 <td><code>socket/handlers/</code></td>
@@ -3205,7 +3261,7 @@
 </tr>
 <tr>
 <td><code>db/</code></td>
-<td>DB接続・マイグレーション（001〜040、台帳 <code>schema_migrations</code>）</td>
+<td>DB接続・マイグレーション（001〜045、台帳 <code>schema_migrations</code>）。★ 未適用があると本体は名前と <code>npm run migrate</code> を出して起動しない（v0.12.0〜。台帳が無い・DB に届かないときは判定せずに起動）</td>
 </tr>
 <tr>
 <td><code>utils/</code></td>
@@ -3324,7 +3380,7 @@
 <h2 id="_6">認証フロー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>POST /api/auth/login { login_id, password }
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    ↓ bcryptで検証
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>JWT発行（ペイロード: user_id, role）
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>JWT発行（ペイロード: id, login_id, auth_at。期限 7 日）
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    ↓
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Authorization: Bearer &lt;token&gt;
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    ↓ middleware/auth.mts で検証

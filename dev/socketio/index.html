@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1854,6 +1882,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2579,7 +2635,7 @@
 <h1 id="socketio">Socket.IO イベント<a class="headerlink" href="#socketio" title="Permanent link">&para;</a></h1>
 <p>リアルタイム通信に使用するSocket.IOイベントの一覧です。</p>
 <h2 id="_1">認証<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Socket.IO接続時に <code>handshake.auth.token</code> でJWTを検証します。管理者ユーザーは接続時に全ルームへ自動参加します（モニタリング用）。</p>
+<p>Socket.IO接続時に <code>handshake.auth.token</code> でJWTを検証します。管理者ユーザーは接続時に全ルームへ自動参加します（モニタリング用）。DB の失敗は「サーバーエラーが発生しました」で断り（「トークンが無効です」にしない）、断った理由は <code>[socket] 認証を断りました</code> でログに残します（v0.12.0）。</p>
 <h2 id="_2">クライアント → サーバー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2603,7 +2659,7 @@
 <tr>
 <td><code>message:send</code></td>
 <td><code>{ room_id, content, type, reply_to, forwarded_from? }</code></td>
-<td>メッセージ送信。★ **受け取りの返事（ack）**を返す: 保存できたら <code>{ ok: true, id }</code>、断ったら <code>{ ok: false, error: 理由 }</code>（<a href="https://github.com/gamasenninn/tealus/issues/593">#593</a>）。画面は断られたら入力欄の文を残して理由を出す。ack 無しの emit（古い画面）も受け付ける</td>
+<td>メッセージ送信。★ <strong>受け取りの返事（ack）</strong>を返す: 保存できたら <code>{ ok: true, id }</code>、断ったら <code>{ ok: false, error: 理由 }</code>（<a href="https://github.com/gamasenninn/tealus/issues/593">#593</a>）。画面は断られたら入力欄の文を残して理由を出す。ack 無しの emit（古い画面）も受け付ける</td>
 </tr>
 <tr>
 <td><code>message:read</code></td>
@@ -2704,12 +2760,12 @@
 </tr>
 <tr>
 <td><code>user:online</code></td>
-<td>全接続ユーザー</td>
-<td>ユーザーオンライン通知</td>
+<td>ゲスト以外の全接続</td>
+<td>ユーザーオンライン通知（v0.12.0 からゲストには流さない）</td>
 </tr>
 <tr>
 <td><code>user:offline</code></td>
-<td>全接続ユーザー</td>
+<td>ゲスト以外の全接続</td>
 <td>ユーザーオフライン通知</td>
 </tr>
 <tr>

@@ -1455,6 +1455,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2060,6 +2088,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2839,7 +2895,7 @@
 <div class="admonition tip">
 <p class="admonition-title">業務辞書 inject による業界用語認識（v0.2.4〜、<a href="https://github.com/gamasenninn/tealus/issues/269">#269</a> Phase 2）</p>
 <p>v0.2.4 で default model が <code>gpt-4o-transcribe</code> → <strong><code>gpt-4o-mini-transcribe</code></strong> に切替、業務辞書（vocabulary）を文字起こしのプロンプトに渡す <strong>model-aware vocabulary inject</strong> が稼働します。業界用語・固有名詞・短人名の認識精度が向上します（業務無線 dogfood の業界用語 + 短人名 6/6 完璧 verify）。</p>
-<p>辞書の語は、**データベースの業務辞書（<code>dictionary</code> テーブル）**から読みます（<a href="https://github.com/gamasenninn/tealus/issues/327">#327</a>。テーブルが空のときだけ <code>transcription_guideline.json</code> の語を使います）。辞書は使われ方から育ちます（<a href="../../../admin/dictionary/">業務辞書</a>）。organon を使う環境では、整形の段で organon の知識も渡します。</p>
+<p>辞書の語は、<strong>データベースの業務辞書（<code>dictionary</code> テーブル）</strong>から読みます（<a href="https://github.com/gamasenninn/tealus/issues/327">#327</a>。テーブルが空のときだけ <code>transcription_guideline.json</code> の語を使います）。辞書は使われ方から育ちます（<a href="../../../admin/dictionary/">業務辞書</a>）。organon を使う環境では、整形の段で organon の知識も渡します。</p>
 </div>
 <div class="admonition info">
 <p class="admonition-title">文字起こしの経路は 3 つから選べます（<a href="https://github.com/gamasenninn/tealus/issues/424">#424</a>）</p>
@@ -2860,6 +2916,10 @@
 <div class="admonition tip">
 <p class="admonition-title">音声を聴きながら編集（v0.2.3〜、<a href="https://github.com/gamasenninn/tealus/issues/248">#248</a>）</p>
 <p>編集 modal 内に<strong>音声再生スライダー</strong>が組み込まれており、原音を聴きながら文字起こしを修正できます。聞き取りにくい箇所のシークがしやすく、特に長尺の voice メッセージで効果的です。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">宛名の候補（v0.12.0）</p>
+<p>編集画面の「<strong>宛名</strong>」に、その部屋で人が直した冒頭の呼びかけが多い順に並びます。押すと冒頭の呼びかけを差し替えます（無ければ先頭に足します）。設定は要りません。</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">連続編集 — 前/次ボタンで隣の音声へ送る（<a href="https://github.com/gamasenninn/tealus/issues/302">#302</a>）</p>
@@ -2910,6 +2970,7 @@
 <div class="admonition note">
 <p class="admonition-title">編集権限</p>
 <p>文字起こしの編集は、既定では<strong>送信者のみ</strong>です。部屋の管理者がルーム設定の「<strong>文字起こし編集</strong>」を「メンバー全員」にすると、誰でも直せます（本文の「メッセージ編集」とは別の設定です）。</p>
+<p>ただし、<strong>機械が送った音声（無線・通話履歴など）の文字起こし</strong>は、設定によらずメンバーなら誰でも直せます（ゲストは除く。v0.12.0）。同じ文のまま保存しても、版は増えません。</p>
 </div>
 <h2 id="_6">再文字起こし<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>文字起こしが失敗した（<code>status=error</code>）場合や、結果が不適切な場合に、<strong>手動で retry</strong> できます（v0.2.2〜、<a href="https://github.com/gamasenninn/tealus/issues/216">#216</a>）。</p>

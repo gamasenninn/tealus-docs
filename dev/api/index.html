@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1867,6 +1895,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2126,6 +2182,28 @@
     <span class="md-ellipsis">
       
         エラーレスポンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v0120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        鍵の延長（v0.12.0）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v0120_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        記録の行（v0.12.0）
       
     </span>
   </a>
@@ -2862,6 +2940,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#v0120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        鍵の延長（v0.12.0）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v0120_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        記録の行（v0.12.0）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3216,7 +3316,13 @@
 <ul>
 <li>★ <strong>想定外の失敗（500）は、決まった文だけを返します</strong>（<a href="https://github.com/gamasenninn/tealus/issues/603">#603</a>）。中身（スタック・本体の中のパス）は返さず、サーバーの記録にだけ残します。<code>NODE_ENV</code> に関係ありません。状態の番号を持つ失敗（本文が大きすぎる 413・JSON が壊れている 400 など）は番号を保ち、本文は「リクエストを受け付けられませんでした」です</li>
 <li>★ <strong>ID の形が正しくないと 400</strong> です（<a href="https://github.com/gamasenninn/tealus/issues/543">#543</a>）。以前は 500 になっていました。本文は「ID「…」の形が正しくありません。ID は省略せずに、36 文字のまま渡してください。」で、<strong>途中で切った ID を渡した AI が自分で気づける</strong>ようにしてあります</li>
+<li>★ <strong>本文は 5 万字まで</strong>です（投稿・編集・bot・socket。超えると 400。v0.12.0）</li>
+<li>部屋のアプリ・ホームのリンク・リンクの下見の画像・webhook の宛先は <strong>http / https の URL だけ</strong>です（v0.12.0）</li>
 </ul>
+<h3 id="v0120">鍵の延長（v0.12.0）<a class="headerlink" href="#v0120" title="Permanent link">&para;</a></h3>
+<p>残りが半分を切った鍵で要求が通ると、応答のヘッダー <strong><code>X-Refreshed-Token</code></strong> に新しい鍵を返します（最初のログインから 30 日まで）。延ばさない応答には空の値が付きます。画面は「今の鍵と同じ人で、期限が今より後」の鍵だけを差し替えます。API を直接叩く機械は読まなくても今までどおり動きます（7 日で切れたら入り直し）。</p>
+<h3 id="v0120_1">記録の行（v0.12.0）<a class="headerlink" href="#v0120_1" title="Permanent link">&para;</a></h3>
+<p>4xx は warn の <code>[http]</code>、断った要求は <code>[http-denied]</code>（warn）、成功した変更（GET 以外）は <code>[change]</code>（info。値は残さない）、同じ相手が同じ口を 1 分に 60 回を超えて叩くと <code>[http-flood]</code>（warn。止めはしない）を残します。agent-server も同じです。</p>
 <h3 id="_3">ステータスコード<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -3312,7 +3418,7 @@
 <tr>
 <td>GET</td>
 <td><code>/api/auth/me</code></td>
-<td>現在ユーザー取得</td>
+<td>現在ユーザー取得。<code>{ user, push_active_subscriptions, push_total_subscriptions }</code>（数えられなければ null。v0.12.0）</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3336,7 +3442,13 @@
 <tr>
 <td>PUT</td>
 <td><code>/api/auth/password</code></td>
-<td>パスワード変更</td>
+<td>パスワード変更（8 文字以上）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/sso/app-login</code></td>
+<td>「Tealus でログイン」の札（60 秒）つきの戻り先 URL（<code>{ aud, state }</code>。<code>aud</code> は <code>APP_LOGIN_TARGETS</code> にあるものだけ、<code>state</code> は 16 進 32 文字。ゲスト・機械・出せないときは 404。v0.12.0、<a href="../../admin/app-pass/">アプリの通行証</a>）</td>
 <td>必要</td>
 </tr>
 </tbody>
@@ -3386,7 +3498,7 @@
 <tr>
 <td>POST</td>
 <td><code>/api/rooms</code></td>
-<td>グループ作成</td>
+<td>グループ作成。応答に <code>same_name_rooms</code>（同じ名前のグループの数、v0.12.0）。新しい部屋の編集の決まりは「送信者のみ」</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3404,7 +3516,7 @@
 <tr>
 <td>PUT</td>
 <td><code>/api/rooms/:id</code></td>
-<td>ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など）。★ <strong>グループで、メンバーで、部屋の管理者</strong>のとき。<code>is_announcement</code> はさらに admin のみ</td>
+<td>ルーム設定の更新（名前・編集の決まり・会話モード・機械の投稿の通知など）。★ <strong>グループで、メンバーで、部屋の管理者</strong>のとき（システム管理者はメンバーでなくても、どのグループでも同じ。v0.12.0）。<code>is_announcement</code> はさらに admin のみ</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3416,7 +3528,7 @@
 <tr>
 <td>DELETE</td>
 <td><code>/api/rooms/:id</code></td>
-<td>グループ削除。<strong>作成者で、メンバーが自分だけのとき</strong>。メッセージと添付も消える</td>
+<td>グループ削除。<strong>メンバーが自分だけなら誰でも</strong>（作成者でなくてよい、v0.12.0 <a href="https://github.com/gamasenninn/tealus/issues/643">#643</a>）。システム管理者はメンバーが残っていても消せる。メッセージと添付も消える</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3428,7 +3540,19 @@
 <tr>
 <td>GET</td>
 <td><code>/api/rooms/portal-links</code></td>
-<td>ポータルリンク一覧</td>
+<td>ポータルリンク一覧（migration <code>041</code> が要る）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/rooms/portal-links/:id/app-pass</code></td>
+<td>ホームのタブのアプリの通行証（2 分）つき URL（v0.12.0）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/rooms/:id/app-pass</code></td>
+<td>部屋のアプリの通行証（2 分）つき URL（<code>{ index, url }</code>。メンバーのみ。ゲスト・機械・出せないときは 404。v0.12.0）</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3489,7 +3613,19 @@
 <tr>
 <td>GET</td>
 <td><code>/api/rooms/:id/prompts/history?targets=アシスタント,cc-tealus&amp;limit=30</code></td>
-<td>自分がこのルームで送った「宛先 + 本文」の投稿を新しい順に（「最近の指示」パネル、<a href="https://github.com/gamasenninn/tealus/issues/354">#354</a>）</td>
+<td>自分がこのルームで送った「宛先 + 本文」の投稿を新しい順に（「最近の指示」パネル、<a href="https://github.com/gamasenninn/tealus/issues/354">#354</a>）。返り値 <code>{ items, pinned, target_counts }</code>。<code>q</code> での絞り込みは本体で行う</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>POST / DELETE</td>
+<td><code>/api/rooms/:id/prompts/pins</code></td>
+<td>指示を ☆ で固定する／外す（<code>{ content }</code>。1 人 1 部屋 50 本。v0.12.0、migration <code>044</code>）</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/rooms/:id/voice-address-candidates</code></td>
+<td>人が直した文字起こしの冒頭の宛名を多い順に（直近 90 日・2 回以上・16 件まで。v0.12.0）</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3563,7 +3699,7 @@
 <tr>
 <td>PUT</td>
 <td><code>/api/messages/:id/transcription</code></td>
-<td>文字起こしテキスト編集</td>
+<td>文字起こしテキスト編集（最新の版と同じ文なら版を積まない。v0.12.0）</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3620,7 +3756,7 @@
 <tr>
 <td>POST</td>
 <td><code>/api/rooms/:id/members</code></td>
-<td>メンバー追加</td>
+<td>メンバー追加。★ 機械は招待できない（403）。「社外の窓口」の口座は、自分が作って今もいる部屋に、社員（ゲスト・機械・窓口以外）だけを足せる（v0.12.0）</td>
 <td>必要</td>
 </tr>
 <tr>
@@ -3781,7 +3917,7 @@
 <tr>
 <td>GET</td>
 <td><code>/api/config</code></td>
-<td>画面が使う設定（通話・トランシーバーが使えるか等。agent-server の公開設定も中継）</td>
+<td>画面が使う設定（通話・トランシーバーが使えるか等。agent-server の公開設定も中継。agent-server の値は 30 秒使い回す）</td>
 <td>不要</td>
 </tr>
 <tr>
@@ -3824,7 +3960,7 @@
 <tr>
 <td>PUT</td>
 <td><code>/api/admin/users/:id</code></td>
-<td>ユーザー編集</td>
+<td>ユーザー編集（<code>is_external_contact</code> = 社外の窓口。パスワードを入れ直すと本人に変更を求める）</td>
 </tr>
 <tr>
 <td>PATCH</td>
@@ -3872,6 +4008,16 @@
 <td>応答ログ 1 件の前後の文脈</td>
 </tr>
 <tr>
+<td>GET</td>
+<td><code>/api/admin/deleted-messages</code></td>
+<td>削除した投稿の本文（新しい順に 100 件。v0.12.0、migration <code>043</code>）</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/admin/deleted-messages/:id/restore</code></td>
+<td>本文を戻す（退避より前に消したものは 404）</td>
+</tr>
+<tr>
 <td>GET / POST</td>
 <td><code>/api/admin/dictionary/terms</code></td>
 <td>業務辞書の語（<code>PATCH /:id</code>・<code>PATCH /:id/reading</code>・<code>POST /:id/reject</code>・<code>POST /:id/restore</code>）</td>
@@ -3907,7 +4053,7 @@
 <tr>
 <td>POST</td>
 <td><code>/api/bot/push-image</code></td>
-<td>画像送信</td>
+<td>画像送信（★ 終わりまで読めない画像・HEIC・BMP は 400。v0.12.0）</td>
 </tr>
 <tr>
 <td>POST</td>
@@ -3972,7 +4118,7 @@
 <tr>
 <td>GET</td>
 <td><code>/api/bot/unread</code></td>
-<td>未読メッセージ取得</td>
+<td>未読メッセージ取得（各便に <code>created_at_local</code>。部屋に入る前の便は数えない）</td>
 </tr>
 <tr>
 <td>POST</td>
@@ -3997,7 +4143,7 @@
 <tr>
 <td>POST</td>
 <td><code>/api/bot/push-file</code></td>
-<td>text 内容を file（.txt / .md 等）として投稿（v0.2.3〜、tealus-mcp v0.11.0 の <code>send_text_as_file</code> の wrapper）</td>
+<td>text 内容を file（.txt / .md 等）として投稿（v0.2.3〜、tealus-mcp v0.11.0 の <code>send_text_as_file</code> の wrapper）。種類が <code>image/*</code> のときは push-image と同じく読めるかを見る</td>
 </tr>
 </tbody>
 </table>
@@ -4033,7 +4179,7 @@
 <tr>
 <td><code>type</code></td>
 <td>enum</td>
-<td><code>text</code> / <code>image</code> / <code>voice</code> / <code>video</code> / <code>stamp</code> / <code>system</code></td>
+<td><code>text</code> / <code>image</code> / <code>voice</code> / <code>video</code> / <code>file</code> / <code>stamp</code> / <code>system</code> / <code>form</code></td>
 </tr>
 <tr>
 <td><code>tag_names</code></td>
@@ -4046,14 +4192,19 @@
 <td>TODO 完了状態（<code>tag_names</code> 指定時のみ有効）</td>
 </tr>
 <tr>
+<td><code>has_reaction</code></td>
+<td>bool</td>
+<td>リアクション有無で絞る</td>
+</tr>
+<tr>
 <td><code>since</code></td>
 <td>ISO 8601</td>
-<td>開始日時</td>
+<td>開始日時（時間帯を省くとサーバーの時間帯で読む。<code>Z</code>・<code>+09:00</code> は明示どおり）</td>
 </tr>
 <tr>
 <td><code>until</code></td>
 <td>ISO 8601</td>
-<td>終了日時</td>
+<td>終了日時（同上）</td>
 </tr>
 <tr>
 <td><code>limit</code></td>

@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1831,6 +1859,45 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#external-contact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        社外の窓口
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deleted-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除された投稿を戻す
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bot-admin-rights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        機械のアカウントとシステム管理者の権限
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="機械のアカウントとシステム管理者の権限">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#api_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2021,6 +2088,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2670,6 +2765,45 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#external-contact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        社外の窓口
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deleted-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除された投稿を戻す
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bot-admin-rights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        機械のアカウントとシステム管理者の権限
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="機械のアカウントとシステム管理者の権限">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#api_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2769,7 +2903,7 @@
 </tr>
 <tr>
 <td>パスワード</td>
-<td>初期パスワード</td>
+<td>初期パスワード（<strong>8 文字以上</strong>。短いと 400）</td>
 </tr>
 <tr>
 <td>権限（ロール）</td>
@@ -2791,8 +2925,27 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user"</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">初回ログインでパスワードの変更を求めます（v0.12.0）</p>
+<p>管理者が作った人・管理者がパスワードを入れ直した人は、次のログインで「はじめに、パスワードを変えてください」の画面だけが出ます。本人が新しいパスワード（8 文字以上）を決めるまで、ほかの画面は使えません。機械（AIエージェント）と、管理者が自分のパスワードを入れ直したときは求めません。v0.12.0 より前からいる利用者にも求めません。migration <code>042</code> が要ります。</p>
+</div>
 <h2 id="_5">ユーザーの編集<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>表示名やロールを変更できます。</p>
+<p>表示名やロール・パスワードの入れ直しができます。編集のときだけ「<strong>社外の窓口</strong>」の印も出ます（下記）。</p>
+<ul>
+<li>自分自身と、最後の有効なシステム管理者は、無効にも一般にもできません</li>
+</ul>
+<h3 id="external-contact">社外の窓口<a class="headerlink" href="#external-contact" title="Permanent link">&para;</a></h3>
+<p>EC サイトのお客様など、<strong>社外の人の発言を代わりに投稿する口座</strong>に付ける印です（v0.12.0）。付けると、その口座が作った部屋は、トーク一覧のタブ「<strong>お客様</strong>」にまとまり、「すべて」「1:1」「グループ」には出なくなります（社内の人が作った部屋に窓口を入れても移りません）。表示の分け方であって、検索や AI の扱いは変えません。migration <code>045</code> が要ります（忘れると部屋の一覧が全員 500）。</p>
+<ul>
+<li>窓口の口座は機械のアカウントですが、<strong>自分が作って今もいる部屋</strong>に限り、社員（ゲスト・機械・窓口以外の有効な人）を後から足せます。それ以外の部屋には人を足せません</li>
+</ul>
+<h2 id="deleted-messages">削除された投稿を戻す<a class="headerlink" href="#deleted-messages" title="Permanent link">&para;</a></h2>
+<p>消された投稿の本文は、システム管理者だけが見られる所に残ります（v0.12.0。migration <code>043</code>）。管理ダッシュボード（<code>/admin</code>）の「<strong>削除された投稿</strong>」に新しい順で 100 件出て、確かめてから「戻す」で元の場所に戻せます。検索・AI など本文を読む口からは、今までどおり見えません。v0.12.0 より前に消したものは戻せません。</p>
+<h2 id="bot-admin-rights">機械のアカウントとシステム管理者の権限<a class="headerlink" href="#bot-admin-rights" title="Permanent link">&para;</a></h2>
+<ul>
+<li>機械（AIエージェント）のアカウントは、メンバーを招待できません（上の「社外の窓口」が自分の部屋に社員を足す場合だけ例外）</li>
+<li>システム管理者は、どのグループでも部屋の管理者と同じ操作（名前・設定・メンバー）ができ、メンバーが残っている部屋も削除できます（確認で残っている人数が出ます）。1 対 1 は対象外で、中身を読めるのは今までどおりメンバーだけです</li>
+</ul>
 <h3 id="api_1">API<a class="headerlink" href="#api_1" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PUT /api/admin/users/:id
 </code></pre></div>

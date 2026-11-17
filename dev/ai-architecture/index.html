@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1854,6 +1882,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -3340,7 +3396,7 @@
 </tr>
 <tr>
 <td>ルーム固有</td>
-<td><code>{workspace}/light_prompt.md</code></td>
+<td><code>_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/light_prompt.md</code>（v0.12.0〜。作業場所の外）</td>
 <td>ルーム個別の指示</td>
 </tr>
 <tr>
@@ -3395,7 +3451,7 @@
 </tbody>
 </table>
 <h4 id="tealus-mcp-lightdeep-v020">Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）<a class="headerlink" href="#tealus-mcp-lightdeep-v020" title="Permanent link">&para;</a></h4>
-<p><a href="../mcp/">Tealus MCP</a> を介して Light Agent も以下のツールを利用できます（<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）。Deep Agent と<strong>同一のツールセット</strong>です。本体の agent-server は tealus-mcp <code>#v0.16.0</code> を使い、19 ツールすべてが使えます（v0.11.1 以前の本体は <code>#v0.14.7</code> 固定で、<code>send_form</code> と <code>edit_message</code> が使えませんでした）。</p>
+<p><a href="../mcp/">Tealus MCP</a> を介して Light Agent も以下のツールを利用できます（<a href="https://github.com/gamasenninn/tealus/issues/199">#199</a>）。Deep Agent と<strong>同一のツールセット</strong>です。本体の agent-server は tealus-mcp <code>#v0.17.0</code> を使い、19 ツールすべてが使えます（v0.11.1 以前の本体は <code>#v0.14.7</code> 固定で、<code>send_form</code> と <code>edit_message</code> が使えませんでした）。</p>
 <table>
 <thead>
 <tr>
@@ -3462,7 +3518,7 @@
 </tr>
 <tr>
 <td><code>delete_room</code></td>
-<td>グループルームをアーカイブ（v0.2.0、creator + solo member のみ）</td>
+<td>グループルームをアーカイブ（v0.2.0、自分しかいないグループのみ）</td>
 </tr>
 <tr>
 <td><code>list_rooms</code></td>
@@ -3498,8 +3554,10 @@
 <h3 id="_5">起動方式<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>claude<span class="w"> </span>-p<span class="w"> </span>-<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--dangerously-skip-permissions<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--mcp-config<span class="w"> </span>&lt;動的設定ファイル&gt;<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="o">[</span>--resume<span class="w"> </span>&lt;sessionId&gt;<span class="o">]</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--strict-mcp-config<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--mcp-config<span class="w"> </span>&lt;組み立てた設定&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="o">[</span>--append-system-prompt-file<span class="w"> </span>&lt;部屋の<span class="w"> </span>CLAUDE.md&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="o">[</span>--resume<span class="w"> </span>&lt;sessionId&gt;<span class="o">]</span>
 </code></pre></div>
 <ul>
 <li>プロンプトは <strong>stdin</strong> から送信</li>
@@ -3508,9 +3566,9 @@
 <h3 id="mcp">動的 MCP 設定生成<a class="headerlink" href="#mcp" title="Permanent link">&para;</a></h3>
 <p>実行時に MCP 設定 JSON を動的に組み立てます。</p>
 <ol>
-<li>Tealus MCP Server（チャット読み書き用）を基本設定として追加</li>
-<li>ルーム固有の MCP 設定（<code>room_settings.json</code> の <code>mcp</code> セクション）をマージ</li>
-<li><code>.deep_mcp_config.json</code> としてワークスペースに書き出し</li>
+<li>Tealus MCP（依頼した人の部屋に絞る中継へ向ける）を基本設定として置く</li>
+<li>部屋の <code>mcp_config.json</code>（<code>&lt;AGENT_WORKSPACE_ROOT&gt;/_room-configs/&lt;agentId&gt;/&lt;roomId&gt;/</code>）をマージする。★ <code>tealus</code> が書いてあっても使わない（本体の組み立てを優先し、warn に残す）</li>
+<li><code>&lt;AGENT_WORKSPACE_ROOT&gt;/_mcp-configs/&lt;agentId&gt;/&lt;roomId&gt;.json</code> に書き出す（作業場所の外）。<code>--strict-mcp-config</code> なので、作業場所の <code>.mcp.json</code> などは読まない（古い <code>.deep_mcp_config.json</code> は見つけたら消す）</li>
 </ol>
 <p>これにより、Deep Agent は <a href="../mcp/">MCP Server</a> 経由でチャット履歴の読み取り・メッセージ送信を自律的に行えます。</p>
 <h3 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
@@ -3552,6 +3610,7 @@
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ルーム B: メッセージ1 → メッセージ2（並行して処理）
 </code></pre></div>
 <p>異なるルームのメッセージは並行処理されますが、同じルーム内のメッセージは前のメッセージの処理が完了してから次に進みます。</p>
+<p>v0.12.0 から、待っている間は「順番待ちです。前に N 件あります」を状態（<code>agent:status</code>）で出します（<a href="https://github.com/gamasenninn/tealus/issues/644">#644</a>）。計画的な停止では捨てた仕事の件数を部屋に 1 回知らせ、予告なしの停止は控え <code>~/.tealus/agent/pending-work-&lt;PORT&gt;.json</code>（<code>AGENT_PENDING_JOURNAL</code> で変更可）から次の起動で「中断されました」を出します（やり直しはしない）。</p>
 <h3 id="_8">無限ループ防止<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p><code>botUserIds</code>（Set）に Bot ユーザー ID を保持し、Webhook 受信時に送信者をチェックします。Bot からのメッセージは即座にスキップされ、Bot 同士の無限応答ループを防止します。</p>
 <h3 id="_9">対応イベント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>

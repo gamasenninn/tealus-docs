@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2104,6 +2132,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -3086,7 +3142,7 @@
 </tr>
 </tbody>
 </table>
-<p>設定ファイル: <code>agent-workspaces/{agentId}/{roomId}/room_settings.json</code></p>
+<p>設定ファイル: <code>&lt;AGENT_WORKSPACE_ROOT&gt;/_room-configs/{agentId}/{roomId}/room_settings.json</code>（v0.12.0〜。それより前は作業場所の中の <code>{agentId}/{roomId}/room_settings.json</code>）</p>
 <h2 id="_4">グローバル設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>ダッシュボードまたは設定ファイルの直接編集で管理します。</p>
 <h3 id="settingsjson">settings.json<a class="headerlink" href="#settingsjson" title="Permanent link">&para;</a></h3>
@@ -3119,11 +3175,41 @@
 <p><code>@latest</code> や版なしにすると、<strong>起動のたびにその時 registry が返す版が動きます</strong>（<a href="https://github.com/gamasenninn/tealus/issues/577">#577</a>）。DSN などの鍵を渡す子プロセスが、確かめていないコードになります。版を上げるときは書き換えたうえで、先に手で 1 回 <code>npx -y &lt;名前@版&gt; --help</code> を流してキャッシュに入れてください。本体が自分で起動する道具も版を 1 か所で固定しています（例: <code>@modelcontextprotocol/server-filesystem@2026.1.14</code>、<code>agent-server/src/lib/mcpPackages.mts</code>）。</p>
 </div>
 <h2 id="_5">コンテキスト管理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>各エージェントのコンテキストは <code>agent-workspaces/{agent_id}/{room_id}/</code> にファイルベースで保存されます。</p>
+<p>各エージェントの作業場所は <code>agent-workspaces/{agent_id}/{room_id}/</code> です。</p>
 <ul>
-<li><code>CLAUDE.md</code> — 行動制限・ルール</li>
-<li><code>memory/MEMORY.md</code> — エージェントのメモリ</li>
+<li><code>memory/MEMORY.md</code> — エージェントのメモリ（作業場所の中）</li>
 </ul>
+<p>部屋ごとの設定 4 つは、v0.12.0 から作業場所の<strong>外</strong>の <code>&lt;AGENT_WORKSPACE_ROOT&gt;/_room-configs/{agent_id}/{room_id}/</code> に置きます（AI が自分の設定を書き換えられないようにするため）。</p>
+<table>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>中身</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>room_settings.json</code></td>
+<td>応答モード・読み上げのエンジンと声など</td>
+</tr>
+<tr>
+<td><code>light_prompt.md</code></td>
+<td>Light の部屋の指示</td>
+</tr>
+<tr>
+<td><code>mcp_config.json</code></td>
+<td>部屋の道具（MCP）。★ 書き込めるのはシステム管理者だけ</td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code></td>
+<td>Deep の部屋の指示（claude にも codex にも渡します）</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">★ 手で編集・バックアップしていた人は、置き場を読み替えてください（v0.12.0）</p>
+<p>古い置き場（作業場所の中）のファイルは、agent-server の起動のときに 1 度だけ新しい置き場へ移ります。<strong>移ったあとに古い置き場へ置いても読まれません。</strong> 保存のたびに前の版を <code>&lt;ファイル&gt;.prev</code> に 1 つ残すので、空で保存してしまっても戻せます。</p>
+</div>
 <h2 id="_6">無限ループ防止<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>Webhook受信時に <code>sender.is_bot</code> を確認し、Botからのメッセージは無視します。これによりBot同士の無限応答ループを防止します。</p>
 <h2 id="tts">TTS 読み上げ（音声合成）<a class="headerlink" href="#tts" title="Permanent link">&para;</a></h2>

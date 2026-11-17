@@ -1255,6 +1255,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2042,6 +2070,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#autostart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows で自動起動する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows で自動起動する">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
@@ -2082,6 +2127,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2830,6 +2903,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#autostart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows で自動起動する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows で自動起動する">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
@@ -2879,6 +2969,39 @@
 </ul>
 </li>
 </ul>
+<p>v0.12.0 から、次の行が増えました。warn を数えて見張っている場合は数え直してください。</p>
+<table>
+<thead>
+<tr>
+<th>行</th>
+<th>レベル</th>
+<th>中身</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[http-denied]</code></td>
+<td>warn</td>
+<td>断った要求（状態・方法・パス・利用者・ip・ua・理由 <code>reason=</code>）</td>
+</tr>
+<tr>
+<td><code>[change]</code></td>
+<td>info</td>
+<td>成功した変更（GET 以外）。誰が・パス・本文の欄の名前（値は残さない）。AI が頼まれて編集・削除したときは頼んだ人も</td>
+</tr>
+<tr>
+<td><code>[http-flood]</code></td>
+<td>warn</td>
+<td>同じ相手が同じ口を 1 分に 60 回を超えて叩いた（10 分に 1 回まで。止めはしない）</td>
+</tr>
+<tr>
+<td><code>[http]</code></td>
+<td>warn</td>
+<td>4xx の応答（以前は <code>[error]</code> でした）</td>
+</tr>
+</tbody>
+</table>
+<p>agent-server にも同じ行があります。</p>
 <h3 id="_4">ログビューア<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>システムダッシュボード（<code>/system</code>）の <strong>モニタリング → サーバーログ</strong> タブで確認できます。</p>
 <h2 id="_5">エージェント監視<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -2955,7 +3078,7 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>npm<span class="w"> </span>run<span class="w"> </span>doctor<span class="w">             </span><span class="c1"># 既定: 外部の API は叩かない</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>npm<span class="w"> </span>run<span class="w"> </span>doctor<span class="w"> </span>--<span class="w"> </span>--probe<span class="w">  </span><span class="c1"># 外部（OpenAI 等）への疎通も確かめる</span>
 </code></pre></div>
-<p>起動時の 1 行と同じ判定を、手で確かめたいときに使います。必須の環境変数・<code>WEBHOOK_SECRET</code>・資格情報・Codex のモデル・未適用の migration などを見ます。値そのものは表示しません（指紋のみ）。叩かなかった経路は <code>not-probed</code> と出るので、「確かめて全部だめ」と区別できます。</p>
+<p>起動時の 1 行と同じ判定を、手で確かめたいときに使います。必須の環境変数・<code>WEBHOOK_SECRET</code>・資格情報・Codex のモデル・未適用の migration などを見ます。v0.12.0 からは、メディアの総量・ディスクの空き・常駐のメモリと、「DB が指すのにファイルが無い添付」の数も出します。値そのものは表示しません（指紋のみ）。叩かなかった経路は <code>not-probed</code> と出るので、「確かめて全部だめ」と区別できます。</p>
 <h2 id="_9">ヘルスチェック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>GET /api/health
 </code></pre></div>
@@ -3006,10 +3129,18 @@
 <td><code>.env</code>（<code>JWT_SECRET</code> / VAPID 鍵など）</td>
 <td>全員が再ログイン、プッシュの購読が無効になる</td>
 </tr>
+<tr>
+<td>AI の設定</td>
+<td>agent-server の <code>.env</code>・<code>config/</code>・部屋の設定（<code>_room-configs/</code>）</td>
+<td>応答モード・部屋の指示・道具の設定が消える</td>
+</tr>
 </tbody>
 </table>
+<p>Windows では <code>scripts/backup/tealus-backup.ps1 -Dest &lt;UNC&gt;</code> で、DB・メディア・鍵と設定・記録・AI の設定をまとめて写せます（<code>-Parts</code> で一部だけ）。DB の控えの横に件数の控え（<code>.counts.json</code>）を置くので、戻す試しで比べられます。</p>
 <p>復元の具体的な手順は、本体リポジトリの <a href="https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md">upgrade-guide.md</a> の「壊れたときの復元」にあります。</p>
 </div>
+<h2 id="autostart">Windows で自動起動する<a class="headerlink" href="#autostart" title="Permanent link">&para;</a></h2>
+<p><code>scripts/startup/tealus-autostart.ps1</code> は、ログオン時に本体・agent-server・rtc-server を上げます（v0.12.0）。タスクスケジューラへの登録は各自で行います。<code>-DryRun</code> で何を起動するか試せます。環境ごとに違う起動は、リポジトリの外の <code>~\.tealus\startup\extras.ps1</code> に書きます。</p>
 <h3 id="_12">メディアファイル<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <p><code>media/</code> ディレクトリにアップロードされたファイルが保存されています。定期的にバックアップしてください。</p>
 

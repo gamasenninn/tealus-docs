@@ -1264,6 +1264,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2027,6 +2055,34 @@
     
   
     ルームトリガーと見張り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
   
 
     
@@ -2835,7 +2891,7 @@
 </ul>
 <div class="admonition info">
 <p class="admonition-title">Inbound（起こす知らせ）も HTTP で届きます（v0.8.0〜、<a href="https://github.com/gamasenninn/tealus/issues/214">#214</a>）</p>
-<p>以前このページは「Inbound は同じマシンの file 経由のみ、HTTP 対応は Phase 2 で予定」と書いていましたが、<strong>古くなっていました</strong>。v0.8.0 から、<code>@cc-…</code> の起こす知らせを **<code>/agent-api/cc-queue/stream</code>（NDJSON のストリーム）**で別のマシンへ届けられます。<strong>Tealus サーバと別のマシンだけで、往路（道具の呼び出し）と復路（起こす知らせ）の両方が完結します。</strong></p>
+<p>以前このページは「Inbound は同じマシンの file 経由のみ、HTTP 対応は Phase 2 で予定」と書いていましたが、<strong>古くなっていました</strong>。v0.8.0 から、<code>@cc-…</code> の起こす知らせを <strong><code>/agent-api/cc-queue/stream</code>（NDJSON のストリーム）</strong>で別のマシンへ届けられます。<strong>Tealus サーバと別のマシンだけで、往路（道具の呼び出し）と復路（起こす知らせ）の両方が完結します。</strong></p>
 <ul>
 <li>復路は <code>listen-tealus</code> skill の <strong>http mode</strong>（設定に <code>stream_url</code> を書く）が受け取ります</li>
 <li>設定手順は本体の <a href="https://github.com/gamasenninn/tealus/blob/main/docs/setup-cc-remote.md">setup-cc-remote.md</a>（Claude Code 自身が読んで実行する手順書）にあります</li>

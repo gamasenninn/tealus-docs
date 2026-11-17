@@ -1253,6 +1253,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/advanced/app-panel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリパネル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1865,6 +1893,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/app-pass/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリの通行証と「Tealus でログイン」
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2450,6 +2506,17 @@
       目次
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v0120-20261117" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.12.0 — 黙って失敗していたところを、言うようにする（2026年11月17日）
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#v0111-0110-2-20261015" class="md-nav__link">
@@ -3083,6 +3150,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v0120-20261117" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.12.0 — 黙って失敗していたところを、言うようにする（2026年11月17日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v0111-0110-2-20261015" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3710,11 +3788,36 @@
 <p>以前は本体 CHANGELOG とほぼ同じ内容を二重に持っていましたが、<strong>二重管理は必ず片方が腐り、腐ったときに読者がどちらを信じてよいか判断できません</strong>。そのため詳細は CHANGELOG に一元化し、このページは要約とリンクに絞る方針へ切り替えました。</p>
 <p><strong>v0.4.0 以降</strong>がこの新しい形式です。<strong>v0.3.0 以前</strong>は当時の詳細な記述をそのまま残しています。</p>
 </div>
+<h2 id="v0120-20261117">v0.12.0 — 黙って失敗していたところを、言うようにする（2026年11月17日）<a class="headerlink" href="#v0120-20261117" title="Permanent link">&para;</a></h2>
+<p><strong>押しても何も起きない・AI が答えない・通知が届かない・再起動で仕事が消える</strong>を、理由つきで知らせるように替えました。新しい入口は<strong>アプリの通行証</strong>と<strong>ブラウザから「Tealus でログイン」</strong>です。同じだけ、入口の締め直し（AI の道具・部屋の AI 設定の置き場・通話の入口）が入っています。</p>
+<p><strong>主な変更</strong></p>
+<ul>
+<li><strong>アプリの通行証</strong>（<a href="https://github.com/gamasenninn/tealus/issues/607">#607</a>）— 部屋のメンバーなら、アプリパネルとホームのタブのアプリの前のベーシック認証を飛ばせます。<strong>ブラウザから「Tealus でログイン」</strong>（<a href="https://github.com/gamasenninn/tealus/issues/648">#648</a>）— 社内のポータルなどに Tealus の ID で入れます。どちらも管理者が相手を決めたときだけ動きます。<a href="../admin/app-pass/">アプリの通行証</a></li>
+<li><strong>トーク一覧のタブ「お客様」</strong>と、口座の印「社外の窓口」— EC サイトのお客様などの部屋をまとめます</li>
+<li><strong>削除した投稿をシステム管理者が戻せる</strong>（管理画面の「削除された投稿」）、<strong>指示の履歴の ☆ 固定</strong>、<strong>ログインの鍵を使っている間に延ばす</strong>（最初のログインから 30 日で入り直し）</li>
+<li><strong>初回ログインでパスワードの変更を求める</strong>（管理者が作った・入れ直した人だけ）、<strong>パスワードは 8 文字以上</strong></li>
+<li><strong>AI が答えられないときに部屋へ知らせる</strong> — 順番待ち（<a href="https://github.com/gamasenninn/tealus/issues/644">#644</a>）・AI に届かなかった・再起動で捨てた仕事</li>
+<li><strong>見張りの見方が増えた</strong> — 通知が届かない人（<code>push_reach</code>）・置き場の空き（<code>disk_free</code>）・何回続いたら知らせるか（<code>alert_after</code>）・agent-server の鼓動。<a href="../admin/automation/">ルームトリガーと見張り</a></li>
+<li><strong>入口の締め直し</strong> — 通話・トランシーバーはログインした部屋のメンバーだけ、AI の書き込みの道具は依頼した人の部屋だけ、部屋の AI の MCP 設定を書けるのはシステム管理者だけ</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">★ 更新時の急所（全員に作業があります）</p>
+<ul>
+<li>★★★ <strong>migrate を先に、再起動はあと</strong> — migration が 5 本（<code>041</code>〜<code>045</code>）。<strong>この版から、未適用があると本体は起動しません</strong>（名前と <code>npm run migrate</code> を出して終わります）。手順は <a href="../admin/server-setup/">サーバー構築 &gt; DBマイグレーション</a>。nodemon などで自動で起こし直している環境は、<code>git pull</code> の時点で止まるので、migrate のあと自分で起こし直してください</li>
+<li>★ <strong>client と管理画面（dashboard）を本番ビルドし直す</strong>（しないと画面は何も変わらず、エラーも出ません）</li>
+<li>★ <strong><code>npm install</code> を server・agent-server・rtc-server・ルートで</strong>（依存の穴を lock だけで直しました）</li>
+<li>★ <strong>tealus-mcp が v0.17.0 に</strong>。上げた最初の起動は npx のダウンロードで遅いので、先に <code>npx -y github:gamasenninn/tealus-mcp#v0.17.0 &lt; /dev/null</code> を<strong>最後まで</strong> 1 回流します（打ち切るとキャッシュが欠けたまま残り、AI の道具が全部つながりません）</li>
+<li>★ <strong>部屋の AI 設定 4 つの置き場が変わりました</strong>（<code>room_settings.json</code> / <code>light_prompt.md</code> / <code>mcp_config.json</code> / <code>CLAUDE.md</code>）。agent-server の起動で 1 度だけ自動で <code>&lt;AGENT_WORKSPACE_ROOT&gt;/_room-configs/</code> へ移ります。<strong>AI の作業場所の中のファイルを手で直したりバックアップしたりしていた環境は、置き場を読み替えてください</strong>（移したあと作業場所に置いても読まれません）</li>
+<li>★ <strong>rtc-server も再起動</strong>。本体の <code>/rtc</code> 中継を通さず rtc-server を直接外へ出している構成は、接続が断られないか確かめてください</li>
+<li>cc-bridge を使っている場合は、listen-tealus の <code>SKILL.md</code> と <code>cc-stream.sh</code> を差し替えます。ログに <code>[http-denied]</code> <code>[change]</code> <code>[http-flood]</code> の行が増えるので、warn を数えて見張っている環境は数え直してください</li>
+</ul>
+</div>
+<p><a href="https://github.com/gamasenninn/tealus/compare/v0.11.1...v0.12.0">変更履歴 v0.11.1...v0.12.0（221 コミット）</a> ／ <a href="https://github.com/gamasenninn/tealus/releases/tag/v0.12.0">リリースページ</a></p>
 <h2 id="v0111-0110-2-20261015">v0.11.1 — 0.11.0 の更新で踏む穴を 2 つ塞ぐ（2026年10月15日）<a class="headerlink" href="#v0111-0110-2-20261015" title="Permanent link">&para;</a></h2>
 <p>修正だけの版です。</p>
 <p><strong>主な変更</strong></p>
 <ul>
-<li>migration 040 を流す前に再起動すると、**どの部屋も削除できなかった（500）**のを直しました（表が無いときは記録を飛ばして削除を通す）</li>
+<li>migration 040 を流す前に再起動すると、<strong>どの部屋も削除できなかった（500）</strong>のを直しました（表が無いときは記録を飛ばして削除を通す）</li>
 <li>起動時の確認が 034〜040 の流し忘れを知らせていなかったのを直しました。台帳と migration のファイルを突き合わせ、<code>[migration-check] ★ 未適用 N 件: …</code> と名前つきで警告します</li>
 </ul>
 <div class="admonition warning">
