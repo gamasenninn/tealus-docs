@@ -111,11 +111,11 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 
 | ディレクトリ | 役割 |
 |---|---|
-| `routes/` | REST APIルート定義（19 ファイル ＋ `routes/admin/` 9 ファイル） |
+| `routes/` | REST APIルート定義（21 ファイル ＋ `routes/admin/` 10 ファイル） |
 | `socket/handlers/` | Socket.IOイベントハンドラ（message・read・typing・call） |
 | `middleware/` | JWT認証・ファイルアップロード |
 | `services/` | プッシュ通知・サムネイル生成等のビジネスロジック |
-| `db/` | DB接続・マイグレーション（001〜040、台帳 `schema_migrations`） |
+| `db/` | DB接続・マイグレーション（001〜045、台帳 `schema_migrations`）。★ 未適用があると本体は名前と `npm run migrate` を出して起動しない（v0.12.0〜。台帳が無い・DB に届かないときは判定せずに起動） |
 | `utils/` | ユーティリティ |
 
 ### AIエージェント（agent-server/）
@@ -162,7 +162,7 @@ v0.5.0（[#330](https://github.com/gamasenninn/tealus/issues/330)）で全レイ
 ```
 POST /api/auth/login { login_id, password }
     ↓ bcryptで検証
-JWT発行（ペイロード: user_id, role）
+JWT発行（ペイロード: id, login_id, auth_at。期限 7 日）
     ↓
 Authorization: Bearer <token>
     ↓ middleware/auth.mts で検証

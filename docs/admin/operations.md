@@ -12,6 +12,17 @@ Tealus Server は `winston` + `winston-daily-rotate-file` でログを出力し�
     - 開発: `debug`（Socket.IO接続/切断、メッセージ送信、認証等の詳細ログ）
     - 本番: `info`（重要なイベントのみ）
 
+v0.12.0 から、次の行が増えました。warn を数えて見張っている場合は数え直してください。
+
+| 行 | レベル | 中身 |
+|---|---|---|
+| `[http-denied]` | warn | 断った要求（状態・方法・パス・利用者・ip・ua・理由 `reason=`） |
+| `[change]` | info | 成功した変更（GET 以外）。誰が・パス・本文の欄の名前（値は残さない）。AI が頼まれて編集・削除したときは頼んだ人も |
+| `[http-flood]` | warn | 同じ相手が同じ口を 1 分に 60 回を超えて叩いた（10 分に 1 回まで。止めはしない） |
+| `[http]` | warn | 4xx の応答（以前は `[error]` でした） |
+
+agent-server にも同じ行があります。
+
 ### ログビューア
 
 システムダッシュボード（`/system`）の **モニタリング → サーバーログ** タブで確認できます。
@@ -73,7 +84,7 @@ npm run doctor             # 既定: 外部の API は叩かない
 npm run doctor -- --probe  # 外部（OpenAI 等）への疎通も確かめる
 ```
 
-起動時の 1 行と同じ判定を、手で確かめたいときに使います。必須の環境変数・`WEBHOOK_SECRET`・資格情報・Codex のモデル・未適用の migration などを見ます。値そのものは表示しません（指紋のみ）。叩かなかった経路は `not-probed` と出るので、「確かめて全部だめ」と区別できます。
+起動時の 1 行と同じ判定を、手で確かめたいときに使います。必須の環境変数・`WEBHOOK_SECRET`・資格情報・Codex のモデル・未適用の migration などを見ます。v0.12.0 からは、メディアの総量・ディスクの空き・常駐のメモリと、「DB が指すのにファイルが無い添付」の数も出します。値そのものは表示しません（指紋のみ）。叩かなかった経路は `not-probed` と出るので、「確かめて全部だめ」と区別できます。
 
 ## ヘルスチェック
 
@@ -118,8 +129,15 @@ docker compose -f docker-compose.full.yml exec -T postgres pg_dump -U tealus tea
     | DB のダンプ | `pg_dump` の出力 | 投稿・利用者・部屋がすべて失われる |
     | メディア | `MEDIA_ROOT` の中身（画像・動画・音声・ファイル・サムネイル） | 投稿は残るが、添付が開けない |
     | 鍵と設定 | `.env`（`JWT_SECRET` / VAPID 鍵など） | 全員が再ログイン、プッシュの購読が無効になる |
+    | AI の設定 | agent-server の `.env`・`config/`・部屋の設定（`_room-configs/`） | 応答モード・部屋の指示・道具の設定が消える |
+
+    Windows では `scripts/backup/tealus-backup.ps1 -Dest <UNC>` で、DB・メディア・鍵と設定・記録・AI の設定をまとめて写せます（`-Parts` で一部だけ）。DB の控えの横に件数の控え（`.counts.json`）を置くので、戻す試しで比べられます。
 
     復元の具体的な手順は、本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) の「壊れたときの復元」にあります。
+
+## Windows で自動起動する {#autostart}
+
+`scripts/startup/tealus-autostart.ps1` は、ログオン時に本体・agent-server・rtc-server を上げます（v0.12.0）。タスクスケジューラへの登録は各自で行います。`-DryRun` で何を起動するか試せます。環境ごとに違う起動は、リポジトリの外の `~\.tealus\startup\extras.ps1` に書きます。
 
 ### メディアファイル
 

@@ -92,7 +92,7 @@ Agent Server は Port 4000 で独立したExpressプロセスとして動作し�
 | `all` | 常にすべてのメッセージに応答 |
 | `off` | 応答しない |
 
-設定ファイル: `agent-workspaces/{agentId}/{roomId}/room_settings.json`
+設定ファイル: `<AGENT_WORKSPACE_ROOT>/_room-configs/{agentId}/{roomId}/room_settings.json`（v0.12.0〜。それより前は作業場所の中の `{agentId}/{roomId}/room_settings.json`）
 
 ## グローバル設定
 
@@ -134,10 +134,21 @@ Agent Server は Port 4000 で独立したExpressプロセスとして動作し�
 
 ## コンテキスト管理
 
-各エージェントのコンテキストは `agent-workspaces/{agent_id}/{room_id}/` にファイルベースで保存されます。
+各エージェントの作業場所は `agent-workspaces/{agent_id}/{room_id}/` です。
 
-- `CLAUDE.md` — 行動制限・ルール
-- `memory/MEMORY.md` — エージェントのメモリ
+- `memory/MEMORY.md` — エージェントのメモリ（作業場所の中）
+
+部屋ごとの設定 4 つは、v0.12.0 から作業場所の**外**の `<AGENT_WORKSPACE_ROOT>/_room-configs/{agent_id}/{room_id}/` に置きます（AI が自分の設定を書き換えられないようにするため）。
+
+| ファイル | 中身 |
+|---|---|
+| `room_settings.json` | 応答モード・読み上げのエンジンと声など |
+| `light_prompt.md` | Light の部屋の指示 |
+| `mcp_config.json` | 部屋の道具（MCP）。★ 書き込めるのはシステム管理者だけ |
+| `CLAUDE.md` | Deep の部屋の指示（claude にも codex にも渡します） |
+
+!!! danger "★ 手で編集・バックアップしていた人は、置き場を読み替えてください（v0.12.0）"
+    古い置き場（作業場所の中）のファイルは、agent-server の起動のときに 1 度だけ新しい置き場へ移ります。**移ったあとに古い置き場へ置いても読まれません。** 保存のたびに前の版を `<ファイル>.prev` に 1 つ残すので、空で保存してしまっても戻せます。
 
 ## 無限ループ防止
 

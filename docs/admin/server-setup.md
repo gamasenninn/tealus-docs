@@ -93,6 +93,13 @@ rtc-server は以下 2 つの理由で Linux ホストでのみ動作します�
 
 Mac / Windows ホストで通話機能を使いたい場合は、別途 Linux ホストに rtc-server を立てる構成（または開発時は `npm run dev` でホストに直接起動）を検討してください。
 
+!!! warning "★ 通話・トランシーバーの入口は、ログインした部屋のメンバーだけ（v0.12.0）"
+    rtc-server は、接続してきた人の鍵で本体に「この部屋のメンバーか」を聞き、メンバーだけを通します。更新したら **rtc-server も再起動**してください。
+
+    - `JWT_SECRET` は本体と同じ値にします（ホストで動かすときは `server/.env` を読みます。Docker では `rtc-server/.env`）
+    - rtc-server を**別のマシンやコンテナ**で動かすときは、`TEALUS_API_URL` に本体の URL を入れます。**本体に届かないと、メンバーも全員断られます**
+    - 本体の `/rtc` 中継を通さず rtc-server を直接外へ出している構成は、接続が断られないか確かめてください
+
 ## 3. サーバーセットアップ
 
 ```bash
@@ -151,6 +158,10 @@ npx web-push generate-vapid-keys
 | `AGENT_URL` / `RTC_URL` / `MCP_HTTP_URL` | `http://localhost:{AGENT_PORT / RTC_PORT / MCP_HTTP_PORT}` | server が中継する先（[#556](https://github.com/gamasenninn/tealus/issues/556)）。agent-server・rtc-server・MCP を**別のホストやコンテナ**で動かすときに指定。★ Docker フルデプロイ（`docker-compose.full.yml`）が設定するのは **`AGENT_URL` だけ**です。rtc-server（`docker-compose.rtc.yml`、`network_mode: host`）を併用するときは、**server コンテナから届くアドレスを `RTC_URL` に**設定してください（コンテナの中の `localhost` はホストではありません） |
 | `TRANSCRIPTION_MODE` | — | `organon` を指定すると、自ホスト STT（Qwen3-ASR）の生出力を organon 知識で文脈補正する 2 段構成に切替（v0.5.0、[#326](https://github.com/gamasenninn/tealus/issues/326)） |
 | `LINE_IMAGESET_FLUSH_MS` | **60000** | LINE の複数画像同時送信（imageSet）を 1 メッセージに束ねる待ち時間。全枚が揃えば即投稿、揃わなければ**最後の 1 枚から**この時間で届いた分だけ投稿（v0.7.0 [#353](https://github.com/gamasenninn/tealus/issues/353)、既定 15 秒 → 60 秒 [#552](https://github.com/gamasenninn/tealus/issues/552)） |
+| `APP_PASS_KEY_DIR` | `~/.tealus/app-pass` | アプリの通行証と「Tealus でログイン」の鍵 `<ホスト名>.key`（16 進 1 行、32 バイト以上）の置き場。鍵を置かなければどちらも出ません（v0.12.0、[アプリの通行証](app-pass.md#key-file)） |
+| `APP_LOGIN_TARGETS` | 空（だれにも出さない） | 「Tealus でログイン」を出してよい相手と戻り先。相手の origin と戻り先のパスを縦棒でつなぎ、カンマで並べる（書き方は [アプリの通行証 > 相手と戻り先](app-pass.md#login-targets)）。崩れた行は黙って捨てる。変えたら再起動（[#648](https://github.com/gamasenninn/tealus/issues/648)） |
+| `PUSH_STALE_DAYS` | 30 | この日数のあいだ端末から登録し直されないプッシュの宛先を、1 日ごとに外す（印だけ。開き直せば戻る。その人のいちばん新しい有効な宛先は外さない。v0.12.0） |
+| `PUSH_INACTIVE_DELETE_DAYS` | 90 | 無効になってからこの日数たったプッシュの宛先の行を、毎日消す（`.env.example` には載っていません。v0.12.0） |
 | `LINE_IMAGESET_MAX_WAIT_MS` | 300000 | 同じ束ねの**最初の 1 枚から**の上限（5 分）。画像が届き続けても、ここで区切って投稿する（[#552](https://github.com/gamasenninn/tealus/issues/552)） |
 
 ### DBマイグレーション
@@ -159,12 +170,12 @@ npx web-push generate-vapid-keys
 npm run migrate
 ```
 
-マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（**001〜040**）が順に実行されます。適用済みの記録は DB の **`schema_migrations` テーブル**（台帳）に残ります（[#406](https://github.com/gamasenninn/tealus/issues/406)）。
+マイグレーションは `server/src/db/migrations/` 内の連番SQLファイル（**001〜045**）が順に実行されます。適用済みの記録は DB の **`schema_migrations` テーブル**（台帳）に残ります（[#406](https://github.com/gamasenninn/tealus/issues/406)）。
 
 !!! danger "★ 更新するときは、必ず migrate を**再起動の前**に"
-    v0.11.0 以降、**`034` を流さずにサーバーを再起動すると、ログインそのものが失敗します**（認証の問い合わせが新しい列を読むため）。プッシュの送信も止まります。
+    v0.11.0 以降、**`034` を流さずにサーバーを再起動すると、ログインそのものが失敗します**（認証の問い合わせが新しい列を読むため）。プッシュの送信も止まります。v0.12.0 の `042`（パスワードの変更の印）も、認証が読む列です。
 
-    更新の正しい順序は「コード取得 → 依存更新 → **migrate** → client 再ビルド → 再起動」です。手順の本文は本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) にあります。
+    更新の正しい順序は「コード取得 → 各パッケージで `npm install`（server・agent-server・rtc-server・client・dashboard。client と dashboard はこれで本番ビルドされます）→ **migrate** → 再起動」です。★ `npm run dev`（nodemon）で動かしていると、`git pull` の時点で再起動がかかり、migrate の前なので止まります。migrate のあと、手で起動し直してください。手順の本文は本体リポジトリの [upgrade-guide.md](https://github.com/gamasenninn/tealus/blob/main/docs/upgrade-guide.md) にあります。
 
 !!! danger "★ 台帳より前から動かしている DB は、`--baseline-through` が要ります"
     台帳（`schema_migrations`）が導入される前から動かしている DB には適用済みの記録がないため、**通常の `npm run migrate` は止まります**。このとき案内に出る `--baseline`（上限なし）を打つと、**まだ流していない migration まで「適用済み」として記録され、静かに壊れます**（[#500](https://github.com/gamasenninn/tealus/issues/500)）。
@@ -177,8 +188,10 @@ npm run migrate
     npm run migrate                                                   # 027 以降が実際に流れる
     ```
 
-!!! warning "migrate 忘れは「クラッシュしないが静かに壊れる」"
-    未適用の migration がある状態でも**サーバーが起動してしまう**ことがあり、機能だけが欠けます（例: 辞書テーブルが無いと辞書育成画面が 500、自己成長辞書が効かない）。起動時の確認は v0.11.1 で強化され、台帳とファイルを突き合わせて **`[migration-check] ★ 未適用 N 件: …`** とファイル名つきで出るようになりました。**起動ログの `[migration-check]` / `[build-check]`** を必ず確認してください。
+!!! warning "★ v0.12.0 から、未適用の migration があると本体は起動しません"
+    起動ログに `[migration-check] ★ 未適用の migration が N 件あるので起動しません: <ファイル名>` と `cd server && npm run migrate を実行してから、もう一度起動してください` が出て終わります。migrate を流してから起動し直してください。正常なら `[migration-check] 未適用の migration は 0 件` が出ます。
+
+    ただし、台帳（`schema_migrations`）が無い DB や、DB に届かないときは確かめられないので、`[migration-check] 未適用かどうかを確かめられないまま起動します` を出して起動します。このときは以前と同じく**起動はするが機能だけが欠けます**（例: 辞書テーブルが無いと辞書育成画面が 500）。**起動ログの `[migration-check]` / `[build-check]`** を必ず確認してください。
 
 !!! warning "managed PostgreSQL 環境での注意"
     migration 021 は `pg_trgm` extension を要求します。`CREATE EXTENSION` 権限がない managed PostgreSQL 環境（一部のクラウド DB）では migration が失敗するため、運用前に extension 作成権限を確認してください。
@@ -246,6 +259,13 @@ npm run dev
 
 エージェントサーバーは `http://localhost:4000` で起動します。
 
+!!! warning "★ 更新のあと最初の起動は、tealus-mcp の取得で遅くなります"
+    本体の agent-server は tealus-mcp を **v0.17.0** に固定して起動します（v0.12.0〜）。版が上がったあとの最初の起動は npx のダウンロードで遅いので、先に次を**最後まで** 1 回流してください。途中で止めるとキャッシュが欠けたまま残り、**AI の道具が全部つながりません**。
+
+    ```bash
+    npx -y github:gamasenninn/tealus-mcp#v0.17.0 < /dev/null   # Git Bash / Linux / Mac
+    ```
+
 ### エージェント環境変数
 
 `agent-server/.env` に以下を設定します。
@@ -269,7 +289,9 @@ npm run dev
 | `DEEP_TIMEOUT` | Deep agent のタイムアウト（**default 480000 = 8 分**、v0.5.0 [#314](https://github.com/gamasenninn/tealus/issues/314) で 5 分から延長） |
 | `QUEUE_TASK_TIMEOUT` | キュー投入タスクのタイムアウト（**default 540000 = 9 分**、同 [#314](https://github.com/gamasenninn/tealus/issues/314)） |
 | `CC_ACK_TTL_MS` | `@cc-<project>` 投入時に出る受付エコーの表示時間（default 5000 = 5 秒、v0.6.0 [#335](https://github.com/gamasenninn/tealus/issues/335)） |
-| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)）。★ 読むのは agent-server ではなく**子の tealus-mcp**（`generate_and_send_image`）。agent-server の `.env` に書けば tealus-mcp に届きます（本体 `db890c7` 以降、agent-server の再起動後から）。**v0.11.1 以前は子に渡す許可一覧に無く、書いても届きません**（[#573](https://github.com/gamasenninn/tealus/issues/573)） |
+| `OPENAI_IMAGE_MODEL` | 画像生成モデルの上書き（default `gpt-image-1`、v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313)）。★ 読むのは agent-server ではなく**子の tealus-mcp**（`generate_and_send_image`）。agent-server の `.env` に書けば tealus-mcp に届きます（本体 `db890c7` 以降、agent-server の再起動後から）。**v0.12.0 から届きます**（v0.11.1 以前は子に渡す許可一覧に無く、書いても届きません。[#573](https://github.com/gamasenninn/tealus/issues/573)） |
+| `TAVILY_API_KEY` | Web 検索の道具（Tavily）の鍵。`.env` に置き、部屋の `mcp_config.json` の `env` で `${TAVILY_API_KEY}` と引きます（[#573](https://github.com/gamasenninn/tealus/issues/573) 以後） |
+| `ENABLE_CROSS_ROOM_DELEGATION` | `true` で、部屋をまたいで仕事を頼める（先頭が `%<部屋> <頼みごと>` の投稿、[#292](https://github.com/gamasenninn/tealus/issues/292)）。既定はオフ |
 | `TTS_BROADCAST_MEDIASOUP` | `false` | ★ agent-server が読む。TTS を mediasoup 経由で配信（legacy）。`true` で v0.1.0 以前の rtc-server 経由配信に切替（[#189](https://github.com/gamasenninn/tealus/issues/189)） |
 
 !!! danger "★ 以前このページは逆のことを書いていました"

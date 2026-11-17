@@ -94,6 +94,7 @@ nav:
       - 会話モード（AI と音声で話す）: guide/advanced/voice-chat.md
       - マルチトーク（PC）: guide/advanced/multi-talk.md
       - お知らせ: guide/advanced/announcement.md
+      - アプリパネル: guide/advanced/app-panel.md
     - 設定:
       - プロフィール: guide/settings/profile.md
       - 表示設定: guide/settings/display.md
@@ -112,6 +113,7 @@ nav:
     - AIエージェント設定: admin/agent.md
     - 運用・監視: admin/operations.md
     - ルームトリガーと見張り: admin/automation.md
+    - アプリの通行証と「Tealus でログイン」: admin/app-pass.md
   - 開発者ガイド:
     - はじめに: dev/index.md
     - アーキテクチャ: dev/architecture.md

@@ -53,7 +53,7 @@ AI の文字起こし  vs  人が直した文字起こし
 | 正規名の追加・編集 | 正規名そのものと、分類・読みを編集 |
 
 !!! warning "辞書タブが 500 になるときは migration 忘れです"
-    辞書テーブル（`023`〜`025`）が未適用のまま起動すると、**サーバーはクラッシュせず起動してしまい、辞書タブだけが 500 になります**。`cd server && npm run migrate` を実行してください。v0.6.0 以降は起動ログに `[migration-check]` の警告が出ます（[#334](https://github.com/gamasenninn/tealus/issues/334)）。
+    v0.12.0 からは、未適用の migration があると本体が起動しません（起動ログの `[migration-check]` に名前が出ます）。台帳（`schema_migrations`）が無い古い DB では起動してしまい、**辞書タブだけが 500 になります**。どちらも `cd server && npm run migrate` で直ります（[#334](https://github.com/gamasenninn/tealus/issues/334)）。
 
 ## どこに効くか
 

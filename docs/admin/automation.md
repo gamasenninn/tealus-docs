@@ -77,6 +77,15 @@
 | `heartbeat` | 部品が `POST /api/bot/heartbeat` で送る**鼓動** | `max_silence_minutes` を超えて来ない／一度も来ていない／最新のファイルは新しいのに送っていない（`max_send_lag_minutes`） |
 | `room_quiet` | 部屋の、指定した送り手（`from_user_ids`）の最新の投稿 | 稼働時間（`hours`・`days`）の中で `max_quiet_minutes` を超えて投稿が無い |
 | `backup_log` | Tealus のバックアップの記録（`dir` の `backup-YYYYMMDD.log`） | 最後の記録が成功で終わっていない／26 時間より古い／置き場が読めない |
+| `push_reach`（v0.12.0） | 人ごとのプッシュ通知の宛先 | 有効な宛先が 0 本の人がいる（人ごとに ⚠ を 1 回、登録し直したら ✅）。直近 `active_within_days` 日（既定 30）に何も読んでいない人は見ない。`exclude_user_ids` で試験用を外す |
+| `disk_free`（v0.12.0） | 置き場（`path`）の空き | 空きが `min_free_gb` を切った |
+
+どの見方にも **`alert_after`**（何回続けて異常なら ⚠ を出すか、既定 1）を付けられます（v0.12.0）。置き場がときどき数分見えなくなる環境では `"alert_after": 2` にすると、10 分続いたときだけ知らせます。✅ は待ちません。
+
+!!! warning "★ 見本の `disk_free` は `enabled: true` です"
+    `server/config/watchdogs.example.json` を写すとき、`disk_free` の `path` は仮の値（`<MEDIA_ROOT …>`）のままです。自分のメディアの置き場に書き換えてください。
+
+**agent-server の鼓動**（v0.12.0）— agent-server は 1 分ごとに鼓動 `agent-server` を本体へ送ります。`kind: "heartbeat"`・`"heartbeat": "agent-server"`・`from_user_id` に AI の利用者 ID の 1 行を足すと、agent-server が止まったときと、tealus の道具が欠けて「動いてはいますが、…」のとき（生きているのに AI が答えない）に知らせます。
 
 鼓動は CLI の監視モードから送れます:
 

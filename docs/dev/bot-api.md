@@ -17,7 +17,7 @@ TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
 ```
 
 !!! note
-    Botユーザーは `users.is_bot = true` に設定してください。これによりBotからのメッセージがWebhookで無限ループしなくなります。
+    Botユーザーは `users.is_bot = true` に設定してください。これによりBotからのメッセージがWebhookで無限ループしなくなります。機械（`is_bot`）には部屋のプッシュ通知を送りません（v0.12.0）。
 
 ### テキストメッセージ送信
 

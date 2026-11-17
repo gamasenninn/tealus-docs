@@ -96,7 +96,7 @@ Light は、必要な履歴を**自分で `get_messages` / `search_messages` を
 |---|---|---|
 | デフォルト | `config/default_system_prompt.md` | 基本（リポジトリ管理、Tealus MCP 利用ガイダンスを含む） |
 | カスタム | `config/system_prompt.md` | グローバル上書き（**`.gitignore` 対象、user カスタム枠**） |
-| ルーム固有 | `{workspace}/light_prompt.md` | ルーム個別の指示 |
+| ルーム固有 | `_room-configs/<agentId>/<roomId>/light_prompt.md`（v0.12.0〜。作業場所の外） | ルーム個別の指示 |
 | メモリ | `{workspace}/memory/MEMORY.md` | エージェントの記憶 |
 
 !!! info "config/system_prompt.md の運用"
@@ -118,7 +118,7 @@ Light は、必要な履歴を**自分で `get_messages` / `search_messages` を
 
 #### Tealus MCP ツール（Light/Deep 共通、v0.2.0〜）
 
-[Tealus MCP](mcp.md) を介して Light Agent も以下のツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。本体の agent-server は tealus-mcp `#v0.16.0` を使い、19 ツールすべてが使えます（v0.11.1 以前の本体は `#v0.14.7` 固定で、`send_form` と `edit_message` が使えませんでした）。
+[Tealus MCP](mcp.md) を介して Light Agent も以下のツールを利用できます（[#199](https://github.com/gamasenninn/tealus/issues/199)）。Deep Agent と**同一のツールセット**です。本体の agent-server は tealus-mcp `#v0.17.0` を使い、19 ツールすべてが使えます（v0.11.1 以前の本体は `#v0.14.7` 固定で、`send_form` と `edit_message` が使えませんでした）。
 
 | ツール名 | 説明 |
 |---|---|
@@ -136,7 +136,7 @@ Light は、必要な履歴を**自分で `get_messages` / `search_messages` を
 | `list_tags` | bot 全 room の tag 一覧を usage 順で返す（v0.10.0） |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 |
 | `create_room` | グループルームを作成（v0.2.0、bot は admin として自動追加） |
-| `delete_room` | グループルームをアーカイブ（v0.2.0、creator + solo member のみ） |
+| `delete_room` | グループルームをアーカイブ（v0.2.0、自分しかいないグループのみ） |
 | `list_rooms` | 参加中ルーム一覧 |
 | `join_room` | ルーム参加 |
 | `mark_read` | メッセージ既読化 |
@@ -170,7 +170,9 @@ agent-server 起動時
 ```bash
 claude -p - \
   --dangerously-skip-permissions \
-  --mcp-config <動的設定ファイル> \
+  --strict-mcp-config \
+  --mcp-config <組み立てた設定> \
+  [--append-system-prompt-file <部屋の CLAUDE.md>] \
   [--resume <sessionId>]
 ```
 
@@ -181,9 +183,9 @@ claude -p - \
 
 実行時に MCP 設定 JSON を動的に組み立てます。
 
-1. Tealus MCP Server（チャット読み書き用）を基本設定として追加
-2. ルーム固有の MCP 設定（`room_settings.json` の `mcp` セクション）をマージ
-3. `.deep_mcp_config.json` としてワークスペースに書き出し
+1. Tealus MCP（依頼した人の部屋に絞る中継へ向ける）を基本設定として置く
+2. 部屋の `mcp_config.json`（`<AGENT_WORKSPACE_ROOT>/_room-configs/<agentId>/<roomId>/`）をマージする。★ `tealus` が書いてあっても使わない（本体の組み立てを優先し、warn に残す）
+3. `<AGENT_WORKSPACE_ROOT>/_mcp-configs/<agentId>/<roomId>.json` に書き出す（作業場所の外）。`--strict-mcp-config` なので、作業場所の `.mcp.json` などは読まない（古い `.deep_mcp_config.json` は見つけたら消す）
 
 これにより、Deep Agent は [MCP Server](mcp.md) 経由でチャット履歴の読み取り・メッセージ送信を自律的に行えます。
 
@@ -219,6 +221,8 @@ Agent Server がメッセージを受け取り、エージェントに渡すま�
 ```
 
 異なるルームのメッセージは並行処理されますが、同じルーム内のメッセージは前のメッセージの処理が完了してから次に進みます。
+
+v0.12.0 から、待っている間は「順番待ちです。前に N 件あります」を状態（`agent:status`）で出します（[#644](https://github.com/gamasenninn/tealus/issues/644)）。計画的な停止では捨てた仕事の件数を部屋に 1 回知らせ、予告なしの停止は控え `~/.tealus/agent/pending-work-<PORT>.json`（`AGENT_PENDING_JOURNAL` で変更可）から次の起動で「中断されました」を出します（やり直しはしない）。
 
 ### 無限ループ防止
 

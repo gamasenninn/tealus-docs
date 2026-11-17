@@ -4,7 +4,7 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 
 ## 概要
 
-- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（最新 v0.16.0）
+- リポジトリ: **独立 repo [`gamasenninn/tealus-mcp`](https://github.com/gamasenninn/tealus-mcp)**（最新 v0.17.0）
 - 配布: npm publish ではなく **GitHub から直接 install**（`npx -y github:gamasenninn/tealus-mcp`）
 - 通信: stdio (MCP) → HTTP (Bot API) → Tealus Server (port 3000)
 - 技術スタック: `@modelcontextprotocol/sdk`、`zod`、`node-fetch`、`form-data`
@@ -16,9 +16,9 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
     `.mcp.json` で **タグ pin**（`github:gamasenninn/tealus-mcp#v0.14.6` のような形）にしている場合、そのタグ時点のツールセットしか見えません。`send_form` は **v0.14.8 以降**、`edit_message` は **v0.15.0 以降**です。v0.16.0 からは、投稿の決まり（mention の書き方・同報への返し方）を**案内文（instructions）**として接続時に渡します。
 
 !!! note "本体の AI エージェントが使う版"
-    本体の agent-server（Light v2 / Deep / 会話モード）は tealus-mcp を **`#v0.16.0`** に固定して起動します。版は `agent-server/src/lib/mcpPackages.mts` の `TEALUS_MCP_PACKAGE` の 1 か所で決まります。
+    本体の agent-server（Light v2 / Deep / 会話モード）は tealus-mcp を **`#v0.17.0`** に固定して起動します（本体 v0.12.0〜）。版は `agent-server/src/lib/mcpPackages.mts` の `TEALUS_MCP_PACKAGE` の 1 か所で決まります。版が上がったあとの最初の起動は npx の取得で遅いので、先に `npx -y github:gamasenninn/tealus-mcp#v0.17.0 < /dev/null` を**最後まで** 1 回流してください（途中で打ち切るとキャッシュが欠けたまま残り、道具が全部つながりません）。
 
-    以前（v0.11.1 まで）は `#v0.14.7` に固定されていて、**本体のエージェントからは `send_form` と `edit_message` が見えませんでした**。本体の 2026-10-15 の変更（`2ef45fc`）で 19 ツールすべてが使えるようになっています。v0.11.1 以前の本体を動かしている場合は、この差が残っています。
+    以前（本体 v0.11.1 まで）は `#v0.14.7` に固定されていて、**本体のエージェントからは `send_form` と `edit_message` が見えませんでした**。v0.16.1 は検索の `since` / `until` の時間帯の説明を、v0.17.0 は道具の説明（見つけた投稿の全文の取り方・`get_messages` の 100 件の上限）と `search_messages` の `type` の `file` / `form` を足した版です。道具の数は 19 のままです。
 
     また、pin を上げたあと **Claude Code をフル再起動**（プロセスごと）しないと反映されません。in-app reload や `/mcp` 再接続では **stdio 子プロセスが生き残り、`npx` が再解決されない**ためです。ref 無し（`github:gamasenninn/tealus-mcp` = HEAD 追従）の場合はフル再起動だけで反映されます。
 
@@ -30,16 +30,16 @@ Tealus の Bot API を MCP（Model Context Protocol）ツールとしてラッ�
 | `generate_and_send_image` | `gpt-image-1` で画像生成 → ルームに投稿（v0.11.0、`OPENAI_API_KEY` env 必須。v0.5.0 [#313](https://github.com/gamasenninn/tealus/issues/313) で DALL-E 3 から移行、env `OPENAI_IMAGE_MODEL` で上書き可） | `room_id` / `prompt` / `size?`（`1024x1024` / `1536x1024` / `1024x1536` / `auto`） / `caption?` |
 | `send_form` | **回答フォームを投稿**（v0.14.8、本体 v0.6.0 [#336](https://github.com/gamasenninn/tealus/issues/336)）。radio（単一選択・補足 text 可）/ text（自由記述）を出し、回答者は 1 ボタンで返信。`reply_mention` を付けると回答が `@cc-<project>` を起動する | `room_id` / `title` / `fields[]`（`id` / `type`（`radio` \| `text`） / `label` / `options?` / `required?` / `multiline?`） / `intro?` / `reply_mention?` / `submit_label?` |
 | `edit_message` | **既存メッセージの本文を直す**（v0.15.0、[#394](https://github.com/gamasenninn/tealus/issues/394)）。既定は前後の文字列を指定する部分置換で、置換した箇所数を返す。`content` で全文差し替え（排他）。`expected_count` で件数を検算、`dry_run` で書き込まず確認。編集できるかはルームの「メッセージ編集」設定で決まり、不可なら 403。旧版は編集履歴に残る | `message_id` / `before?` / `after?` / `content?` / `expected_count?` / `dry_run?` |
-| `get_messages` | メッセージ履歴取得 | `room_id` / `limit?`（最大100） / `include_transcription?`（v0.7.0、default true） / `include_raw?`（v0.7.0、default false） |
+| `get_messages` | メッセージ履歴取得（100 を超える `limit` は黙って 100） | `room_id` / `limit?`（最大100） / `include_transcription?`（v0.7.0、default true） / `include_raw?`（v0.7.0、default false） |
 | `get_message_media` | メディア取得（画像はAIが直接視認、音声は文字起こし優先、v0.14.1 で image 判定を mime_type ベースに緩和）。**複数添付は `index` で 1 枚ずつ取得**（v0.14.5、[#316](https://github.com/gamasenninn/tealus/issues/316)。返り値の `media_count` を見て `index=0,1,…` で全枚取得） | `message_id` / `index?`（0始まり） |
 | `get_message_edit_history` | メッセージ編集履歴を取得（text edits + voice / video transcription versions を統合返却、v0.14.0、organon daily cycle の edit history 観察用、[#281](https://github.com/gamasenninn/tealus/issues/281) follow-up） | `message_id` |
 | `read_document` | 添付 PDF / DOCX / XLSX / Markdown / Plain Text / CSV を text 化（v0.8.0〜、v0.9.0 で Gemini Vision fallback、v0.11.1 で parseError robustness、v0.13.1 で text/* mime 対応）。**複数添付は `index` で 1 件ずつ取得**（v0.14.6、[#317](https://github.com/gamasenninn/tealus/issues/317)） | `message_id` / `index?`（0始まり） |
 | `transcribe_media` | 動画/音声メッセージを文字起こし（v0.13.0、server-side で ffmpeg audio 抽出 → 文字起こし → AI 整形。`get_message_media` の 10MB 上限を回避） | `message_id` / `force_retranscribe?` |
-| `search_messages` | キーワード/タグ/期間/発言者で全文検索（snippetハイライト付）。**`has_reaction` でリアクション有無を SQL 側で絞れる**（v0.14.7、[#325](https://github.com/gamasenninn/tealus/issues/325)。「✅ が付いていないもの一覧」等） | `q?` / `room_id?` / `sender_id?` / `type?` / `tag_names?` / `is_done?` / `has_reaction?` / `since?` / `until?` / `limit?`（1-50）/ `offset?` |
+| `search_messages` | キーワード/タグ/期間/発言者で全文検索（snippetハイライト付）。**`has_reaction` でリアクション有無を SQL 側で絞れる**（v0.14.7、[#325](https://github.com/gamasenninn/tealus/issues/325)。「✅ が付いていないもの一覧」等）。`type` は `text`/`image`/`voice`/`video`/`file`/`stamp`/`system`/`form`（`file`・`form` は v0.17.0）。★ 見つけた投稿の全文は `get_message_edit_history` の `current_content` で取る。`since`/`until` に時間帯が無ければサーバーの時間帯で読む | `q?` / `room_id?` / `sender_id?` / `type?` / `tag_names?` / `is_done?` / `has_reaction?` / `since?` / `until?` / `limit?`（1-50）/ `offset?` |
 | `list_tags` | bot メンバー全 room の tag 一覧を usage 順で返す discovery primitive（v0.10.0） | `limit?`（default 30、max 100） |
 | `mark_tag_done` | タグの完了状態（is_done）を更新 | `message_id` / `tag_name` / `is_done` |
 | `create_room` | グループルームを作成（v0.2.0、bot は admin として自動追加） | `name` / `member_ids?` / `type?`（現状 `'group'` のみ） |
-| `delete_room` | グループルームをアーカイブ（v0.2.0、creator + solo member のみ、破壊的・CASCADE 削除） | `room_id` |
+| `delete_room` | グループルームをアーカイブ（v0.2.0、自分しかいないグループのみ。本体 v0.12.0 から作成者でなくてよい。破壊的・CASCADE 削除） | `room_id` |
 | `list_rooms` | 参加中ルーム一覧 | （なし） |
 | `join_room` | ルーム参加 | `room_id` |
 | `mark_read` | メッセージ既読化 | `message_ids[]` |
@@ -184,7 +184,7 @@ Claude Code やその他の MCP クライアントから、業務メモやチー
 
 `create_room` / `delete_room` により、AI が**読む**だけでなく**ルーム編成にも参加**できるようになりました（v0.2.0、[#200](https://github.com/gamasenninn/tealus/issues/200) / [#207](https://github.com/gamasenninn/tealus/issues/207)）。「議題ごとに新しいルームを作って整理して」「役目を終えたルームをアーカイブして」のような依頼を AI が直接実行できます。
 
-`delete_room` には安全制約として **creator のみ + solo member のみ + グループルーム限定** が課されています（破壊的操作のため）。
+`delete_room` には安全制約として **solo member のみ + グループルーム限定** が課されています（破壊的操作のため。本体 v0.11.1 までは作成者のみ、という条件もありました [#643](https://github.com/gamasenninn/tealus/issues/643)）。
 
 ### Light agent / Deep agent 共有
 

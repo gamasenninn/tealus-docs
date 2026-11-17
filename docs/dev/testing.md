@@ -84,7 +84,7 @@ GitHub Actions（`.github/workflows/test.yml`）で **6 ジョブ**が走りま�
 | `client-build` | ライセンス確認 → 型検査 → テスト → ビルド |
 | `dashboard-build` | ライセンス確認 → 型検査 → ビルド |
 | `agent-server-test` | ライセンス確認 → 型検査 → テスト |
-| `rtc-server-typecheck` | ライセンス確認 → 型検査（mediasoup の native 依存があるためテストは走らせない） |
+| `rtc-server-typecheck` | ライセンス確認 → 型検査 → 入口の守りのテスト（`wsAccess.test.mts`。mediasoup の worker は使わない） |
 | `cli-test` | 型検査 → テスト（ルートの `scripts/` は他プロジェクトの依存を引かず、root の依存だけで実行） |
 
 各ジョブで **GPL / AGPL 混入の検査**（`npm run license-fail-on-gpl`）も実行されます。
